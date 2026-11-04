@@ -1,0 +1,7 @@
+# Local (light) environment: metadata checks + merge.py smoke tests. Training happens in Colab.
+roboflow==1.7.3
+pyyaml
+pillow
+numpy
+nbformat
+requests

@@ -1,0 +1,79 @@
+# EquipX detector classes (order == content/index.json == model output class index)
+classes:
+  - digital_multimeter
+  - analog_multimeter
+  - digital_clamp_meter
+  - digital_oscilloscope
+  - function_generator
+  - dc_power_supply
+  - soldering_station
+  - lcr_meter
+  - insulation_tester
+  - breadboard_trainer
+
+# Public datasets (TASKS.md section 3). roboflow = workspace/project slugs.
+# license_ok is from the Roboflow API metadata (checked 2026-11-05, see datasets_report.md).
+# mapping: dataset class name -> our id. Matching is case-insensitive and ignores spaces/underscores/hyphens.
+# Classes not listed are dropped (boxes removed; images left with no boxes are discarded).
+datasets:
+  tardata:
+    roboflow: [new-workspace-febsz, tardata]
+    license_ok: true
+    mapping:
+      Digital_Multimeter: digital_multimeter
+      Analog_Multimeter: analog_multimeter
+      Digital_Clamp_Meter: digital_clamp_meter
+      Tektronik-1052B_Digital_Oscilloscope: digital_oscilloscope
+      Tektronik-2000_Digital_Oscilloscope: digital_oscilloscope
+      Function_Generator: function_generator
+      Benchtop_Electrical_Power_Supply: dc_power_supply
+      Power_Supply_30V2A: dc_power_supply
+      Power_Supply_30V3A: dc_power_supply
+      GORDAK-Soldering_Station: soldering_station
+      HAKO-Soldering_Station: soldering_station
+      IM3533-01_LCR_Meter: lcr_meter
+      Insulation_Tester: insulation_tester
+      Protoboard: breadboard_trainer
+    # dropped on purpose: AC-Voltage&DC-Regulator_Power_Supply (AC regulator, not a DC bench supply), Soldering_iron
+    # (bare iron, not a station), Digital_Power_Meter, Current_Probe, cables, hand tools, transformers
+  objectdetection:
+    roboflow: [universiti-malaysia-pahang-qcvas, objectdetection-ngxjp]
+    license_ok: true
+    mapping:
+      "DC Power Supply": dc_power_supply
+      "Digital Trainer": breadboard_trainer
+      "Function Generator": function_generator
+      "Digital Multimeter": digital_multimeter
+      "Oscilloscope": digital_oscilloscope
+  instrument_lab:
+    roboflow: [universidad-de-los-andes-lzihh, instrument-lab-detection]
+    license_ok: true
+    mapping:
+      fuente: dc_power_supply
+      generador: function_generator
+      multimetro: digital_multimeter
+      osciloscopio: digital_oscilloscope
+  equipment_data:
+    roboflow: [senior-design-yolov7, equipment-data]
+    license_ok: true   # API reports CC BY 4.0
+    mapping:
+      AFG: function_generator
+      ELVIS: breadboard_trainer      # NI ELVIS = benchtop trainer workstation; review a few images
+      "Digital Oscilliscope": digital_oscilloscope
+      Multimeter: digital_multimeter
+      "Power Supply": dc_power_supply
+  testbw:
+    roboflow: [new-workspace-febsz, testbw]
+    license_ok: true
+    mapping:
+      Analog_Multimeter: analog_multimeter
+      Digital_Clamp_Meter: digital_clamp_meter
+      Digital_Multimeter: digital_multimeter
+      Protoboard: breadboard_trainer
+  resistor_detection:
+    roboflow: [circuits-project, resistor-detection-5azes]
+    license_ok: true
+    mapping:
+      breadboard: breadboard_trainer   # plain breadboard only; wire/resistor dropped
+  # oscilloscope_detection (roboticslearning/oscilloscope-detection): CC BY 4.0 but 0 images and 0 versions
+  # in the API (empty project), so it is not downloadable. Skipped.
