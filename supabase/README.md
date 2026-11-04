@@ -1,6 +1,6 @@
-# EquipX Supabase backend (written, NOT applied)
+# EquipX Supabase backend
 
-Nothing in this folder has been applied to any remote project. The SQL was verified against a throwaway local PostgreSQL 17 with stubbed `auth` objects (see "Verification").
+The migrations and `seed.sql` are applied to the owner's hosted project (24 tables, RLS on, content seeded). The SQL was first verified against a throwaway local PostgreSQL 17 with stubbed `auth` objects, then smoke-tested on the hosted DB (see "Verification").
 
 ## Files
 
@@ -14,24 +14,34 @@ Nothing in this folder has been applied to any remote project. The SQL was verif
 
 Migrations run in filename order; keep the order (functions need tables, policies need `is_teacher()`).
 
-## Applying later (Phase 6, T6.1)
+## Applying migrations
 
-Local (needs Docker + Supabase CLI):
+Hosted project: put the Postgres connection string in the gitignored `supabase/.env` as `DATABASE_URL=...` (and `SUPABASE_URL=...`). Never commit it.
 ```
-supabase start
-supabase db reset        # drops the local DB and re-runs every migration
+set -a; . supabase/.env; set +a
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrations/<file>.sql   # new migrations only, in filename order
 ```
-Remote (only when you decide to, after `supabase login` and `supabase link --project-ref <ref>`):
-```
-supabase db push
-```
-Seed content: a generator from `/content/*.json` to SQL is planned (see TASKS.md section 7); until then content is inserted by the admin panel or SQL.
+(Already applied: all four `2026110400*` migrations; they are recorded in `supabase_migrations.schema_migrations`.) With the Supabase CLI instead: `supabase link --project-ref <ref>` then `supabase db push`. Local (Docker + CLI): `supabase start && supabase db reset`.
 
-Make the first teacher (new sign-ups are always `student`; the role in signup metadata is ignored on purpose):
+## Seeding / re-seeding content
+
+`supabase/seed.sql` is generated from `/content/*.json` + `content/missions.json` by `tools/supabase/seed.mjs`. Do not hand-edit it.
+```
+npm run db:seed-sql                                   # regenerate supabase/seed.sql from /content
+set -a; . supabase/.env; set +a
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/seed.sql
+```
+(Or paste the file into the Supabase SQL editor, which runs it as one transaction.) It takes a minute or two over the network because it is ~700 statements.
+
+Behaviour: idempotent upserts keyed on natural keys (`equipment.id`, `(equipment_id, part id)`, `(equipment_id, slug)`, `(scenario_id, slug)`, `(quiz_id, slug)`, mission `slug`, task `(mission_id, sort_order)`), so row uuids and any student activity or mission progress that references them survive a re-seed. Children that no longer exist in `/content` (parts, procedures, faults, options, quizzes, questions, extra tasks) are deleted; procedure steps, safety rules and fault-related parts are replaced. Equipment and missions from the seed are set `published = true`; `model_asset` is `models/<id>.glb`. Hotspot overrides (`parts.hotspot_position/normal`, set in the admin panel) are not touched. Devices or missions created only in the admin panel are never deleted by the seed, but a re-seed overwrites edits made in the admin panel to seeded content (content files are the source of truth).
+
+## Making the first teacher
+
+New sign-ups are always `student` (the role in signup metadata is ignored on purpose). The owner signs up once (Supabase dashboard: Authentication > Users > Add user, or via the app/admin sign-up), then runs in the SQL editor (or with `psql "$DATABASE_URL"`):
 ```sql
 update public.profiles set role = 'teacher' where id = (select id from auth.users where email = 'teacher@example.com');
 ```
-(run in the SQL editor / as service role; a signed-in teacher can also promote others).
+Only a service-role / SQL-editor connection (no JWT) or an existing teacher can change roles. The admin panel then accepts that account; any other account is signed out with a message.
 
 ## Schema notes
 
@@ -72,3 +82,6 @@ One row per student per equipment: `quiz_attempts`, `questions_answered`, `corre
 ## Verification (what was actually run)
 
 Local PostgreSQL 17 (Homebrew, no Docker) with a test-only prelude (roles `anon`/`authenticated`/`service_role`, a stub `auth.users`, `auth.uid()` reading `request.jwt.claim.sub`), which is not part of the migrations. All four migrations applied cleanly with `ON_ERROR_STOP`. Second round (answer-key fix, scan limit, mission published check): the same prelude (plus default grants to `authenticated`, as Supabase does) and all four migrations applied cleanly; as a student `select correct_index` and `select *` on `quiz_questions`, `select is_correct` on `fault_options` and `teacher_quiz_questions()` fail, other columns work, `quiz_answers`/`fault_attempts` still get `is_correct` computed, a teacher reads answers via the functions and can still update/insert content, `anon` cannot call them, scan points are 10 then 0 on the same day/device and 10 again on another day, `mission_complete` is rejected while unpublished and grants 50 once published. Earlier round: a smoke test under `SET ROLE authenticated/anon` confirmed: teacher writes content, students only see published content and cannot write it, `anon` is denied, role self-promotion is blocked, direct `points_ledger` inserts are denied, `award_points` grants once and rejects unverified refs, server-side `is_correct`, `check_badges`, and `student_results` per role. Not tested: real Supabase (Auth/PostgREST/Storage).
+
+### Hosted DB verification (2026-11-05)
+Seed applied to the hosted project twice (idempotent), counts: 10 equipment (all published), 96 parts, 60 safety rules, 19 procedures / 162 steps, 30 fault scenarios / 120 options / 69 related parts, 10 quizzes / 100 questions, 12 missions / 52 tasks, 6 badges. RLS smoke test (rolled-back transaction, `set local role authenticated` + fake JWT claims): student reads published content, `correct_index` / `is_correct` / `select *` on the answer tables are denied, `teacher_*()` functions raise "teachers only", content writes and `points_ledger` inserts are denied, `anon` has no access; a (rolled-back) teacher reads everything, reads answers via `teacher_*()`, and can insert/update content. Note: `INSERT ... ON CONFLICT DO UPDATE` on `quiz_questions` / `fault_options` is denied even for teachers (Postgres needs SELECT on the answer columns), and so is an update that reads them (`set x = x`); use plain INSERT and `UPDATE ... SET col = <value>` (the admin `SupabaseStore` does).

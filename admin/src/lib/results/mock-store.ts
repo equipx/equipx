@@ -1,5 +1,7 @@
 import seedIndex from "@/data/seed/index.json";
 import seedMissions from "@/data/seed/missions.json";
+import { useSupabase } from "@/lib/supabase/client";
+import { SupabaseResultsStore } from "./supabase-store";
 import { buildLedger, summarizePoints, type ActivityData } from "./points";
 import type {
   DeviceInfo,
@@ -271,6 +273,7 @@ export class MockResultsStore implements ResultsStore {
 }
 
 let singleton: ResultsStore | null = null;
+/** Supabase when NEXT_PUBLIC_SUPABASE_URL + NEXT_PUBLIC_SUPABASE_ANON_KEY are set, otherwise generated mock data. */
 export function getResultsStore(): ResultsStore {
-  return (singleton ??= new MockResultsStore());
+  return (singleton ??= useSupabase ? new SupabaseResultsStore() : new MockResultsStore());
 }

@@ -6,6 +6,7 @@
     "setup": "npm --prefix tools/content install && npm --prefix tools/gen-models install",
     "content:validate": "npm --prefix tools/content run validate --silent",
     "models:gen": "npm --prefix tools/gen-models run gen --silent",
-    "sync": "node tools/sync/sync.mjs"
+    "sync": "node tools/sync/sync.mjs",
+    "db:seed-sql": "node tools/supabase/seed.mjs"
   }
 }

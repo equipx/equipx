@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAuth } from "@/lib/auth";
+import { useSupabase } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -68,10 +69,12 @@ export default function LoginPage() {
               {busy ? "Signing in..." : "Sign in"}
             </Button>
           </form>
+          {!useSupabase && (
           <div className="mt-5 rounded-md border bg-callout px-3 py-2 text-xs text-muted-foreground">
             <p className="font-medium text-foreground">Demo teacher account</p>
             <p>teacher@equipx.app / teacher123</p>
           </div>
+          )}
         </CardContent>
       </Card>
     </main>

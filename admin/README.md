@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EquipX Admin
 
-## Getting Started
+Next.js 16 (App Router) + Tailwind 4 + shadcn (base-nova) admin panel for teachers: equipment content, procedures, faults, quizzes, missions, student results.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+npm install
+npm run dev      # http://localhost:3000
+npm run build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data source: mock or Supabase
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app picks its backend from two env vars (see `.env.example`; copy to the gitignored `.env.local`):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Backend |
+|---|---|
+| unset (default) | Offline mocks: `MockStore` (localStorage over `src/data/seed`), `MockResultsStore` (generated results), `MockAuth` (`teacher@equipx.app` / `teacher123`) |
+| both set | `SupabaseStore`, `SupabaseResultsStore`, `SupabaseAuth` |
 
-## Learn More
+Use the project's **publishable / anon** key only. Never put the service-role / secret key or the database URL in the admin app. Restart `npm run dev` after changing env vars (they are inlined at build time).
 
-To learn more about Next.js, take a look at the following resources:
+With Supabase:
+- **Sign-in** is email + password through Supabase Auth. Only users whose `profiles.role = 'teacher'` get in; anyone else is signed out with a message. Promote the first teacher as described in `../supabase/README.md`.
+- **Reads/writes** go through RLS as the signed-in teacher. Quiz answer keys and fault correct-options are read with the `teacher_quiz_questions()` / `teacher_fault_options()` functions.
+- **Editors save to the database**: a `Device` maps to `equipment`, `parts` (hotspot overrides to `parts.hotspot_position` / `hotspot_normal`), `safety_rules`, `procedures` + `procedure_steps`, `fault_scenarios` + `fault_options` + `fault_related_parts`, `quizzes` + `quiz_questions`. Missions map to `missions` + `mission_tasks` (task ids are `t1..tn` by order). Devices and missions created in the panel are published immediately.
+- **Results** come from `student_results`, the activity tables and the server-side `points_ledger` / `user_badges`. The schema has no "college" field, so that column is blank.
+- "Reset to seed" is mock-only. To restore content in the database, re-run the seed (`../supabase/README.md`).
+- The 3D preview still loads GLBs from `public/models/` (synced by `npm run sync`); hosting models in Supabase Storage is T6.5.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Content lives in `/content`; never hand-edit `src/data/seed/` or `public/models/` (run `npm run sync` from the repo root).
