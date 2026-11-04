@@ -84,7 +84,8 @@ class OutboxActivitySink(
         val owner = tokens.userId() ?: return
         val list = ops(owner)
         if (list.isEmpty()) return
-        store.update { s -> list.fold(s) { acc, op -> acc + op } }
+        val t = now()
+        store.update { s -> list.fold(s) { acc, op -> acc + op }.pruned(owner, t) }
         scheduler()?.kick()
     }
 

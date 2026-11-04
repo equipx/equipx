@@ -75,15 +75,18 @@ class AuthTest {
     }
 
     @Test fun expiredSessionRefreshesAndPersists() = runBlocking {
-        val t = FakeTransport { HttpResponse(200, tokenJson("a2", "r2", 3600, name = null)) }
+        val t = FakeTransport { r ->
+            if (r.url.contains("/rest/v1/profiles")) HttpResponse(200, """[{"role":"student","display_name":"Sam"}]""")
+            else HttpResponse(200, tokenJson("a2", "r2", 3600, name = null))
+        }
         val store = InMemorySessionStore(session(now - 5).copy(role = "teacher"))
         val sm = SessionManager(SupabaseAuthApi(testConfig, t) { now }, store) { now }
         val fresh = sm.validSession()!!
         assertEquals("a2", fresh.accessToken); assertEquals("r2", fresh.refreshToken)
-        assertEquals("teacher", fresh.role) // role survives a refresh
+        assertEquals("student", fresh.role) // role is re-read from the profile after a refresh
         assertEquals("Sam", fresh.displayName)
-        assertEquals("https://example.supabase.co/auth/v1/token?grant_type=refresh_token", t.requests.single().url)
-        assertEquals("""{"refresh_token":"refresh1"}""", t.requests.single().body)
+        assertEquals("https://example.supabase.co/auth/v1/token?grant_type=refresh_token", t.requests.first().url)
+        assertEquals("""{"refresh_token":"refresh1"}""", t.requests.first().body)
         assertEquals("a2", store.session.first()!!.accessToken)
     }
 

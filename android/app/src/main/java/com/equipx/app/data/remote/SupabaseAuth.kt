@@ -10,6 +10,8 @@ import com.equipx.app.data.EquipXJson
 import com.equipx.app.domain.Role
 import com.equipx.app.domain.User
 import java.io.IOException
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -39,6 +43,8 @@ data class AuthSession(
     val email: String,
     val displayName: String = "",
     val role: String = "student",
+    /** True when [role] is the default because the profile could not be read; it is re-fetched later. */
+    val roleFallback: Boolean = false,
 ) {
     /** True when the access token is expired or about to be (within [skewSec]). */
     fun isExpired(nowSec: Long, skewSec: Long = 60): Boolean = nowSec + skewSec >= expiresAtSec
@@ -97,7 +103,7 @@ class SupabaseAuthApi(
             throw e
         }
         val fresh = sessionFrom(resp, fallbackName = old.displayName)
-        return fresh.copy(displayName = fresh.displayName.ifBlank { old.displayName }, role = old.role)
+        return fresh.copy(displayName = fresh.displayName.ifBlank { old.displayName }, role = old.role, roleFallback = old.roleFallback)
     }
 
     /** Best-effort server-side sign out (revokes the refresh token). Errors are ignored by callers. */
@@ -217,9 +223,12 @@ class SessionManager(
 
     override suspend fun validSession(forceRefresh: Boolean): AuthSession? = mutex.withLock {
         val current = store.session.first() ?: return@withLock null
-        if (!forceRefresh && !current.isExpired(nowSec())) return@withLock current
+        if (!forceRefresh && !current.isExpired(nowSec())) {
+            if (!current.roleFallback) return@withLock current
+            return@withLock withProfile(current).also { if (it != current) store.save(it) }
+        }
         try {
-            val fresh = api.refresh(current)
+            val fresh = withProfile(api.refresh(current))
             store.save(fresh)
             fresh
         } catch (e: AuthException) {
@@ -230,6 +239,13 @@ class SessionManager(
             null
         }
     }
+
+    /** Re-reads the profile role/name; keeps the old values when the fetch fails. */
+    private suspend fun withProfile(s: AuthSession): AuthSession =
+        api.fetchProfile(s)?.let { (role, name) -> s.copy(role = role, roleFallback = false, displayName = s.displayName.ifBlank { name }) } ?: s
+
+    /** The stored session as is, without any refresh or network. */
+    suspend fun current(): AuthSession? = store.session.first()
 
     suspend fun establish(session: AuthSession) = mutex.withLock { store.save(session) }
     suspend fun clear() = mutex.withLock { store.save(null) }
@@ -254,7 +270,8 @@ class SupabaseAuthRepository(
 
     private suspend fun runAuth(block: suspend () -> AuthSession): Result<User> = try {
         var s = block()
-        api.fetchProfile(s)?.let { (role, name) -> s = s.copy(role = role, displayName = s.displayName.ifBlank { name }) }
+        val profile = api.fetchProfile(s)
+        s = if (profile != null) s.copy(role = profile.first, displayName = s.displayName.ifBlank { profile.second }) else s.copy(roleFallback = true)
         sessions.establish(s)
         Result.success(s.toUser())
     } catch (e: AuthException) {
@@ -263,10 +280,23 @@ class SupabaseAuthRepository(
         Result.failure(AuthException("No connection. Check your network and try again.", AuthException.Kind.UNAVAILABLE))
     }
 
+    private companion object {
+        const val LOGOUT_STEP_TIMEOUT_MS = 4_000L
+    }
+
     override suspend fun logout() {
-        runCatching { beforeLogout() }
-        val s = sessions.validSession()
-        if (s != null) runCatching { api.signOut(s) }
-        sessions.clear()
+        try {
+            try {
+                withTimeoutOrNull(LOGOUT_STEP_TIMEOUT_MS) { beforeLogout() }
+                // Current token as is (no refresh): if it is expired the server call just fails and the session is cleared anyway.
+                sessions.current()?.let { s -> withTimeoutOrNull(LOGOUT_STEP_TIMEOUT_MS) { api.signOut(s) } }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                // best effort
+            }
+        } finally {
+            withContext(NonCancellable) { sessions.clear() }
+        }
     }
 }

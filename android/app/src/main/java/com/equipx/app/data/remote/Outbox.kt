@@ -82,7 +82,30 @@ data class OutboxState(
     /** Ops dropped because the server permanently rejected them (kept as a counter + last message for diagnostics). */
     val droppedCount: Int = 0,
     val lastError: String? = null,
+    /** Failed (server-side, non-network) upload attempts per op id; see [SyncErrors.MAX_ATTEMPTS]. */
+    val attempts: Map<String, Int> = emptyMap(),
 )
+
+object OutboxLimits {
+    const val MAX_OPS = 2_000
+    const val FOREIGN_MAX_AGE_MS = 14L * 24 * 60 * 60 * 1000
+}
+
+/**
+ * Keeps the outbox bounded: drops other owners' ops older than 14 days, then, above [maxOps], the oldest ops of other
+ * owners first and the oldest overall after that. Returns `this` (same instance) when nothing changes.
+ */
+fun OutboxState.pruned(owner: String, nowMs: Long, maxOps: Int = OutboxLimits.MAX_OPS): OutboxState {
+    var kept = ops.filterNot { it.ownerId != owner && it.atMillis < nowMs - OutboxLimits.FOREIGN_MAX_AGE_MS }
+    if (kept.size > maxOps) {
+        val order = (kept.filter { it.ownerId != owner }.sortedBy { it.atMillis } + kept.sortedBy { it.atMillis })
+            .map { it.id }.distinct().take(kept.size - maxOps).toSet()
+        kept = kept.filterNot { it.id in order }
+    }
+    if (kept.size == ops.size) return this
+    val ids = kept.mapTo(HashSet()) { it.id }
+    return copy(ops = kept, attempts = attempts.filterKeys { it in ids })
+}
 
 interface OutboxStore {
     suspend fun read(): OutboxState
@@ -113,12 +136,14 @@ class DataStoreOutboxStore(private val store: DataStore<Preferences>) : OutboxSt
         var result = OutboxState()
         store.edit { prefs ->
             val raw = prefs[key]
-            val current = OutboxCodec.decode(raw) ?: run {
+            val decoded = OutboxCodec.decode(raw)
+            val current = decoded ?: run {
                 if (prefs[backupKey] == null && raw != null) prefs[backupKey] = raw
                 OutboxState()
             }
             result = transform(current)
-            prefs[key] = OutboxCodec.encode(result)
+            // No-op changes (e.g. re-enqueueing a known id) don't rewrite the JSON blob.
+            if (decoded == null || result != current) prefs[key] = OutboxCodec.encode(result)
         }
         return result
     }

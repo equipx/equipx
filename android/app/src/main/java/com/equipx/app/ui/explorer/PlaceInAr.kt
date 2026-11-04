@@ -37,13 +37,13 @@ object ArConfig {
             .build()
 }
 
-/** Opens Scene Viewer in AR; falls back to 3D-only, then to any browser, when the Google app is unavailable. */
+/** Opens Scene Viewer in AR; falls back to 3D-only. Returns false when the Google app is unavailable (caller tells the user). */
 fun launchPlaceInAr(context: Context, deviceId: String, title: String): Boolean {
     fun view(mode: String, withPackage: Boolean) = Intent(Intent.ACTION_VIEW, ArConfig.sceneViewerUri(deviceId, title, mode)).apply {
         if (withPackage) setPackage(ArConfig.GOOGLE_APP_PACKAGE)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
-    val attempts = listOf(view("ar_preferred", true), view("3d_only", true), view("3d_only", false))
+    val attempts = listOf(view("ar_preferred", true), view("3d_only", true))
     for (intent in attempts) {
         try {
             context.startActivity(intent)

@@ -217,10 +217,40 @@ class SyncTest {
     @Test fun rejectedAwardDoesNotDropTheUploadedRow() = runBlocking {
         val outbox = InMemoryOutboxStore(OutboxState(listOf(OutboxOp.Scan("scan-1", "user-1", at, "dmm"))))
         val t = FakeTransport { r ->
-            if (r.url.contains("award_points")) HttpResponse(404, """{"code":"P0002","message":"scan not found"}""") else HttpResponse(201, "")
+            if (r.url.contains("award_points")) HttpResponse(500, """{"code":"P0002","message":"scan not found"}""") else HttpResponse(201, "")
         }
         assertEquals(DrainResult.Idle, engine(t, outbox).drainOnce())
         assertEquals(0, outbox.read().droppedCount)
+    }
+
+    @Test fun persistentServerErrorDropsOpAfterMaxAttempts() = runBlocking {
+        val outbox = InMemoryOutboxStore(OutboxState(listOf(
+            OutboxOp.Scan("stuck", "user-1", at, "dmm"),
+            OutboxOp.Scan("next", "user-1", at, "dmm"),
+        )))
+        val t = FakeTransport { r -> if (r.body.orEmpty().contains("stuck")) HttpResponse(500, "") else HttpResponse(201, "") }
+        val e = engine(t, outbox)
+        repeat(SyncErrors.MAX_ATTEMPTS - 1) { assertTrue(e.drainOnce() is DrainResult.Retry) }
+        assertEquals(DrainResult.Idle, e.drainOnce())
+        val s = outbox.read()
+        assertTrue(s.ops.isEmpty()); assertEquals(1, s.droppedCount)
+    }
+
+    @Test fun outboxIsCappedAndForeignOldOpsPurged() {
+        val day = 24L * 60 * 60 * 1000
+        val now = 100 * day
+        val ops = listOf<OutboxOp>(
+            OutboxOp.Scan("old-foreign", "other", now - 20 * day, "dmm"),
+            OutboxOp.Scan("new-foreign", "other", now - day, "dmm"),
+            OutboxOp.Scan("mine-1", "me", now - 3 * day, "dmm"),
+            OutboxOp.Scan("mine-2", "me", now - 2 * day, "dmm"),
+        )
+        val state = OutboxState(ops)
+        assertEquals(listOf("new-foreign", "mine-1", "mine-2"), state.pruned("me", now).ops.map { it.id })
+        assertEquals(listOf("mine-1", "mine-2"), state.pruned("me", now, maxOps = 2).ops.map { it.id })
+        assertEquals(listOf("mine-2"), state.pruned("me", now, maxOps = 1).ops.map { it.id })
+        val small = OutboxState(ops.drop(1))
+        assertTrue(small.pruned("me", now) === small)
     }
 
     @Test fun unknownContentIdTriggersOneRefreshThenDrops() = runBlocking {

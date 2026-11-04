@@ -17,11 +17,9 @@ import com.equipx.app.ui.main.MainScreen
 import com.equipx.app.ui.part.PartDetailScreen
 import com.equipx.app.ui.procedure.ProcedureScreen
 import com.equipx.app.ui.quiz.QuizScreen
-import com.equipx.app.ui.splash.SplashScreen
 import com.equipx.app.ui.troubleshoot.TroubleshootScreen
 
 object Routes {
-    const val SPLASH = "splash"
     const val LOGIN = "login"
     const val MAIN = "main"
     const val DEVICE = "device/{deviceId}"
@@ -49,15 +47,9 @@ private inline fun NavBackStackEntry.ifResumed(block: () -> Unit) {
 }
 
 @Composable
-fun EquipXNavHost() {
+fun EquipXNavHost(startRoute: String) {
     val nav = rememberNavController()
-    NavHost(navController = nav, startDestination = Routes.SPLASH) {
-        composable(Routes.SPLASH) {
-            SplashScreen(
-                onLoggedIn = { nav.navigate(Routes.MAIN) { popUpTo(Routes.SPLASH) { inclusive = true } } },
-                onLoggedOut = { nav.navigate(Routes.LOGIN) { popUpTo(Routes.SPLASH) { inclusive = true } } },
-            )
-        }
+    NavHost(navController = nav, startDestination = startRoute) {
         composable(Routes.LOGIN) { entry ->
             LoginScreen(onLoggedIn = { entry.ifResumed { nav.navigate(Routes.MAIN) { popUpTo(Routes.LOGIN) { inclusive = true } } } })
         }

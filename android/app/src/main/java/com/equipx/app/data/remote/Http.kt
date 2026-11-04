@@ -47,7 +47,7 @@ class UrlConnectionTransport(private val timeoutMs: Int = 15_000) : HttpTranspor
 /** Supabase endpoint + anon (public, RLS-protected) key. [toString] never reveals the key. */
 class SupabaseConfig(url: String, val anonKey: String) {
     val baseUrl: String = url.trim().trimEnd('/')
-    val isConfigured: Boolean get() = baseUrl.startsWith("http") && anonKey.isNotBlank()
+    val isConfigured: Boolean get() = baseUrl.startsWith("https://") && anonKey.isNotBlank()
 
     fun authUrl(path: String) = "$baseUrl/auth/v1/$path"
     fun restUrl(path: String) = "$baseUrl/rest/v1/$path"

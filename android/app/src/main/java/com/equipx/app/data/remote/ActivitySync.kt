@@ -20,8 +20,11 @@ sealed interface StepOutcome {
     data object Ok : StepOutcome
     data object Unauthorized : StepOutcome
 
-    /** Offline, 5xx, 429...: try again later. */
-    data class Transient(val message: String) : StepOutcome
+    /**
+     * Offline, 5xx, 429...: try again later. [network] marks failures that never reached the server logic (offline,
+     * session trouble); only the others count towards [SyncErrors.MAX_ATTEMPTS].
+     */
+    data class Transient(val message: String, val network: Boolean = false) : StepOutcome
 
     /** The server will never accept this (RLS, FK, bad ref): drop the op, local data is untouched. */
     data class Permanent(val message: String) : StepOutcome
@@ -41,11 +44,25 @@ object SyncErrors {
         // unique_violation on insert: the row is already on the server (earlier attempt) -> idempotent success.
         if (step is SyncStep.Insert && code == "23505") return StepOutcome.Ok
         return when {
-            resp.code == 401 -> StepOutcome.Unauthorized
+            resp.code == 401 && !isPermanentCode(code) -> StepOutcome.Unauthorized
+            // The PostgREST/SQLSTATE code is authoritative: `raise exception ... using errcode='P0002'` arrives as HTTP 500.
+            isPermanentCode(code) -> StepOutcome.Permanent(text)
+            isTransientCode(code) -> StepOutcome.Transient(text)
             resp.code == 408 || resp.code == 429 || resp.code >= 500 -> StepOutcome.Transient(text)
             else -> StepOutcome.Permanent(text)
         }
     }
+
+    /** Ops that fail this many times with a server-side (non-network) error are dropped so they never block the queue. */
+    const val MAX_ATTEMPTS = 8
+
+    private fun isPermanentCode(code: String?): Boolean =
+        code != null && (code.startsWith("P0") || code in PERMANENT_CODES)
+
+    private fun isTransientCode(code: String?): Boolean =
+        code != null && (code.startsWith("PGRST00") || code.startsWith("53") || code.startsWith("57"))
+
+    private val PERMANENT_CODES = setOf("22P02", "28000", "23502", "23503", "42501")
 }
 
 /** Exponential backoff: 2s, 4s, 8s ... capped at 5 minutes. */
@@ -146,12 +163,15 @@ class ActivitySync(
                 val outcome = try {
                     SyncErrors.classify(step, transport.execute(SyncRequests.toRequest(step, config, session.accessToken)))
                 } catch (e: IOException) {
-                    StepOutcome.Transient(e.message ?: "offline")
+                    StepOutcome.Transient(e.message ?: "offline", network = true)
                 }
                 if (outcome is StepOutcome.Unauthorized) {
-                    if (forced) return StepOutcome.Transient("unauthorized")
+                    if (forced) return StepOutcome.Transient("unauthorized", network = true)
                     forced = true
-                    session = tokens.validSession(forceRefresh = true) ?: return StepOutcome.Transient("session expired")
+                    val fresh = tokens.validSession(forceRefresh = true) ?: return StepOutcome.Transient("session expired", network = true)
+                    // A different account signed in meanwhile: stop; the next drain starts over for that user.
+                    if (fresh.userId != session.userId) return StepOutcome.Transient("session changed", network = true)
+                    session = fresh
                     continue
                 }
                 return outcome
@@ -172,10 +192,11 @@ class ActivitySync(
 
                 is Plan.Steps -> {
                     var dropped: String? = null
+                    var failed: StepOutcome.Transient? = null
                     for (step in plan.steps) {
                         when (val o = run(step)) {
                             StepOutcome.Ok -> Unit
-                            is StepOutcome.Transient -> return DrainResult.Retry(o.message)
+                            is StepOutcome.Transient -> { failed = o; break }
                             is StepOutcome.Permanent -> {
                                 // An insert rejection invalidates the op; a rejected award (e.g. already granted) only skips that award.
                                 if (step is SyncStep.Insert) { dropped = o.message; break }
@@ -183,8 +204,18 @@ class ActivitySync(
                             StepOutcome.Unauthorized -> return DrainResult.Retry("unauthorized")
                         }
                     }
+                    if (failed != null) {
+                        if (!failed.network) {
+                            val n = store.update { s -> s.copy(attempts = s.attempts + (op.id to (s.attempts[op.id] ?: 0) + 1)) }.attempts[op.id] ?: 1
+                            if (n >= SyncErrors.MAX_ATTEMPTS) {
+                                drop(op, "gave up after $n attempts: ${failed.message}")
+                                continue
+                            }
+                        }
+                        return DrainResult.Retry(failed.message)
+                    }
                     if (dropped != null) drop(op, dropped)
-                    else store.update { s -> s.copy(ops = s.ops.filterNot { it.id == op.id }, badgeCheckPending = true) }
+                    else store.update { s -> s.copy(ops = s.ops.filterNot { it.id == op.id }, attempts = s.attempts - op.id, badgeCheckPending = true) }
                 }
             }
         }
@@ -200,6 +231,6 @@ class ActivitySync(
     }
 
     private suspend fun drop(op: OutboxOp, message: String) {
-        store.update { s -> s.copy(ops = s.ops.filterNot { it.id == op.id }, droppedCount = s.droppedCount + 1, lastError = message) }
+        store.update { s -> s.copy(ops = s.ops.filterNot { it.id == op.id }, attempts = s.attempts - op.id, droppedCount = s.droppedCount + 1, lastError = message) }
     }
 }
