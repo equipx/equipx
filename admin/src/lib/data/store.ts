@@ -10,6 +10,8 @@ export interface DataStore {
   saveDevice(device: Device): Promise<void>;
   deleteDevice(id: string): Promise<void>;
   listMissions(): Promise<Mission[]>;
+  saveMission(mission: Mission): Promise<void>;
+  deleteMission(id: string): Promise<void>;
   /** Discard local edits and fall back to the seed data. */
   reset(): Promise<void>;
 }

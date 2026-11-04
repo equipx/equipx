@@ -113,6 +113,8 @@ export interface Device extends DeviceIndexEntry {
   procedures: Procedure[];
   faults: Fault[];
   quizzes: Quiz[];
+  /** Admin-only (not in /content schema): manual hotspot placements keyed by part id. */
+  hotspotOverrides?: Record<string, { position: [number, number, number]; normal: [number, number, number] }>;
 }
 
 export interface Hotspot {

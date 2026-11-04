@@ -8,16 +8,23 @@ const STORAGE_KEY = "equipx.admin.store.v1";
 interface Overrides {
   devices: Record<string, Device>;
   deleted: string[];
+  missions: Record<string, Mission>;
+  deletedMissions: string[];
 }
 
 function readOverrides(): Overrides {
-  const empty: Overrides = { devices: {}, deleted: [] };
+  const empty: Overrides = { devices: {}, deleted: [], missions: {}, deletedMissions: [] };
   if (typeof window === "undefined") return empty;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return empty;
     const parsed = JSON.parse(raw) as Partial<Overrides>;
-    return { devices: parsed.devices ?? {}, deleted: parsed.deleted ?? [] };
+    return {
+      devices: parsed.devices ?? {},
+      deleted: parsed.deleted ?? [],
+      missions: parsed.missions ?? {},
+      deletedMissions: parsed.deletedMissions ?? [],
+    };
   } catch {
     return empty;
   }
@@ -84,7 +91,27 @@ export class MockStore implements DataStore {
   }
 
   async listMissions(): Promise<Mission[]> {
-    return (seedMissions as unknown as MissionsFile).missions ?? [];
+    const o = readOverrides();
+    const byId = new Map<string, Mission>();
+    for (const m of (seedMissions as unknown as MissionsFile).missions ?? []) {
+      if (!o.deletedMissions.includes(m.id)) byId.set(m.id, m);
+    }
+    for (const m of Object.values(o.missions)) byId.set(m.id, m);
+    return [...byId.values()];
+  }
+
+  async saveMission(mission: Mission): Promise<void> {
+    const o = readOverrides();
+    o.missions[mission.id] = mission;
+    o.deletedMissions = o.deletedMissions.filter((x) => x !== mission.id);
+    writeOverrides(o);
+  }
+
+  async deleteMission(id: string): Promise<void> {
+    const o = readOverrides();
+    delete o.missions[id];
+    if (!o.deletedMissions.includes(id)) o.deletedMissions.push(id);
+    writeOverrides(o);
   }
 
   async reset(): Promise<void> {
