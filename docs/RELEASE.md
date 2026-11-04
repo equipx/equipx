@@ -3,7 +3,7 @@
 ## Android: signed release APK
 
 ### 1. Bump the version
-Edit `android/app/build.gradle.kts` (`defaultConfig`): currently `versionCode = 1`, `versionName = "0.1.0"`. Increase `versionCode` by 1 for every build you install over an earlier one; set `versionName` to the human version (e.g. `0.2.0`).
+Edit `android/app/build.gradle.kts` (`defaultConfig`): currently `versionCode = 2`, `versionName = "1.0.0"` (release prep, T7.1). Increase `versionCode` by 1 for every build you install over an earlier one; set `versionName` to the human version (e.g. `0.2.0`).
 
 ### 2. Prepare content and tests
 ```bash

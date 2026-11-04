@@ -11,6 +11,8 @@ object EquipXColors {
     val Border = Color(0xFFE9E9E7)
     val Text = Color(0xFF37352F)
     val TextSecondary = Color(0xFF787774)
+    /** Darker secondary text for small chips on tinted backgrounds (>= 4.5:1). */
+    val TextChip = Color(0xFF5A5955)
     val Accent = Color(0xFF2383E2)
     val AccentDark = Color(0xFF1B64B0)
     val AccentTint = Color(0xFFE6F1FC)
@@ -28,10 +30,10 @@ object EquipXColors {
 data class Accent(val tint: Color, val strong: Color)
 
 object CategoryAccents {
-    val Measurement = Accent(Color(0xFFE6F1FC), Color(0xFF2383E2))
-    val Sources = Accent(Color(0xFFFDEEDD), Color(0xFFD9730D))
-    val Assembly = Accent(Color(0xFFFAE8F3), Color(0xFFAD1A72))
-    val Training = Accent(Color(0xFFE3F3F0), Color(0xFF0F7B6C))
+    val Measurement = Accent(Color(0xFFE6F1FC), Color(0xFF1B64B0))
+    val Sources = Accent(Color(0xFFFDEEDD), Color(0xFFA85407))
+    val Assembly = Accent(Color(0xFFFAE8F3), Color(0xFF9A1665))
+    val Training = Accent(Color(0xFFE3F3F0), Color(0xFF0B6154))
     val Other = Accent(Color(0xFFEEE9F8), Color(0xFF6940A5))
 
     fun forCategory(category: String): Accent = when (category.trim().lowercase()) {

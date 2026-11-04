@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.equipx.app.ui.theme.EquipXColors
@@ -48,7 +50,7 @@ fun ErrorState(
             Box(Modifier.size(64.dp).clip(CircleShape).background(EquipXColors.DangerTint), contentAlignment = Alignment.Center) {
                 Icon(Icons.Outlined.ErrorOutline, contentDescription = null, tint = EquipXColors.Danger, modifier = Modifier.size(32.dp))
             }
-            Text(title, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+            Text(title, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
             Text(message, style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary, textAlign = TextAlign.Center)
             if (onRetry != null) PrimaryButton("Try again", onClick = onRetry, modifier = Modifier.padding(top = 6.dp))
         }
@@ -70,7 +72,7 @@ fun EmptyState(
             Box(Modifier.size(64.dp).clip(CircleShape).background(EquipXColors.AccentTint), contentAlignment = Alignment.Center) {
                 Icon(icon, contentDescription = null, tint = EquipXColors.Accent, modifier = Modifier.size(30.dp))
             }
-            Text(title, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+            Text(title, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
             if (message != null) {
                 Text(message, style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary, textAlign = TextAlign.Center)
             }
@@ -93,7 +95,7 @@ fun SectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(text, style = MaterialTheme.typography.titleLarge)
+        Text(text, style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
         if (count != null) Pill(count.toString())
         androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
         action?.invoke()

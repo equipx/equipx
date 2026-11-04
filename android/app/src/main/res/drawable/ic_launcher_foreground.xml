@@ -3,8 +3,30 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- stylized "X" -->
+    <!-- Meter dial (gauge arc + ticks) with a needle and a probe tip. Kept inside the 66dp adaptive safe zone.
+         Pure white strokes so the same drawable doubles as the Android 13 monochrome layer. -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M30,64 A24,24 0 0 1 78,64" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M54,36 L54,40 M36,43 L38.8,45.8 M72,43 L69.2,45.8" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M54,64 L66,48" />
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M34,32 L44,32 L54,46 L64,32 L74,32 L59,54 L74,76 L64,76 L54,62 L44,76 L34,76 L49,54 Z" />
+        android:pathData="M54,60 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0 Z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M34,76 L46,76 L52,70" />
 </vector>

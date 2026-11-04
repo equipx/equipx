@@ -6,6 +6,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -142,7 +144,7 @@ fun Pill(
     text: String,
     modifier: Modifier = Modifier,
     background: Color = EquipXColors.Surface,
-    contentColor: Color = EquipXColors.TextSecondary,
+    contentColor: Color = EquipXColors.TextChip,
 ) {
     Text(
         text,
@@ -250,7 +252,7 @@ fun EquipXTopBar(
 ) {
     TopAppBar(
         modifier = modifier,
-        title = { Text(title, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(title, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() }) },
         navigationIcon = {
             if (onBack != null) {
                 IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
@@ -267,7 +269,7 @@ fun EquipXTopBar(
 @Composable
 fun TabTitle(title: String, modifier: Modifier = Modifier, subtitle: String? = null) {
     Column(modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp)) {
-        Text(title, style = MaterialTheme.typography.headlineMedium)
+        Text(title, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.semantics { heading() })
         if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary)
     }
 }

@@ -16,6 +16,14 @@ import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.TouchApp
+import androidx.compose.material.icons.outlined.ViewInAr
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.rememberCoroutineScope
@@ -90,6 +98,18 @@ fun ExplorerScreen(
     // Starts as "dismissed" so the hint never flashes before the stored flag is read.
     val coachDismissed by prefs.explorerCoachDismissed.collectAsStateWithLifecycle(initialValue = true)
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val online = rememberIsOnline()
+    val snackbar = remember { SnackbarHostState() }
+
+    fun placeInAr() {
+        val d = device ?: return
+        if (!online) {
+            scope.launch { snackbar.currentSnackbarData?.dismiss(); snackbar.showSnackbar("Needs internet") }
+        } else if (!launchPlaceInAr(context, d.id, d.name)) {
+            scope.launch { snackbar.showSnackbar("No app found to open AR view") }
+        }
+    }
 
     fun dismissCoach() { if (!coachDismissed) scope.launch { prefs.dismissExplorerCoach() } }
     fun pick(id: String) { dismissCoach(); vm.selectPart(id) }
@@ -117,7 +137,10 @@ fun ExplorerScreen(
                 },
                 onOpenParts = vm::openPartsList,
                 onDismissCoach = ::dismissCoach,
+                onPlaceInAr = if (device != null) ::placeInAr else null,
+                arEnabled = online,
             )
+            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(12.dp))
         }
         ExplorerPartsBar(parts = parts, selectedPartId = state.selectedPartId, onPick = ::pick)
     }
@@ -157,6 +180,8 @@ fun BoxScope.ExplorerOverlay(
     onReset: () -> Unit,
     onOpenParts: () -> Unit,
     onDismissCoach: () -> Unit,
+    onPlaceInAr: (() -> Unit)? = null,
+    arEnabled: Boolean = true,
 ) {
     Column(
         Modifier.align(Alignment.TopEnd).padding(12.dp),
@@ -164,6 +189,13 @@ fun BoxScope.ExplorerOverlay(
     ) {
         if (modelLoaded) FloatingControl(Icons.Outlined.CenterFocusStrong, "Reset view", onReset)
         if (parts.isNotEmpty()) FloatingControl(Icons.Outlined.FormatListNumbered, "Parts list", onOpenParts)
+        // Stays tappable when offline so it can explain itself ("Needs internet") instead of silently doing nothing.
+        if (onPlaceInAr != null) FloatingControl(
+            Icons.Outlined.ViewInAr,
+            if (arEnabled) "Place in AR" else "Place in AR, needs internet",
+            onPlaceInAr,
+            enabledLook = arEnabled,
+        )
     }
     AnimatedVisibility(
         visible = showCoach,
@@ -207,13 +239,14 @@ fun ExplorerPartsBar(parts: List<Part>, selectedPartId: String?, onPick: (String
 }
 
 @Composable
-private fun FloatingControl(icon: ImageVector, description: String, onClick: () -> Unit) {
+private fun FloatingControl(icon: ImageVector, description: String, onClick: () -> Unit, enabledLook: Boolean = true) {
     Surface(
         onClick = onClick,
         shape = CircleShape,
         color = Color.White,
         shadowElevation = 6.dp,
-        modifier = Modifier.size(48.dp),
+        modifier = Modifier.size(48.dp).alpha(if (enabledLook) 1f else 0.45f)
+            .semantics { if (!enabledLook) stateDescription = "Needs internet" },
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(icon, contentDescription = description, tint = EquipXColors.Text)
@@ -238,7 +271,7 @@ private fun PartChip(part: Part, selected: Boolean, onClick: () -> Unit) {
             Box(
                 Modifier.size(26.dp).clip(CircleShape).background(if (selected) Color.White else EquipXColors.AccentTint),
                 contentAlignment = Alignment.Center,
-            ) { Text(part.number.toString(), style = MaterialTheme.typography.labelLarge, color = EquipXColors.Accent) }
+            ) { Text(part.number.toString(), style = MaterialTheme.typography.labelLarge, color = EquipXColors.AccentDark) }
             Text(
                 part.name.ifBlank { part.id },
                 style = MaterialTheme.typography.labelLarge,
@@ -271,7 +304,7 @@ private fun PartsListContent(parts: List<Part>, selectedPartId: String?, onPick:
     Column(Modifier.fillMaxWidth().navigationBarsPadding()) {
         Text(
             "Parts",
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
         )
         LazyColumn(Modifier.padding(horizontal = 16.dp)) {
@@ -297,7 +330,7 @@ internal fun PartSheetContent(partId: String, part: Part?, onFullDetails: () -> 
             .padding(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (part != null && part.number > 0) Pill("Part ${part.number}", background = EquipXColors.AccentTint, contentColor = EquipXColors.Accent)
+        if (part != null && part.number > 0) Pill("Part ${part.number}", background = EquipXColors.AccentTint, contentColor = EquipXColors.AccentDark)
         Text(part?.name?.ifBlank { null } ?: partId.replace('_', ' ').replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.titleLarge)
         SheetSection("Function", part?.function)
         SheetSection("How to use", part?.usage)
@@ -313,7 +346,7 @@ internal fun PartSheetContent(partId: String, part: Part?, onFullDetails: () -> 
 @Composable
 private fun SheetSection(title: String, body: String?) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(title.uppercase(), style = MaterialTheme.typography.labelSmall, color = EquipXColors.Accent)
+        Text(title.uppercase(), style = MaterialTheme.typography.labelSmall, color = EquipXColors.AccentDark)
         Text(body?.ifBlank { null } ?: "Details for this part are coming soon.", style = MaterialTheme.typography.bodyMedium)
     }
 }

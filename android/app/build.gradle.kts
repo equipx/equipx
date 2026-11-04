@@ -23,15 +23,19 @@ android {
         applicationId = "com.equipx.app"
         minSdk = 26
         targetSdk = 33
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "1.0.0"
         buildConfigField("String", "SUPABASE_URL", bcString(supabaseProps.getProperty("supabase.url")))
         buildConfigField("String", "SUPABASE_ANON_KEY", bcString(supabaseProps.getProperty("supabase.anonKey")))
     }
 
     buildTypes {
+        // Minify/R8 stays OFF on purpose: TFLite, kotlinx-serialization and the WebView JS bridge rely on reflection/JNI
+        // and a shrink pass would need keep rules we have not tested. No signingConfig is committed; the owner signs
+        // the release APK/AAB from Android Studio (Build > Generate Signed Bundle / APK).
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
     compileOptions {
@@ -59,6 +63,7 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

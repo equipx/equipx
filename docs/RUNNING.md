@@ -76,6 +76,9 @@ Schema, RLS, functions and views are in `supabase/migrations/` and have been app
 ## 6. ML detector
 Training and export run in Google Colab, not locally. Short version: open `ml/train_colab.ipynb` in Colab, use a T4 GPU, add `ROBOFLOW_API_KEY` to Colab Secrets, Run all, download `equipx_export.zip`, and put `equipx_detector.tflite`, `labels.txt`, `model_info.json` in `ml/export/`. Then the model is bundled into the Android assets and a `TfliteDetector` replaces `FakeDetector` in `AppContainer`. See `ml/README.md` for steps, metrics and tensor format.
 
+## 7. Place in AR
+The explorer's "Place in AR" button opens Google Scene Viewer with the GLB hosted on jsDelivr from the public repo: `https://cdn.jsdelivr.net/gh/equipx/equipx@main/admin/public/models/<deviceId>.glb` (used instead of Supabase Storage). It needs internet and the models pushed to `main`; jsDelivr may cache for up to a day after a push.
+
 ## Troubleshooting
 - **3D view blank on the phone:** the explorer WebView must have MATCH_PARENT layout params inside a bounded Compose height; wrap-content collapses the page to 0px. Check any layout change around `ExplorerPane`.
 - **3D view stuck loading / console errors:** `adb logcat -s EquipXWeb` shows the WebView console. Re-run `npm run sync` if models are missing from `assets/models/`.
