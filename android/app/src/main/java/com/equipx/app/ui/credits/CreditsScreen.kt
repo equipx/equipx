@@ -73,7 +73,7 @@ class CreditsViewModel(private val content: ContentRepository) : ViewModel() {
 fun CreditsScreen(onBack: () -> Unit) {
     val vm = appViewModel { CreditsViewModel(it.contentRepository) }
     val state by vm.state.collectAsStateWithLifecycle()
-    Column(Modifier.fillMaxSize().background(Color.White)) {
+    Column(Modifier.fillMaxSize().background(com.equipx.app.ui.theme.EquipXColors.Canvas)) {
         EquipXTopBar(title = "Credits & licenses", onBack = onBack)
         when (val s = state) {
             CreditsState.Loading -> LoadingState()

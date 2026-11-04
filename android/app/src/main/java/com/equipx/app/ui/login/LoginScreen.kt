@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -78,14 +79,14 @@ fun LoginScreen(onLoggedIn: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(EquipXColors.Canvas)
             .safeDrawingPadding()
             .verticalScroll(rememberScrollState())
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Spacer(Modifier.height(48.dp))
-        Text("Welcome to EquipX", style = MaterialTheme.typography.headlineSmall)
+        Text("Welcome to EquipX", style = MaterialTheme.typography.headlineMedium)
         Text("Sign in to continue", style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary)
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
@@ -95,6 +96,7 @@ fun LoginScreen(onLoggedIn: () -> Unit) {
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
             colors = fieldColors,
         )
         OutlinedTextField(
@@ -105,6 +107,7 @@ fun LoginScreen(onLoggedIn: () -> Unit) {
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
             colors = fieldColors,
         )
         state.error?.let {

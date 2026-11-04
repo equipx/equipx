@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.equipx.app.data.ActivityTracker
 import com.equipx.app.data.ContentRepository
 import com.equipx.app.domain.ActivityEvent
+import com.equipx.app.domain.DeviceSummary
 import com.equipx.app.ml.Detection
 import com.equipx.app.ml.Detector
 import com.equipx.app.ml.Frame
@@ -26,9 +27,16 @@ class ScanViewModel(
     private val _names = MutableStateFlow<Map<String, String>>(emptyMap())
     val names: StateFlow<Map<String, String>> = _names.asStateFlow()
 
+    /** All devices, for the manual "Choose device" sheet. */
+    private val _devices = MutableStateFlow<List<DeviceSummary>>(emptyList())
+    val devices: StateFlow<List<DeviceSummary>> = _devices.asStateFlow()
+
     init {
         viewModelScope.launch {
-            content.getIndex().onSuccess { list -> _names.value = list.associate { it.id to it.name } }
+            content.getIndex().onSuccess { list ->
+                _names.value = list.associate { it.id to it.name }
+                _devices.value = list
+            }
         }
     }
 
@@ -42,6 +50,12 @@ class ScanViewModel(
     fun onChipTapped(deviceId: String) {
         tracker.post(ActivityEvent.Scan(deviceId, com.equipx.app.domain.PointsRules.scanDay(System.currentTimeMillis())))
     }
+
+    /**
+     * Manual device choice (fallback when detection fails). Deliberately NOT a scan: it posts no [ActivityEvent.Scan],
+     * so it awards no scan points/badge and cannot complete a mission's scan task. Scanning must be real.
+     */
+    fun onManualChoice(@Suppress("UNUSED_PARAMETER") deviceId: String) = Unit
 
     fun reset() {
         detector.reset()

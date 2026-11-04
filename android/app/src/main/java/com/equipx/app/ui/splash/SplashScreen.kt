@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.equipx.app.LocalAppContainer
@@ -35,7 +36,7 @@ fun SplashScreen(onLoggedIn: () -> Unit, onLoggedOut: () -> Unit) {
     Box(Modifier.fillMaxSize().background(Color.White), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(
-                Modifier.size(56.dp).clip(RoundedCornerShape(12.dp)).background(EquipXColors.Accent),
+                Modifier.size(72.dp).clip(RoundedCornerShape(20.dp)).background(Brush.linearGradient(listOf(EquipXColors.Accent, EquipXColors.AccentDark))),
                 contentAlignment = Alignment.Center,
             ) { Text("X", style = MaterialTheme.typography.headlineSmall, color = Color.White) }
             Text("EquipX", style = MaterialTheme.typography.headlineSmall)

@@ -1,6 +1,14 @@
 package com.equipx.app.ui.troubleshoot
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import com.equipx.app.ui.components.DeviceIconTile
+import com.equipx.app.ui.components.EquipXCard
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -179,7 +187,7 @@ fun TroubleshootScreen(
         TroubleshootViewModel(deviceId, faultId, it.contentRepository, it.progressRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
-    Column(Modifier.fillMaxSize().background(Color.White)) {
+    Column(Modifier.fillMaxSize().background(EquipXColors.Canvas)) {
         EquipXTopBar(title = "Troubleshoot", onBack = onBack)
         when (val s = state) {
             FaultUiState.Loading -> LoadingState()
@@ -217,8 +225,11 @@ private fun SymptomContent(s: FaultUiState.Active, onStart: () -> Unit) {
         Modifier.fillMaxSize().navigationBarsPadding().verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Pill(s.device.name)
-        Text("Symptom", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            DeviceIconTile(s.device.id, s.device.category, size = 40.dp)
+            Text(s.device.name, style = MaterialTheme.typography.titleSmall, color = EquipXColors.TextSecondary)
+        }
+        Text("SYMPTOM", style = MaterialTheme.typography.labelSmall, color = EquipXColors.Danger)
         Text(s.fault.symptom.ifBlank { s.fault.id.replace('_', ' ') }, style = MaterialTheme.typography.headlineSmall)
         Callout(
             title = "Your task",
@@ -267,12 +278,12 @@ private fun InspectContent(s: FaultUiState.Active, vm: TroubleshootViewModel) {
 @Composable
 private fun ChooseContent(s: FaultUiState.Active, onPick: (String) -> Unit, onBack: () -> Unit, onSubmit: () -> Unit) {
     Column(Modifier.fillMaxSize().navigationBarsPadding()) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(s.fault.symptom, style = MaterialTheme.typography.titleMedium)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(s.fault.symptom, style = MaterialTheme.typography.titleLarge)
             Text("What is the most likely cause?", style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary)
             if (s.fault.options.isEmpty()) EmptyState("No answer options for this scenario")
-            s.fault.options.forEach { o ->
-                OptionRow(o.text.ifBlank { o.id }, selected = o.id == s.chosenOptionId, onClick = { onPick(o.id) })
+            s.fault.options.forEachIndexed { i, o ->
+                OptionRow(('A' + i).toString(), o.text.ifBlank { o.id }, selected = o.id == s.chosenOptionId, onClick = { onPick(o.id) })
             }
         }
         HairlineDivider()
@@ -284,19 +295,22 @@ private fun ChooseContent(s: FaultUiState.Active, onPick: (String) -> Unit, onBa
 }
 
 @Composable
-private fun OptionRow(text: String, selected: Boolean, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(6.dp)
-    Text(
-        text,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(if (selected) EquipXColors.Surface else Color.White)
-            .border(1.dp, if (selected) EquipXColors.Accent else EquipXColors.Border, shape)
-            .clickable(onClick = onClick)
-            .padding(14.dp),
-    )
+private fun OptionRow(letter: String, text: String, selected: Boolean, onClick: () -> Unit) {
+    EquipXCard(
+        Modifier.fillMaxWidth().animateContentSize(),
+        onClick = onClick,
+        containerColor = if (selected) EquipXColors.AccentTint else Color.White,
+        borderColor = if (selected) EquipXColors.Accent else EquipXColors.Border,
+        elevation = if (selected) 4.dp else 1.dp,
+    ) {
+        Row(Modifier.padding(horizontal = 14.dp, vertical = 12.dp).heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            Box(
+                Modifier.size(36.dp).clip(CircleShape).background(if (selected) EquipXColors.Accent else EquipXColors.AccentTint),
+                contentAlignment = Alignment.Center,
+            ) { Text(letter, style = MaterialTheme.typography.labelLarge, color = if (selected) Color.White else EquipXColors.Accent) }
+            Text(text, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+        }
+    }
 }
 
 @Composable
@@ -306,14 +320,20 @@ private fun FeedbackContent(s: FaultUiState.Active, onRetry: () -> Unit, onDone:
     Column(Modifier.fillMaxSize().navigationBarsPadding()) {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Icon(
-                    if (s.correct) Icons.Outlined.CheckCircle else Icons.Outlined.ErrorOutline,
-                    contentDescription = null,
-                    tint = if (s.correct) EquipXColors.Success else EquipXColors.Danger,
-                )
+                Box(
+                    Modifier.size(56.dp).clip(CircleShape).background(if (s.correct) EquipXColors.SuccessTint else EquipXColors.DangerTint),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        if (s.correct) Icons.Outlined.CheckCircle else Icons.Outlined.ErrorOutline,
+                        contentDescription = null,
+                        tint = if (s.correct) EquipXColors.Success else EquipXColors.Danger,
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
                 Text(if (s.correct) "Correct diagnosis" else "Not quite", style = MaterialTheme.typography.headlineSmall)
             }
-            if (s.pointsAwarded > 0) Pill("+${s.pointsAwarded} points", contentColor = EquipXColors.Success)
+            if (s.pointsAwarded > 0) Pill("+${s.pointsAwarded} points", background = EquipXColors.SuccessTint, contentColor = EquipXColors.Success)
             if (!s.correct) Text("You chose: $chosenText", style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary)
             Text("Cause: $correctText", style = MaterialTheme.typography.titleSmall)
             if (s.fault.explanation.isNotBlank()) Callout(title = "Why", text = s.fault.explanation)
@@ -323,7 +343,7 @@ private fun FeedbackContent(s: FaultUiState.Active, onRetry: () -> Unit, onDone:
                     val name = s.device.parts.firstOrNull { it.id == id }?.name?.ifBlank { null } ?: id
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(name, style = MaterialTheme.typography.bodyMedium)
-                        if (id in s.inspected) Pill("Inspected", contentColor = EquipXColors.Success) else Pill("Missed")
+                        if (id in s.inspected) Pill("Inspected", background = EquipXColors.SuccessTint, contentColor = EquipXColors.Success) else Pill("Missed")
                     }
                 }
             }

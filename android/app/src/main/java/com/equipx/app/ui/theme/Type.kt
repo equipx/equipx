@@ -24,10 +24,10 @@ private fun style(size: Int, line: Int, weight: FontWeight = FontWeight.Normal) 
 )
 
 val EquipXTypography = Typography(
-    headlineLarge = style(30, 38, FontWeight.Bold),
-    headlineMedium = style(26, 34, FontWeight.Bold),
+    headlineLarge = style(32, 40, FontWeight.Bold),
+    headlineMedium = style(28, 36, FontWeight.Bold),
     headlineSmall = style(24, 32, FontWeight.SemiBold),
-    titleLarge = style(20, 28, FontWeight.SemiBold),
+    titleLarge = style(22, 30, FontWeight.SemiBold),
     titleMedium = style(16, 24, FontWeight.SemiBold),
     titleSmall = style(14, 20, FontWeight.Medium),
     bodyLarge = style(16, 24),

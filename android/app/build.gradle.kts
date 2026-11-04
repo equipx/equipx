@@ -30,6 +30,7 @@ android {
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -60,4 +61,25 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+// Roborazzi's Gradle plugin does not support AGP 9 yet, so only the library is used. Screenshot tests live in
+// com.equipx.app.screenshots and write PNGs to src/test/snapshots/ only when this task is requested.
+val recordRequested = gradle.startParameter.taskNames.any { it.endsWith("recordRoborazziDebug") }
+tasks.withType<Test>().configureEach {
+    systemProperty("roborazzi.test.record", recordRequested.toString())
+    systemProperty("roborazzi.output.dir", layout.projectDirectory.dir("src/test/snapshots").asFile.absolutePath)
+    // Screenshot tests are slow; plain testDebugUnitTest skips them unless recording.
+    if (!recordRequested) filter.excludeTestsMatching("com.equipx.app.screenshots.*")
+}
+tasks.register("recordRoborazziDebug") {
+    group = "verification"
+    description = "Renders key screens with fake data to app/src/test/snapshots/ (Robolectric + Roborazzi)."
+    dependsOn("testDebugUnitTest")
 }

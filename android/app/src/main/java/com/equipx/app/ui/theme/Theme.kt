@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 private val EquipXColorScheme = lightColorScheme(
     primary = EquipXColors.Accent,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFE7F3F8),
+    primaryContainer = EquipXColors.AccentTint,
     onPrimaryContainer = EquipXColors.Text,
     secondary = EquipXColors.TextSecondary,
     onSecondary = Color.White,
@@ -34,14 +34,14 @@ private val EquipXColorScheme = lightColorScheme(
 )
 
 private val EquipXShapes = Shapes(
-    extraSmall = RoundedCornerShape(6.dp),
-    small = RoundedCornerShape(6.dp),
-    medium = RoundedCornerShape(6.dp),
-    large = RoundedCornerShape(6.dp),
-    extraLarge = RoundedCornerShape(6.dp),
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(14.dp),
+    large = RoundedCornerShape(16.dp),
+    extraLarge = RoundedCornerShape(24.dp),
 )
 
-/** Notion-like theme: light only, 6dp shapes, 1dp borders, no elevation. */
+/** Light theme: Notion palette, 12-16dp card radii, soft elevation on cards, 1dp borders for tinted surfaces. */
 @Composable
 fun EquipXTheme(content: @Composable () -> Unit) {
     MaterialTheme(

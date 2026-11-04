@@ -1,6 +1,12 @@
 package com.equipx.app.ui.part
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ViewInAr
+import com.equipx.app.ui.components.DeviceIconTile
+import com.equipx.app.ui.components.EquipXCard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -83,7 +89,7 @@ fun PartDetailScreen(
         PartDetailViewModel(deviceId, partId, it.contentRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
-    Column(Modifier.fillMaxSize().background(Color.White)) {
+    Column(Modifier.fillMaxSize().background(EquipXColors.Canvas)) {
         EquipXTopBar(title = (state as? PartDetailState.Loaded)?.part?.name ?: "Part", onBack = onBack)
         when (val s = state) {
             PartDetailState.Loading -> LoadingState()
@@ -94,12 +100,17 @@ fun PartDetailScreen(
                     .verticalScroll(rememberScrollState())
                     .navigationBarsPadding()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Pill(s.device.name)
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    if (s.part.number > 0) Text("Part ${s.part.number}", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
-                    Text(s.part.name.ifBlank { s.part.id }, style = MaterialTheme.typography.headlineSmall)
+                EquipXCard(Modifier.fillMaxWidth()) {
+                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        DeviceIconTile(s.device.id, s.device.category, size = 52.dp)
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            if (s.part.number > 0) Text("PART ${s.part.number}", style = MaterialTheme.typography.labelSmall, color = EquipXColors.Accent)
+                            Text(s.part.name.ifBlank { s.part.id }, style = MaterialTheme.typography.headlineSmall)
+                            Text(s.device.name, style = MaterialTheme.typography.bodySmall, color = EquipXColors.TextSecondary)
+                        }
+                    }
                 }
                 Section("Function", s.part.function)
                 Section("How to use", s.part.usage)
@@ -108,7 +119,7 @@ fun PartDetailScreen(
                     text = if (s.part.safety.isEmpty()) "Follow your lab's safety rules and ask your instructor before using this part."
                     else s.part.safety.joinToString("\n") { "• $it" },
                 )
-                PrimaryButton("Show in 3D", onClick = onShowIn3D, modifier = Modifier.fillMaxWidth())
+                PrimaryButton("Show in 3D", onClick = onShowIn3D, modifier = Modifier.fillMaxWidth(), icon = Icons.Outlined.ViewInAr)
             }
         }
     }
@@ -116,8 +127,10 @@ fun PartDetailScreen(
 
 @Composable
 private fun Section(title: String, body: String) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(title, style = MaterialTheme.typography.titleSmall, color = EquipXColors.TextSecondary)
-        Text(body.ifBlank { "Details for this part are coming soon." }, style = MaterialTheme.typography.bodyLarge)
+    EquipXCard(Modifier.fillMaxWidth(), elevation = 1.dp) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(title.uppercase(), style = MaterialTheme.typography.labelSmall, color = EquipXColors.Accent)
+            Text(body.ifBlank { "Details for this part are coming soon." }, style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }

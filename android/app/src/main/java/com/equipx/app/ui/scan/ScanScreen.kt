@@ -15,6 +15,31 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.icons.outlined.ViewInAr
+import androidx.compose.material.icons.outlined.ViewList
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import com.equipx.app.domain.DeviceSummary
+import com.equipx.app.ui.components.DeviceIconTile
+import com.equipx.app.ui.components.EquipXCard
+import com.equipx.app.ui.components.ListRow
+import com.equipx.app.ui.components.TabTitle
+import com.equipx.app.ui.components.rememberReducedMotion
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -92,8 +117,8 @@ fun ScanScreen(onOpenExplorer: (String) -> Unit) {
     // Re-check after returning from system settings.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { granted = hasPermission() }
 
-    Column(Modifier.fillMaxSize()) {
-        EquipXTopBar(title = "Scan")
+    Column(Modifier.fillMaxSize().background(EquipXColors.Canvas)) {
+        TabTitle("Scan", subtitle = "Identify lab equipment with the camera")
         if (granted) {
             CameraContent(onOpenExplorer)
         } else {
@@ -123,8 +148,10 @@ private fun PermissionPrompt(
 ) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(32.dp), tint = EquipXColors.TextSecondary)
-            Text("Camera access needed", style = MaterialTheme.typography.titleMedium)
+            Box(Modifier.size(72.dp).clip(RoundedCornerShape(24.dp)).background(EquipXColors.AccentTint), contentAlignment = Alignment.Center) {
+                Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(36.dp), tint = EquipXColors.Accent)
+            }
+            Text("Camera access needed", style = MaterialTheme.typography.titleLarge)
             Text(
                 when {
                     permanentlyDenied -> "Camera permission is turned off. Enable it in Settings to scan lab equipment."
@@ -148,30 +175,17 @@ private fun PermissionPrompt(
 private fun CameraContent(onOpenExplorer: (String) -> Unit) {
     val vm = appViewModel { ScanViewModel(it.createDetector(), it.contentRepository, it.activityTracker) }
     val detections by vm.detections.collectAsStateWithLifecycle()
-    val names by vm.names.collectAsStateWithLifecycle()
+    val devices by vm.devices.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { vm.reset() }
 
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         CameraPreview(onFrame = vm::onFrame, modifier = Modifier.fillMaxSize())
-        DetectionOverlay(
+        ScanOverlay(
             detections = detections,
-            nameFor = { names[it.deviceId] ?: it.label },
-            onChipTap = { vm.onChipTapped(it.deviceId); onOpenExplorer(it.deviceId) },
+            devices = devices,
+            onOpenDetected = { vm.onChipTapped(it.deviceId); onOpenExplorer(it.deviceId) },
+            onChooseManually = { vm.onManualChoice(it); onOpenExplorer(it) },
         )
-        if (detections.isEmpty()) {
-            Text(
-                "Point the camera at a lab device",
-                style = MaterialTheme.typography.labelLarge,
-                color = EquipXColors.Text,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(24.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color.White.copy(alpha = 0.85f))
-                    .border(1.dp, EquipXColors.Border, RoundedCornerShape(6.dp))
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-            )
-        }
     }
 }
 
@@ -229,40 +243,153 @@ private fun CameraPreview(onFrame: (Frame) -> Unit, modifier: Modifier = Modifie
     androidx.compose.ui.viewinterop.AndroidView(factory = { previewView }, modifier = modifier)
 }
 
+/**
+ * Stateless scan overlay drawn over the camera: animated corner-bracket viewfinder, guidance text, the detected-device
+ * card and the manual fallback sheet. Previewable without a camera.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DetectionOverlay(
+fun ScanOverlay(
     detections: List<Detection>,
-    nameFor: (Detection) -> String,
-    onChipTap: (Detection) -> Unit,
+    devices: List<DeviceSummary>,
+    onOpenDetected: (Detection) -> Unit,
+    onChooseManually: (String) -> Unit,
+    initialSheetOpen: Boolean = false,
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize()) {
-        val w = constraints.maxWidth.toFloat()
-        val h = constraints.maxHeight.toFloat()
-        Canvas(Modifier.fillMaxSize()) {
-            detections.forEach { d ->
-                drawRect(
-                    color = EquipXColors.Accent,
-                    topLeft = Offset(d.box.left * w, d.box.top * h),
-                    size = Size((d.box.right - d.box.left) * w, (d.box.bottom - d.box.top) * h),
-                    style = Stroke(width = 2.dp.toPx()),
+    var sheetOpen by rememberSaveable { mutableStateOf(initialSheetOpen) }
+    val detected = detections.firstOrNull()
+    val summary = detected?.let { d -> devices.firstOrNull { it.id == d.deviceId } }
+
+    Box(Modifier.fillMaxSize()) {
+        Viewfinder(detected)
+        Column(
+            Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AnimatedContent(targetState = detected != null, label = "scan-status") { has ->
+                if (has && detected != null) {
+                    DetectedCard(
+                        name = summary?.name ?: detected.label,
+                        deviceId = detected.deviceId,
+                        category = summary?.category.orEmpty(),
+                        onOpen = { onOpenDetected(detected) },
+                    )
+                } else {
+                    Text(
+                        "Point the camera at a device",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(Color.Black.copy(alpha = 0.55f))
+                            .padding(horizontal = 18.dp, vertical = 12.dp),
+                    )
+                }
+            }
+            Row(
+                Modifier
+                    .heightIn(min = 48.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.White.copy(alpha = 0.92f))
+                    .clickable { sheetOpen = true }
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(Icons.Outlined.ViewList, contentDescription = null, tint = EquipXColors.Accent, modifier = Modifier.size(20.dp))
+                Text("Choose device manually", style = MaterialTheme.typography.labelLarge, color = EquipXColors.Text)
+            }
+        }
+    }
+
+    if (sheetOpen) {
+        ModalBottomSheet(
+            onDismissRequest = { sheetOpen = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Color.White,
+        ) {
+            DevicePickerContent(devices, onPick = { sheetOpen = false; onChooseManually(it) })
+        }
+    }
+}
+
+/** Manual fallback list. Opening a device here does not count as a scan (no points, no scan mission task). */
+@Composable
+fun DevicePickerContent(devices: List<DeviceSummary>, onPick: (String) -> Unit) {
+    Column(Modifier.fillMaxWidth().navigationBarsPadding()) {
+        Text("Choose a device", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 20.dp))
+        Text(
+            "Opens the 3D explorer. Only a real scan earns scan points.",
+            style = MaterialTheme.typography.bodySmall,
+            color = EquipXColors.TextSecondary,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+        )
+        LazyColumn(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+            items(devices, key = { it.id }) { d ->
+                ListRow(
+                    title = d.name,
+                    meta = d.category.ifBlank { null },
+                    leading = { DeviceIconTile(d.id, d.category, size = 44.dp) },
+                    onClick = { onPick(d.id) },
+                    trailing = { Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null, tint = EquipXColors.TextSecondary, modifier = Modifier.size(18.dp)) },
                 )
             }
         }
-        detections.forEach { d ->
-            Row(
-                modifier = Modifier
-                    .offset { IntOffset((d.box.left * w).roundToInt() + 8.dp.roundToPx(), (d.box.top * h).roundToInt() + 8.dp.roundToPx()) }
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color.White.copy(alpha = 0.85f))
-                    .border(1.dp, EquipXColors.Border, RoundedCornerShape(6.dp))
-                    .clickable { onChipTap(d) }
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text(nameFor(d), style = MaterialTheme.typography.labelLarge, color = EquipXColors.Text)
-                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = "Open 3D explorer", modifier = Modifier.size(16.dp), tint = EquipXColors.Accent)
+    }
+}
+
+@Composable
+private fun DetectedCard(name: String, deviceId: String, category: String, onOpen: () -> Unit) {
+    EquipXCard(Modifier.fillMaxWidth(), elevation = 8.dp) {
+        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            DeviceIconTile(deviceId, category, size = 48.dp)
+            Column(Modifier.weight(1f)) {
+                Text("DEVICE DETECTED", style = MaterialTheme.typography.labelSmall, color = EquipXColors.Success)
+                Text(name, style = MaterialTheme.typography.titleMedium, maxLines = 2)
             }
+            PrimaryButton("Open 3D", onClick = onOpen, icon = Icons.Outlined.ViewInAr)
         }
+    }
+}
+
+/** Corner-bracket viewfinder: gently pulses while searching, snaps green around the detection once found. */
+@Composable
+private fun Viewfinder(detected: Detection?) {
+    val reduced = rememberReducedMotion()
+    val transition = rememberInfiniteTransition(label = "pulse")
+    val animatedPulse by transition.animateFloat(
+        initialValue = 0.94f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(1100), RepeatMode.Reverse),
+        label = "pulse-scale",
+    )
+    val pulse = if (reduced) 1f else animatedPulse
+    val box = detected?.box
+    val spec = tween<Float>(350)
+    val l by animateFloatAsState(box?.left ?: 0.15f, spec, label = "l")
+    val t by animateFloatAsState(box?.top ?: 0.22f, spec, label = "t")
+    val r by animateFloatAsState(box?.right ?: 0.85f, spec, label = "r")
+    val b by animateFloatAsState(box?.bottom ?: 0.68f, spec, label = "b")
+    val color by animateColorAsState(if (detected != null) Color(0xFF3DDC97) else Color.White, label = "bracket")
+    Canvas(Modifier.fillMaxSize()) {
+        val cx = (l + r) / 2f
+        val cy = (t + b) / 2f
+        val hw = (r - l) / 2f * (if (detected != null) 1f else pulse)
+        val hh = (b - t) / 2f * (if (detected != null) 1f else pulse)
+        val left = (cx - hw) * size.width
+        val right = (cx + hw) * size.width
+        val top = (cy - hh) * size.height
+        val bottom = (cy + hh) * size.height
+        val arm = 36.dp.toPx()
+        val stroke = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+        fun corner(x: Float, y: Float, dx: Float, dy: Float) {
+            val p = Path().apply { moveTo(x + dx * arm, y); lineTo(x, y); lineTo(x, y + dy * arm) }
+            drawPath(p, color, style = stroke)
+        }
+        corner(left, top, 1f, 1f)
+        corner(right, top, -1f, 1f)
+        corner(left, bottom, 1f, -1f)
+        corner(right, bottom, -1f, -1f)
     }
 }

@@ -23,3 +23,6 @@ ml/runs/
 ml/.env
 ml/*.pt
 android/app/src/test/snapshots/
+supabase/.env
+admin/.env.local
+android/supabase.properties

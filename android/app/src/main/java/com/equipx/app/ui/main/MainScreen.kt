@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
@@ -22,10 +23,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.equipx.app.ui.components.HairlineDivider
+import com.equipx.app.ui.home.HomeScreen
 import com.equipx.app.ui.learn.LearnScreen
 import com.equipx.app.ui.missions.MissionsScreen
 import com.equipx.app.ui.profile.ProfileScreen
@@ -33,6 +36,7 @@ import com.equipx.app.ui.scan.ScanScreen
 import com.equipx.app.ui.theme.EquipXColors
 
 private enum class Tab(val label: String, val icon: ImageVector) {
+    Home("Home", Icons.Outlined.Home),
     Scan("Scan", Icons.Outlined.CameraAlt),
     Learn("Learn", Icons.Outlined.MenuBook),
     Missions("Missions", Icons.Outlined.EmojiEvents),
@@ -48,16 +52,16 @@ fun MainScreen(
     onOpenCredits: () -> Unit,
     onLoggedOut: () -> Unit,
 ) {
-    var selected by rememberSaveable { mutableIntStateOf(Tab.Scan.ordinal) }
+    var selected by rememberSaveable { mutableIntStateOf(Tab.Home.ordinal) }
     val tab = Tab.entries[selected]
     Scaffold(
-        containerColor = Color.White,
+        containerColor = EquipXColors.Canvas,
         // Each tab's own TopAppBar handles the status-bar inset; NavigationBar handles the bottom one.
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
             Column {
                 HairlineDivider()
-                NavigationBar(containerColor = Color.White, tonalElevation = 0.dp) {
+                NavigationBar(containerColor = Color.White, tonalElevation = 0.dp, modifier = Modifier.shadow(8.dp)) {
                     Tab.entries.forEach { t ->
                         NavigationBarItem(
                             selected = t == tab,
@@ -69,7 +73,7 @@ fun MainScreen(
                                 selectedTextColor = EquipXColors.Accent,
                                 unselectedIconColor = EquipXColors.TextSecondary,
                                 unselectedTextColor = EquipXColors.TextSecondary,
-                                indicatorColor = EquipXColors.Surface,
+                                indicatorColor = EquipXColors.AccentTint,
                             ),
                         )
                     }
@@ -77,8 +81,14 @@ fun MainScreen(
             }
         },
     ) { padding ->
-        Box(Modifier.padding(padding).background(Color.White)) {
+        Box(Modifier.padding(padding).background(EquipXColors.Canvas)) {
             when (tab) {
+                Tab.Home -> HomeScreen(
+                    onScan = { selected = Tab.Scan.ordinal },
+                    onBrowse = { selected = Tab.Learn.ordinal },
+                    onOpenDevice = onOpenDevice,
+                    onOpenMissions = { selected = Tab.Missions.ordinal },
+                )
                 Tab.Scan -> ScanScreen(onOpenExplorer = onOpenExplorer)
                 Tab.Learn -> LearnScreen(onOpenDevice = onOpenDevice)
                 Tab.Missions -> MissionsScreen(

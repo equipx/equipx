@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.equipx.app.data.ActivityTracker
 import com.equipx.app.domain.Badge
 import kotlinx.coroutines.delay
+import com.equipx.app.ui.components.EquipXCard
+import com.equipx.app.ui.components.IconTile
 import com.equipx.app.ui.theme.EquipXColors
 
 /** App-level toast shown at the top whenever badges unlock; queues several badges and shows them one by one. */
@@ -65,21 +67,17 @@ fun BadgeToastHost(tracker: ActivityTracker, modifier: Modifier = Modifier) {
 
 @Composable
 private fun BadgeToastCard(badge: Badge) {
-    val shape = RoundedCornerShape(6.dp)
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(Color.White)
-            .border(1.dp, EquipXColors.Border, shape)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Icon(badgeIcon(badge), contentDescription = null, tint = EquipXColors.Accent)
-        Column {
-            Text("Badge unlocked", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
-            Text(badge.title, style = MaterialTheme.typography.titleSmall, color = EquipXColors.Text)
+    EquipXCard(Modifier.fillMaxWidth(), elevation = 10.dp) {
+        Row(
+            Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            IconTile(badgeIcon(badge), badgeAccent(badge), size = 44.dp)
+            Column {
+                Text("Badge unlocked", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
+                Text(badge.title, style = MaterialTheme.typography.titleMedium, color = EquipXColors.Text)
+            }
         }
     }
 }

@@ -1,5 +1,13 @@
 package com.equipx.app.ui.procedure
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.Surface
+import androidx.compose.material.icons.outlined.ViewInAr
+import com.equipx.app.ui.components.EquipXCard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -136,7 +144,7 @@ fun ProcedureScreen(
         ProcedureViewModel(deviceId, procedureId, it.contentRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
-    Column(Modifier.fillMaxSize().background(Color.White)) {
+    Column(Modifier.fillMaxSize().background(EquipXColors.Canvas)) {
         EquipXTopBar(title = (state as? ProcedureState.Running)?.procedure?.title ?: "Procedure", onBack = onBack)
         when (val s = state) {
             ProcedureState.Loading -> LoadingState()
@@ -167,22 +175,13 @@ private fun RunnerContent(s: ProcedureState.Running, vm: ProcedureViewModel, onO
             onHotspotTap = {},
             modifier = Modifier.fillMaxWidth().weight(1f),
         )
-        HairlineDivider()
-        Column(Modifier.fillMaxWidth().weight(1.15f)) {
-            Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(
-                    "Step ${s.currentStep + 1} of ${steps.size}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = EquipXColors.TextSecondary,
-                )
-                LinearProgressIndicator(
-                    progress = { s.checked.size.toFloat() / steps.size },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = EquipXColors.Accent,
-                    trackColor = EquipXColors.Border,
-                )
-            }
-            LazyColumn(Modifier.weight(1f).padding(horizontal = 16.dp), state = listState) {
+        Column(Modifier.fillMaxWidth().weight(1.15f).background(EquipXColors.Canvas)) {
+            StepProgress(current = s.currentStep, total = steps.size, checked = s.checked)
+            LazyColumn(
+                Modifier.weight(1f).padding(horizontal = 16.dp),
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 itemsIndexed(steps) { i, step ->
                     val partName = s.device.parts.firstOrNull { it.id == step.partId }?.name
                     StepRow(
@@ -197,13 +196,38 @@ private fun RunnerContent(s: ProcedureState.Running, vm: ProcedureViewModel, onO
                     )
                 }
             }
-            HairlineDivider()
-            Row(
-                Modifier.fillMaxWidth().navigationBarsPadding().padding(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                SecondaryButton("Back", onClick = vm::back, enabled = s.currentStep > 0, modifier = Modifier.weight(1f))
-                PrimaryButton(if (s.isLast) "Finish" else "Next", onClick = vm::next, modifier = Modifier.weight(2f))
+            Surface(shadowElevation = 8.dp, color = Color.White) {
+                Row(
+                    Modifier.fillMaxWidth().navigationBarsPadding().padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    SecondaryButton("Back", onClick = vm::back, enabled = s.currentStep > 0, modifier = Modifier.weight(1f))
+                    PrimaryButton(if (s.isLast) "Finish" else "Next", onClick = vm::next, modifier = Modifier.weight(2f))
+                }
+            }
+        }
+    }
+}
+
+/** Segmented step indicator: done = green, current = blue, upcoming = grey. */
+@Composable
+private fun StepProgress(current: Int, total: Int, checked: Set<Int>) {
+    Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Step ${current + 1} of $total", style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+            Text("${checked.size} done", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            repeat(total) { i ->
+                val color by animateColorAsState(
+                    when {
+                        i == current -> EquipXColors.Accent
+                        i in checked -> EquipXColors.Success
+                        else -> EquipXColors.Border
+                    },
+                    label = "segment",
+                )
+                Box(Modifier.weight(1f).height(6.dp).clip(RoundedCornerShape(50)).background(color))
             }
         }
     }
@@ -220,31 +244,37 @@ private fun StepRow(
     onSelect: () -> Unit,
     onOpenPart: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(6.dp)
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp)
-            .clip(shape)
-            .background(if (current) EquipXColors.Surface else Color.White)
-            .border(1.dp, if (current) EquipXColors.Accent else Color.Transparent, shape)
-            .clickable(onClick = onSelect)
-            .padding(end = 8.dp, top = 2.dp, bottom = 2.dp),
-        verticalAlignment = Alignment.Top,
+    EquipXCard(
+        Modifier.fillMaxWidth().animateContentSize(),
+        onClick = onSelect,
+        containerColor = if (current) EquipXColors.AccentTint else Color.White,
+        borderColor = if (current) EquipXColors.Accent else EquipXColors.Border,
+        elevation = if (current) 4.dp else 1.dp,
     ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { onToggle() },
-            colors = CheckboxDefaults.colors(checkedColor = EquipXColors.Success, uncheckedColor = EquipXColors.TextSecondary),
-        )
-        Column(Modifier.weight(1f).padding(vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                "${index + 1}. $text",
-                style = if (current) MaterialTheme.typography.titleSmall else MaterialTheme.typography.bodyMedium,
-                color = if (checked && !current) EquipXColors.TextSecondary else EquipXColors.Text,
-            )
-            if (current) {
-                Box(Modifier.clickable(onClick = onOpenPart)) { Pill("Part: $partName", contentColor = EquipXColors.Accent) }
+        Row(Modifier.padding(start = 4.dp, end = 14.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.Top) {
+            Box(Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggle), contentAlignment = Alignment.Center) {
+                if (checked) Icon(Icons.Outlined.CheckCircle, contentDescription = "Step ${index + 1} done, tap to undo", tint = EquipXColors.Success)
+                else Box(
+                    Modifier.size(28.dp).clip(CircleShape).background(if (current) EquipXColors.Accent else EquipXColors.Surface),
+                    contentAlignment = Alignment.Center,
+                ) { Text("${index + 1}", style = MaterialTheme.typography.labelLarge, color = if (current) Color.White else EquipXColors.TextSecondary) }
+            }
+            Column(Modifier.weight(1f).padding(vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text,
+                    style = if (current) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
+                    color = if (checked && !current) EquipXColors.TextSecondary else EquipXColors.Text,
+                )
+                if (current) {
+                    Row(
+                        Modifier.clip(RoundedCornerShape(50)).background(Color.White).clickable(onClick = onOpenPart).heightIn(min = 36.dp).padding(horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Icon(Icons.Outlined.ViewInAr, contentDescription = null, tint = EquipXColors.Accent, modifier = Modifier.size(16.dp))
+                        Text("Part: $partName", style = MaterialTheme.typography.labelMedium, color = EquipXColors.Accent)
+                    }
+                }
             }
         }
     }
@@ -257,7 +287,9 @@ private fun CompletionContent(s: ProcedureState.Running, onRestart: () -> Unit, 
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = EquipXColors.Success, modifier = Modifier.size(56.dp))
+        Box(Modifier.size(96.dp).clip(CircleShape).background(EquipXColors.SuccessTint), contentAlignment = Alignment.Center) {
+            Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = EquipXColors.Success, modifier = Modifier.size(56.dp))
+        }
         Text("Procedure complete", style = MaterialTheme.typography.headlineSmall)
         Text(
             "You completed all ${s.procedure.steps.size} steps of \"${s.procedure.title}\".",

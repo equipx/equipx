@@ -10,6 +10,8 @@ import com.equipx.app.data.ContentRepository
 import com.equipx.app.data.DataStoreProgressRepository
 import com.equipx.app.data.MockAuthRepository
 import com.equipx.app.data.ProgressRepository
+import com.equipx.app.data.DataStoreUiPrefsRepository
+import com.equipx.app.data.UiPrefsRepository
 import com.equipx.app.data.equipXDataStore
 import com.equipx.app.ml.Detector
 import com.equipx.app.ml.FakeDetector
@@ -20,6 +22,7 @@ class AppContainer(context: Context) {
     val contentRepository: ContentRepository = AssetContentRepository(appContext.assets)
     val authRepository: AuthRepository = MockAuthRepository(appContext.equipXDataStore)
     val progressRepository: ProgressRepository = DataStoreProgressRepository(appContext.equipXDataStore)
+    val uiPrefsRepository: UiPrefsRepository = DataStoreUiPrefsRepository(appContext.equipXDataStore)
     val activityTracker = ActivityTracker(progressRepository, contentRepository)
     fun createDetector(): Detector = FakeDetector()
 }
