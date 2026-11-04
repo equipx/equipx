@@ -149,11 +149,11 @@ Multimeter, oscilloscope and power supply can be swapped for downloaded models i
 - [x] **T2.6** Unit tests for points, badges and mission progression
 
 ### Phase 3: Admin panel (Days 5 to 6, parallel track)
-- [ ] **T3.1** Equipment CRUD with parts table
-- [ ] **T3.2** 3D preview in the admin panel; **hotspot editor** (click on the model to place or move a hotspot, pick a node)
-- [ ] **T3.3** Procedure, fault scenario, quiz and mission editors
-- [ ] **T3.4** Student results: scores, accuracy, time, per-device breakdown, charts, CSV export (mock data)
-- [ ] **T3.5** Mock data seeded with realistic fake students and attempts
+- [x] **T3.1** Equipment CRUD with parts table
+- [x] **T3.2** 3D preview in the admin panel; **hotspot editor** (click on the model to place or move a hotspot, pick a node)
+- [x] **T3.3** Procedure, fault scenario, quiz and mission editors
+- [x] **T3.4** Student results: scores, accuracy, time, per-device breakdown, charts, CSV export (mock data)
+- [x] **T3.5** Mock data seeded with realistic fake students and attempts
 
 ### Phase 4: Content + models (Days 2 to 6, parallel track, Claude writes)
 Per device: overview, 8 to 10 parts (function, usage, safety, **layout entry**), 1 to 2 procedures (6 to 10 steps), 3 fault scenarios, 10 quiz questions, 2 to 3 safety rules, generated GLB.

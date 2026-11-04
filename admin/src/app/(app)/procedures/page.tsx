@@ -1,12 +1,22 @@
-import { StubPage } from "@/components/shell/stub-page";
+"use client";
+
+import { ListChecks } from "lucide-react";
+import { ContentList } from "@/components/editors/content-list";
+import type { Device } from "@/lib/data";
+
+const rowsFor = (d: Device) =>
+  d.procedures.map((p) => ({ id: p.id, title: p.title, cells: [p.steps.length] }));
 
 export default function Page() {
   return (
-    <StubPage
-      href="/procedures"
-      description="Step-by-step usage procedures for each device."
-      emptyTitle="No procedures yet"
-      emptyDescription="Procedures are authored per device and will appear here."
+    <ContentList
+      basePath="/procedures"
+      title="Procedures"
+      description="Step-by-step procedures students follow on each device."
+      noun="procedure"
+      icon={ListChecks}
+      columns={["Title", "Device", "Steps"]}
+      rowsFor={rowsFor}
     />
   );
 }

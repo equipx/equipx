@@ -16,3 +16,10 @@ android/.kotlin/
 captures/
 # tools
 tools/**/dist/
+# ML
+ml/.venv/
+ml/datasets/
+ml/runs/
+ml/.env
+ml/*.pt
+android/app/src/test/snapshots/

@@ -1,12 +1,11 @@
-import { StubPage } from "@/components/shell/stub-page";
+import { PageHeader } from "@/components/shell/page-header";
+import { ResultsView } from "@/components/results/results-view";
 
-export default function Page() {
+export default function ResultsPage() {
   return (
-    <StubPage
-      href="/results"
-      description="Student scores, accuracy and time."
-      emptyTitle="No results yet"
-      emptyDescription="Results will appear once students complete quizzes and missions."
-    />
+    <>
+      <PageHeader title="Results" description="Student scores, accuracy and time. Showing generated sample data." />
+      <ResultsView />
+    </>
   );
 }

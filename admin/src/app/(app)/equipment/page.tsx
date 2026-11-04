@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Cpu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,10 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EmptyState } from "@/components/shell/empty-state";
+import { NewDeviceButton } from "@/components/equipment/new-device-dialog";
 import { PageHeader } from "@/components/shell/page-header";
 import { getStore, type DeviceIndexEntry } from "@/lib/data";
 
 export default function EquipmentPage() {
+  const router = useRouter();
   const [devices, setDevices] = useState<DeviceIndexEntry[] | null>(null);
 
   useEffect(() => {
@@ -24,12 +27,15 @@ export default function EquipmentPage() {
 
   return (
     <>
-      <PageHeader title="Equipment" description="Lab devices, their parts and 3D models." />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader title="Equipment" description="Lab devices, their parts and 3D models." />
+        <NewDeviceButton existingIds={(devices ?? []).map((d) => d.id)} disabled={devices === null} />
+      </div>
       {devices === null ? null : devices.length === 0 ? (
         <EmptyState
           icon={Cpu}
           title="No equipment yet"
-          description="Run the sync script to import devices from /content, or add one here once editing is available."
+          description="Run the sync script to import devices from /content, or add one with New device."
         />
       ) : (
         <Table>
@@ -42,7 +48,7 @@ export default function EquipmentPage() {
           </TableHeader>
           <TableBody>
             {devices.map((d) => (
-              <TableRow key={d.id}>
+              <TableRow key={d.id} className="cursor-pointer" onClick={() => router.push(`/equipment/${d.id}`)}>
                 <TableCell className="font-medium">{d.name}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">{d.category}</Badge>
