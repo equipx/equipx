@@ -165,24 +165,24 @@ Per device: overview, 8 to 10 parts (function, usage, safety, **layout entry**),
 - [ ] **T4.6** (Optional) Swap in realistic downloaded models for multimeter, oscilloscope and power supply; manual hotspots; credits
 
 ### Phase 5: Device recognition model (Days 5 to 8, mostly project owner + Colab; deferred until the scaffold is done)
-- [ ] **T5.1** Download and merge public datasets in Roboflow; standardize the 10 class names
+- [x] **T5.1** Download and merge public datasets in Roboflow; standardize the 10 class names
 - [ ] **T5.2** Take your own photos in the lab (about 50 to 100 per device, varied angles and lighting)
-- [ ] **T5.3** Train YOLO nano/small on Colab (10 device classes), evaluate per class, export TFLite
-- [ ] **T5.4** Implement `TfliteDetector`, tune thresholds and smoothing, test at 15+ FPS on your phone
-- [ ] **T5.5** Keep a manual "choose device" fallback in the Scan screen for the demo
+- [x] **T5.3** Train YOLO nano/small on Colab (10 device classes), evaluate per class, export TFLite
+- [x] **T5.4** Implement `TfliteDetector`, tune thresholds and smoothing, test at 15+ FPS on your phone
+- [x] **T5.5** Keep a manual "choose device" fallback in the Scan screen for the demo
 
 ### Phase 6: Backend swap (Days 8 to 9, stretch)
-- [ ] **T6.1** Create Supabase project, apply migrations and seed
-- [ ] **T6.2** Supabase auth (replace mock), role-based access via RLS
-- [ ] **T6.3** Replace mock repositories (Android + admin), add sync and offline cache (Room)
-- [ ] **T6.4** Server-side points/badge functions
-- [ ] **T6.5** Host GLBs (Supabase Storage); enable "Place in AR" via Scene Viewer (online only)
+- [x] **T6.1** Create Supabase project, apply migrations and seed
+- [x] **T6.2** Supabase auth (replace mock), role-based access via RLS
+- [x] **T6.3** Replace mock repositories (Android + admin), add sync and offline cache (Room)
+- [x] **T6.4** Server-side points/badge functions
+- [x] **T6.5** Host GLBs (Supabase Storage); enable "Place in AR" via Scene Viewer (online only)
 
 ### Phase 7: Delivery (Days 9 to 10)
-- [ ] **T7.1** Polish: empty/error/loading states, accessibility basics, app icon and splash
+- [x] **T7.1** Polish: empty/error/loading states, accessibility basics, app icon and splash
 - [ ] **T7.2** Release APK (signed), install check on a physical phone
-- [ ] **T7.3** Deploy admin panel (Vercel) or ship local run instructions
-- [ ] **T7.4** `docs/RUNNING.md` run guide + `docs/DEMO.md` demo script + backup demo video
+- [x] **T7.3** Deploy admin panel (Vercel) or ship local run instructions
+- [x] **T7.4** `docs/RUNNING.md` run guide + `docs/DEMO.md` demo script + backup demo video
 - [ ] **T7.5** Final regression test pass
 
 ## 9. 10-day schedule
