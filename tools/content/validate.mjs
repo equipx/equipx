@@ -13,6 +13,7 @@ const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const vDevice = ajv.compile(readJson(path.join(contentRoot, 'schema/device.schema.json')));
 const vIndex = ajv.compile(readJson(path.join(contentRoot, 'schema/index.schema.json')));
+const vMissions = ajv.compile(readJson(path.join(contentRoot, 'schema/missions.schema.json')));
 
 const errors = [];
 const err = (file, msg) => errors.push(`${file}: ${msg}`);
@@ -49,6 +50,24 @@ function checkDevice(file, d) {
   }
 }
 
+const devices = new Map(); // id -> validated device
+
+function checkMissions(file, m) {
+  for (const id of dup(m.missions.map((x) => x.id))) err(file, `duplicate mission id ${id}`);
+  for (const mi of m.missions) {
+    for (const id of dup(mi.tasks.map((t) => t.id))) err(file, `mission ${mi.id}: duplicate task id ${id}`);
+    if (mi.deviceId && !devices.has(mi.deviceId)) err(file, `mission ${mi.id}: unknown deviceId ${mi.deviceId}`);
+    for (const t of mi.tasks) {
+      const where = `mission ${mi.id}/${t.id}`;
+      const d = devices.get(t.deviceId);
+      if (!d) { err(file, `${where}: unknown deviceId ${t.deviceId}`); continue; }
+      if (t.type === 'identify_part' && !d.parts.some((p) => p.id === t.partId)) err(file, `${where}: unknown partId ${t.partId} in ${d.id}`);
+      if (t.type === 'complete_procedure' && !d.procedures.some((p) => p.id === t.procedureId)) err(file, `${where}: unknown procedureId ${t.procedureId} in ${d.id}`);
+      if (t.type === 'pass_quiz' && !d.quizzes.some((q) => q.id === t.quizId)) err(file, `${where}: unknown quizId ${t.quizId} in ${d.id}`);
+    }
+  }
+}
+
 const indexFile = path.join(root, 'index.json');
 if (!fs.existsSync(indexFile)) { console.error('content/index.json missing'); process.exit(1); }
 const index = readJson(indexFile);
@@ -64,11 +83,20 @@ else {
     if (d.id !== entry.id) err(f, `id ${d.id} != index id ${entry.id}`);
     for (const k of ['name', 'category', 'summary']) if (d[k] !== entry[k]) err(f, `${k} differs from index.json`);
     checkDevice(f, d);
+    devices.set(d.id, d);
   }
   const listed = new Set(index.devices.map((d) => `${d.id}.json`));
   for (const f of fs.readdirSync(root)) {
-    if (f.endsWith('.json') && f !== 'index.json' && !listed.has(f)) err(f, 'not listed in index.json');
+    if (f.endsWith('.json') && f !== 'index.json' && f !== 'missions.json' && !listed.has(f)) err(f, 'not listed in index.json');
   }
+}
+
+let missionCount = 0;
+const missionsFile = path.join(root, 'missions.json');
+if (fs.existsSync(missionsFile)) {
+  const m = readJson(missionsFile);
+  if (!vMissions(m)) fmt(vMissions).forEach((x) => err('missions.json', x));
+  else { missionCount = m.missions.length; checkMissions('missions.json', m); }
 }
 
 if (errors.length) {
@@ -76,4 +104,4 @@ if (errors.length) {
   errors.forEach((e) => console.error('  - ' + e));
   process.exit(1);
 }
-console.log(`Content validation OK (${index.devices.length} device(s)).`);
+console.log(`Content validation OK (${index.devices.length} device(s), ${missionCount} mission(s)).`);

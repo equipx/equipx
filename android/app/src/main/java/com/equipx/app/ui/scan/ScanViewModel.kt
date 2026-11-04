@@ -2,7 +2,9 @@ package com.equipx.app.ui.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.equipx.app.data.ActivityTracker
 import com.equipx.app.data.ContentRepository
+import com.equipx.app.domain.ActivityEvent
 import com.equipx.app.ml.Detection
 import com.equipx.app.ml.Detector
 import com.equipx.app.ml.Frame
@@ -14,6 +16,7 @@ import kotlinx.coroutines.launch
 class ScanViewModel(
     private val detector: Detector,
     private val content: ContentRepository,
+    private val tracker: ActivityTracker,
 ) : ViewModel() {
 
     private val _detections = MutableStateFlow<List<Detection>>(emptyList())
@@ -33,6 +36,11 @@ class ScanViewModel(
     fun onFrame(frame: Frame) {
         val result = detector.detect(frame)
         if (result != _detections.value) _detections.value = result
+    }
+
+    /** The student tapped a detection chip: that counts as a scan of the device. */
+    fun onChipTapped(deviceId: String) {
+        tracker.post(ActivityEvent.Scan(deviceId, com.equipx.app.domain.PointsRules.scanDay(System.currentTimeMillis())))
     }
 
     fun reset() {

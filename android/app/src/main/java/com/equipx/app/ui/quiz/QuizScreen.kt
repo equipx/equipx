@@ -64,7 +64,7 @@ internal fun formatClock(totalSec: Int): String {
 @Composable
 fun QuizScreen(deviceId: String, quizId: String, onBack: () -> Unit) {
     val vm = appViewModel(key = "quiz-$deviceId-$quizId") {
-        QuizViewModel(deviceId, quizId, it.contentRepository, it.progressRepository)
+        QuizViewModel(deviceId, quizId, it.contentRepository, it.progressRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
     var confirmExit by rememberSaveable { mutableStateOf(false) }

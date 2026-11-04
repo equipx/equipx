@@ -141,12 +141,12 @@ Multimeter, oscilloscope and power supply can be swapped for downloaded models i
 - [x] **T1.7** Credits screen (attribution for any CC BY models)
 
 ### Phase 2: Gamification + simulation (Days 4 to 5)
-- [ ] **T2.1** Troubleshooting simulation: symptom → inspect (tap parts in 3D) → choose fault → feedback and score
-- [ ] **T2.2** Points ledger and rules (scan +10, first part view +2, quiz correct +5, fault fixed +20, mission complete +50)
-- [ ] **T2.3** Badges (First Scan, Part Spotter, Safety First, Quiz Ace, Fault Finder, Mission Complete) with unlock toasts
-- [ ] **T2.4** Mission Mode: ordered task chain (scan → identify part in 3D → complete procedure → pass quiz), progress UI
-- [ ] **T2.5** Profile tab: points, badges, history, accuracy
-- [ ] **T2.6** Unit tests for points, badges and mission progression
+- [x] **T2.1** Troubleshooting simulation: symptom → inspect (tap parts in 3D) → choose fault → feedback and score
+- [x] **T2.2** Points ledger and rules (scan +10, first part view +2, quiz correct +5, fault fixed +20, mission complete +50)
+- [x] **T2.3** Badges (First Scan, Part Spotter, Safety First, Quiz Ace, Fault Finder, Mission Complete) with unlock toasts
+- [x] **T2.4** Mission Mode: ordered task chain (scan → identify part in 3D → complete procedure → pass quiz), progress UI
+- [x] **T2.5** Profile tab: points, badges, history, accuracy
+- [x] **T2.6** Unit tests for points, badges and mission progression
 
 ### Phase 3: Admin panel (Days 5 to 6, parallel track)
 - [ ] **T3.1** Equipment CRUD with parts table

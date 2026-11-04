@@ -37,7 +37,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.equipx.app.data.ContentRepository
-import com.equipx.app.data.ProgressRepository
+import com.equipx.app.data.ActivityTracker
+import com.equipx.app.domain.ActivityEvent
 import com.equipx.app.domain.Device
 import com.equipx.app.domain.Procedure
 import com.equipx.app.explorer.rememberWebViewExplorerController
@@ -77,7 +78,7 @@ class ProcedureViewModel(
     private val deviceId: String,
     private val procedureId: String,
     private val content: ContentRepository,
-    private val progress: ProgressRepository,
+    private val tracker: ActivityTracker,
 ) : ViewModel() {
     private val _state = MutableStateFlow<ProcedureState>(ProcedureState.Loading)
     val state: StateFlow<ProcedureState> = _state.asStateFlow()
@@ -115,7 +116,7 @@ class ProcedureViewModel(
         if (s.isLast) {
             // Finishing confirms every step.
             _state.value = s.copy(checked = s.procedure.steps.indices.toSet(), completed = true)
-            viewModelScope.launch { progress.markProcedureCompleted(deviceId, procedureId) }
+            tracker.post(ActivityEvent.ProcedureCompleted(deviceId, procedureId))
         } else {
             _state.value = s.copy(checked = checked, currentStep = s.currentStep + 1)
         }
@@ -132,7 +133,7 @@ fun ProcedureScreen(
     onOpenPart: (String) -> Unit,
 ) {
     val vm = appViewModel(key = "procedure-$deviceId-$procedureId") {
-        ProcedureViewModel(deviceId, procedureId, it.contentRepository, it.progressRepository)
+        ProcedureViewModel(deviceId, procedureId, it.contentRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
     Column(Modifier.fillMaxSize().background(Color.White)) {

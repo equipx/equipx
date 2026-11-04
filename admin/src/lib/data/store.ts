@@ -1,4 +1,4 @@
-import type { Device, DeviceIndexEntry } from "./types";
+import type { Device, DeviceIndexEntry, Mission } from "./types";
 
 /**
  * Data access boundary for the admin panel. MockStore (localStorage + seed JSON)
@@ -9,6 +9,7 @@ export interface DataStore {
   getDevice(id: string): Promise<Device | null>;
   saveDevice(device: Device): Promise<void>;
   deleteDevice(id: string): Promise<void>;
+  listMissions(): Promise<Mission[]>;
   /** Discard local edits and fall back to the seed data. */
   reset(): Promise<void>;
 }

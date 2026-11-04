@@ -109,3 +109,32 @@ Layout notes:
 
 ## Design tokens (Notion-like)
 bg `#FFFFFF`, surface `#F7F7F5`, border `#E9E9E7`, text `#37352F`, secondary `#787774`, accent `#2383E2`, success `#0F7B6C`, danger `#E03E3E`, callout `#FBF3DB`. Radius 6dp, 1dp borders, no shadows/gradients, Inter font.
+
+## Missions (`content/missions.json`, Phase 2)
+```json
+{
+  "missions": [
+    {
+      "id": "dmm_first_steps",
+      "title": "Multimeter first steps",
+      "description": "One line.",
+      "deviceId": "digital_multimeter",
+      "tasks": [
+        { "id": "t1", "type": "scan", "title": "Scan a digital multimeter", "deviceId": "digital_multimeter" },
+        { "id": "t2", "type": "identify_part", "title": "Find the COM jack in 3D", "deviceId": "digital_multimeter", "partId": "com_jack" },
+        { "id": "t3", "type": "complete_procedure", "title": "Measure DC voltage", "deviceId": "digital_multimeter", "procedureId": "measure_dc_voltage" },
+        { "id": "t4", "type": "pass_quiz", "title": "Pass the basics quiz", "deviceId": "digital_multimeter", "quizId": "dmm_basics", "minScorePct": 70 }
+      ]
+    }
+  ]
+}
+```
+- Mission-level `deviceId` is optional (cross-device missions omit it); every task has its own `deviceId`. `minScorePct` is optional, default 70.
+- Tasks are ordered; a task unlocks when the previous one is done.
+- `identify_part` is done when the student taps that part's hotspot (or picks it in the parts drawer) while the mission is active.
+- Synced to `android/app/src/main/assets/content/missions.json` and `admin/src/data/seed/missions.json`.
+
+## Points and badges (Phase 2, computed in Android `domain/`)
+Points: scan +10 (once per device per UTC day), first view of a part +2, quiz question correct +5 (first time per question), fault fixed +20 (first correct diagnosis per scenario), mission complete +50 (once).
+Badges: `first_scan` (1 scan), `part_spotter` (10 distinct parts viewed), `safety_first` (1 procedure completed), `quiz_ace` (100% on any quiz), `fault_finder` (3 distinct faults fixed), `mission_complete` (1 mission completed).
+These mirror `supabase/migrations/*_functions.sql`.

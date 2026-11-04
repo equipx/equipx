@@ -50,7 +50,7 @@ fun ExplorerScreen(
     onOpenPart: (deviceId: String, partId: String) -> Unit,
 ) {
     val vm = appViewModel(key = "explorer-$deviceId-$initialPartId") {
-        ExplorerViewModel(deviceId, initialPartId, it.contentRepository, it.progressRepository)
+        ExplorerViewModel(deviceId, initialPartId, it.contentRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
     val controller = rememberWebViewExplorerController()
@@ -137,7 +137,7 @@ private fun PartsListContent(parts: List<Part>, selectedPartId: String?, onPick:
 }
 
 @Composable
-private fun PartSheetContent(partId: String, part: Part?, onFullDetails: () -> Unit) {
+internal fun PartSheetContent(partId: String, part: Part?, onFullDetails: () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()

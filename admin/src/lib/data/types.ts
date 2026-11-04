@@ -126,3 +126,30 @@ export interface HotspotsFile {
   deviceId: string;
   hotspots: Hotspot[];
 }
+
+export type MissionTaskType = "scan" | "identify_part" | "complete_procedure" | "pass_quiz";
+
+export interface MissionTask {
+  id: string;
+  type: MissionTaskType;
+  title: string;
+  deviceId: string;
+  partId?: string;
+  procedureId?: string;
+  quizId?: string;
+  /** pass_quiz only; defaults to 70 */
+  minScorePct?: number;
+}
+
+export interface Mission {
+  id: string;
+  title: string;
+  description: string;
+  /** Absent for cross-device missions. */
+  deviceId?: string;
+  tasks: MissionTask[];
+}
+
+export interface MissionsFile {
+  missions: Mission[];
+}

@@ -3,7 +3,8 @@ package com.equipx.app.ui.explorer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.equipx.app.data.ContentRepository
-import com.equipx.app.data.ProgressRepository
+import com.equipx.app.data.ActivityTracker
+import com.equipx.app.domain.ActivityEvent
 import com.equipx.app.domain.Device
 import com.equipx.app.domain.Part
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,7 @@ class ExplorerViewModel(
     private val deviceId: String,
     initialPartId: String?,
     private val content: ContentRepository,
-    private val progress: ProgressRepository,
+    private val tracker: ActivityTracker,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ExplorerUiState(selectedPartId = initialPartId))
@@ -52,7 +53,7 @@ class ExplorerViewModel(
     /** Select + focus + open the part sheet (hotspot tap or parts list). */
     fun selectPart(partId: String) {
         _state.update { it.copy(selectedPartId = partId, selectionToken = it.selectionToken + 1, sheetOpen = true, partsListOpen = false) }
-        viewModelScope.launch { progress.markPartViewed(deviceId, partId) }
+        tracker.post(ActivityEvent.PartViewed(deviceId, partId, fromExplorer = true))
     }
 
     /** Closes the sheet; the part stays highlighted in 3D. */

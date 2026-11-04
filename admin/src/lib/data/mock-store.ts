@@ -1,6 +1,7 @@
 import seedIndex from "@/data/seed/index.json";
+import seedMissions from "@/data/seed/missions.json";
 import type { DataStore } from "./store";
-import type { Device, DeviceIndexEntry } from "./types";
+import type { Device, DeviceIndexEntry, Mission, MissionsFile } from "./types";
 
 const STORAGE_KEY = "equipx.admin.store.v1";
 
@@ -80,6 +81,10 @@ export class MockStore implements DataStore {
     delete o.devices[id];
     if (!o.deleted.includes(id)) o.deleted.push(id);
     writeOverrides(o);
+  }
+
+  async listMissions(): Promise<Mission[]> {
+    return (seedMissions as unknown as MissionsFile).missions ?? [];
   }
 
   async reset(): Promise<void> {

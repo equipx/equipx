@@ -20,7 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.equipx.app.data.ContentRepository
-import com.equipx.app.data.ProgressRepository
+import com.equipx.app.data.ActivityTracker
+import com.equipx.app.domain.ActivityEvent
 import com.equipx.app.domain.Device
 import com.equipx.app.domain.Part
 import com.equipx.app.ui.appViewModel
@@ -46,7 +47,7 @@ class PartDetailViewModel(
     private val deviceId: String,
     private val partId: String,
     private val content: ContentRepository,
-    private val progress: ProgressRepository,
+    private val tracker: ActivityTracker,
 ) : ViewModel() {
     private val _state = MutableStateFlow<PartDetailState>(PartDetailState.Loading)
     val state: StateFlow<PartDetailState> = _state.asStateFlow()
@@ -63,7 +64,7 @@ class PartDetailViewModel(
                         _state.value = PartDetailState.Error("This part could not be found.")
                     } else {
                         _state.value = PartDetailState.Loaded(d, part)
-                        progress.markPartViewed(deviceId, partId)
+                        tracker.post(ActivityEvent.PartViewed(deviceId, partId, fromExplorer = false))
                     }
                 }
                 .onFailure { _state.value = PartDetailState.Error("Could not load this part.") }
@@ -79,7 +80,7 @@ fun PartDetailScreen(
     onShowIn3D: () -> Unit,
 ) {
     val vm = appViewModel(key = "part-$deviceId-$partId") {
-        PartDetailViewModel(deviceId, partId, it.contentRepository, it.progressRepository)
+        PartDetailViewModel(deviceId, partId, it.contentRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
     Column(Modifier.fillMaxSize().background(Color.White)) {

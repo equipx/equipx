@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Quiz
@@ -64,8 +65,16 @@ sealed interface DeviceDetailState {
         val viewedPartIds: Set<String> = emptySet(),
         val completedProcedureIds: Set<String> = emptySet(),
         val attempts: List<QuizAttempt> = emptyList(),
+        val fixedFaultIds: Set<String> = emptySet(),
     ) : DeviceDetailState
 }
+
+private data class ProgressSnapshot(
+    val viewed: Set<String>,
+    val procedures: Set<String>,
+    val attempts: List<QuizAttempt>,
+    val faults: Set<String>,
+)
 
 class DeviceDetailViewModel(
     private val deviceId: String,
@@ -83,14 +92,15 @@ class DeviceDetailViewModel(
             content.getDevice(deviceId)
                 .onSuccess { device ->
                     _state.value = DeviceDetailState.Loaded(device)
-                    combine(progress.viewedParts, progress.completedProcedures, progress.quizAttempts) { v, c, a -> Triple(v, c, a) }
-                        .collect { (v, c, a) ->
+                    combine(progress.viewedParts, progress.completedProcedures, progress.quizAttempts, progress.fixedFaults) { v, c, a, f -> ProgressSnapshot(v, c, a, f) }
+                        .collect { (v, c, a, f) ->
                             val prefix = "$deviceId:"
                             _state.update {
                                 (it as? DeviceDetailState.Loaded)?.copy(
                                     viewedPartIds = v.filter { k -> k.startsWith(prefix) }.map { k -> k.removePrefix(prefix) }.toSet(),
                                     completedProcedureIds = c.filter { k -> k.startsWith(prefix) }.map { k -> k.removePrefix(prefix) }.toSet(),
                                     attempts = a.filter { x -> x.deviceId == deviceId },
+                                    fixedFaultIds = f.filter { k -> k.startsWith(prefix) }.map { k -> k.removePrefix(prefix) }.toSet(),
                                 ) ?: it
                             }
                         }
@@ -108,6 +118,7 @@ fun DeviceDetailScreen(
     onOpenPart: (String) -> Unit,
     onOpenProcedure: (String) -> Unit,
     onOpenQuiz: (String) -> Unit,
+    onOpenFault: (String) -> Unit,
 ) {
     val vm = appViewModel(key = "device-$deviceId") { DeviceDetailViewModel(deviceId, it.contentRepository, it.progressRepository) }
     val state by vm.state.collectAsStateWithLifecycle()
@@ -117,7 +128,7 @@ fun DeviceDetailScreen(
         when (val s = state) {
             DeviceDetailState.Loading -> LoadingState()
             is DeviceDetailState.Error -> ErrorState(s.message, onRetry = vm::load)
-            is DeviceDetailState.Loaded -> DeviceContent(s, onExplore, onOpenPart, onOpenProcedure, onOpenQuiz)
+            is DeviceDetailState.Loaded -> DeviceContent(s, onExplore, onOpenPart, onOpenProcedure, onOpenQuiz, onOpenFault)
         }
     }
 }
@@ -129,6 +140,7 @@ private fun DeviceContent(
     onOpenPart: (String) -> Unit,
     onOpenProcedure: (String) -> Unit,
     onOpenQuiz: (String) -> Unit,
+    onOpenFault: (String) -> Unit,
 ) {
     val d = s.device
     LazyColumn(
@@ -167,6 +179,20 @@ private fun DeviceContent(
                     icon = Icons.Outlined.Checklist,
                     onClick = { onOpenProcedure(p.id) },
                     trailing = { if (p.id in s.completedProcedureIds) DoneIcon() },
+                )
+                HairlineDivider()
+            }
+        }
+        if (d.faults.isNotEmpty()) {
+            item { SectionHeader("Troubleshoot", count = d.faults.size) }
+            items(d.faults.size) { i ->
+                val f = d.faults[i]
+                ListRow(
+                    title = f.symptom.ifBlank { f.id },
+                    meta = "Inspect in 3D and diagnose",
+                    icon = Icons.Outlined.BugReport,
+                    onClick = { onOpenFault(f.id) },
+                    trailing = { if (f.id in s.fixedFaultIds) DoneIcon() },
                 )
                 HairlineDivider()
             }

@@ -18,6 +18,7 @@ import com.equipx.app.ui.part.PartDetailScreen
 import com.equipx.app.ui.procedure.ProcedureScreen
 import com.equipx.app.ui.quiz.QuizScreen
 import com.equipx.app.ui.splash.SplashScreen
+import com.equipx.app.ui.troubleshoot.TroubleshootScreen
 
 object Routes {
     const val SPLASH = "splash"
@@ -28,6 +29,7 @@ object Routes {
     const val PART = "part/{deviceId}/{partId}"
     const val PROCEDURE = "procedure/{deviceId}/{procedureId}"
     const val QUIZ = "quiz/{deviceId}/{quizId}"
+    const val FAULT = "fault/{deviceId}/{faultId}"
     const val CREDITS = "credits"
 
     fun device(deviceId: String) = "device/$deviceId"
@@ -36,6 +38,7 @@ object Routes {
     fun part(deviceId: String, partId: String) = "part/$deviceId/$partId"
     fun procedure(deviceId: String, procedureId: String) = "procedure/$deviceId/$procedureId"
     fun quiz(deviceId: String, quizId: String) = "quiz/$deviceId/$quizId"
+    fun fault(deviceId: String, faultId: String) = "fault/$deviceId/$faultId"
 }
 
 private fun strArg(name: String) = navArgument(name) { type = NavType.StringType }
@@ -62,6 +65,8 @@ fun EquipXNavHost() {
             MainScreen(
                 onOpenExplorer = { entry.ifResumed { nav.navigate(Routes.explorer(it)) } },
                 onOpenDevice = { entry.ifResumed { nav.navigate(Routes.device(it)) } },
+                onOpenProcedure = { d, p -> entry.ifResumed { nav.navigate(Routes.procedure(d, p)) } },
+                onOpenQuiz = { d, q -> entry.ifResumed { nav.navigate(Routes.quiz(d, q)) } },
                 onOpenCredits = { entry.ifResumed { nav.navigate(Routes.CREDITS) } },
                 onLoggedOut = { entry.ifResumed { nav.navigate(Routes.LOGIN) { popUpTo(Routes.MAIN) { inclusive = true } } } },
             )
@@ -75,6 +80,7 @@ fun EquipXNavHost() {
                 onOpenPart = { entry.ifResumed { nav.navigate(Routes.part(deviceId, it)) } },
                 onOpenProcedure = { entry.ifResumed { nav.navigate(Routes.procedure(deviceId, it)) } },
                 onOpenQuiz = { entry.ifResumed { nav.navigate(Routes.quiz(deviceId, it)) } },
+                onOpenFault = { entry.ifResumed { nav.navigate(Routes.fault(deviceId, it)) } },
             )
         }
         composable(
@@ -113,6 +119,15 @@ fun EquipXNavHost() {
                 deviceId = entry.arguments?.getString("deviceId").orEmpty(),
                 quizId = entry.arguments?.getString("quizId").orEmpty(),
                 onBack = { entry.ifResumed { nav.popBackStack() } },
+            )
+        }
+        composable(Routes.FAULT, arguments = listOf(strArg("deviceId"), strArg("faultId"))) { entry ->
+            val deviceId = entry.arguments?.getString("deviceId").orEmpty()
+            TroubleshootScreen(
+                deviceId = deviceId,
+                faultId = entry.arguments?.getString("faultId").orEmpty(),
+                onBack = { entry.ifResumed { nav.popBackStack() } },
+                onOpenPart = { entry.ifResumed { nav.navigate(Routes.part(deviceId, it)) } },
             )
         }
         composable(Routes.CREDITS) { entry -> CreditsScreen(onBack = { entry.ifResumed { nav.popBackStack() } }) }

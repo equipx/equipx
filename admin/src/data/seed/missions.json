@@ -1,0 +1,458 @@
+{
+  "missions": [
+    {
+      "id": "digital_multimeter_first_steps",
+      "title": "Multimeter first steps",
+      "description": "Find the jacks, measure DC voltage and prove you know the basics.",
+      "deviceId": "digital_multimeter",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the digital multimeter",
+          "deviceId": "digital_multimeter"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the COM Jack in 3D",
+          "deviceId": "digital_multimeter",
+          "partId": "com_jack"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Measure DC voltage",
+          "deviceId": "digital_multimeter",
+          "procedureId": "measure_dc_voltage"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the multimeter basics quiz",
+          "deviceId": "digital_multimeter",
+          "quizId": "dmm_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "analog_multimeter_first_steps",
+      "title": "Analog meter first steps",
+      "description": "Read the needle, zero the meter and measure DC voltage safely.",
+      "deviceId": "analog_multimeter",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the analog multimeter",
+          "deviceId": "analog_multimeter"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Mechanical Zero Adjuster in 3D",
+          "deviceId": "analog_multimeter",
+          "partId": "mechanical_zero"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Measure DC voltage",
+          "deviceId": "analog_multimeter",
+          "procedureId": "measure_dc_voltage"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the analog multimeter basics quiz",
+          "deviceId": "analog_multimeter",
+          "quizId": "analog_mm_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "digital_clamp_meter_first_steps",
+      "title": "Clamp meter first steps",
+      "description": "Measure current without breaking the circuit.",
+      "deviceId": "digital_clamp_meter",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the digital clamp meter",
+          "deviceId": "digital_clamp_meter"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Movable Jaw in 3D",
+          "deviceId": "digital_clamp_meter",
+          "partId": "movable_jaw"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Measure AC current with the jaws",
+          "deviceId": "digital_clamp_meter",
+          "procedureId": "measure_ac_current"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the clamp meter basics quiz",
+          "deviceId": "digital_clamp_meter",
+          "quizId": "clamp_meter_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "digital_oscilloscope_first_steps",
+      "title": "Oscilloscope first steps",
+      "description": "Compensate a probe and learn the front panel controls.",
+      "deviceId": "digital_oscilloscope",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the digital oscilloscope",
+          "deviceId": "digital_oscilloscope"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Trigger Controls in 3D",
+          "deviceId": "digital_oscilloscope",
+          "partId": "trigger_controls"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Connect and compensate a 10X probe",
+          "deviceId": "digital_oscilloscope",
+          "procedureId": "compensate_probe"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the oscilloscope basics quiz",
+          "deviceId": "digital_oscilloscope",
+          "quizId": "scope_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "function_generator_first_steps",
+      "title": "Signal source first steps",
+      "description": "Set up a clean sine wave from the function generator.",
+      "deviceId": "function_generator",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the function generator",
+          "deviceId": "function_generator"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Channel Output Connectors (CH1, CH2) in 3D",
+          "deviceId": "function_generator",
+          "partId": "bnc_outputs"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Output a 1 kHz sine wave of 2 Vpp",
+          "deviceId": "function_generator",
+          "procedureId": "output_sine_wave"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the function generator basics quiz",
+          "deviceId": "function_generator",
+          "quizId": "fg_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "dc_power_supply_first_steps",
+      "title": "Power supply first steps",
+      "description": "Set a voltage and current limit before you power anything.",
+      "deviceId": "dc_power_supply",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the dc power supply",
+          "deviceId": "dc_power_supply"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Current Limit Knobs (Coarse / Fine) in 3D",
+          "deviceId": "dc_power_supply",
+          "partId": "current_knobs"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Set the voltage and current limit",
+          "deviceId": "dc_power_supply",
+          "procedureId": "set_voltage_current_limit"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the dc power supply basics quiz",
+          "deviceId": "dc_power_supply",
+          "quizId": "psu_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "soldering_station_first_steps",
+      "title": "Soldering station first steps",
+      "description": "Heat up, tin the tip and make a good joint.",
+      "deviceId": "soldering_station",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the soldering station",
+          "deviceId": "soldering_station"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Tip Cleaner in 3D",
+          "deviceId": "soldering_station",
+          "partId": "tip_cleaner"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Set up the station and tin the tip",
+          "deviceId": "soldering_station",
+          "procedureId": "prepare_and_tin_tip"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the soldering station basics quiz",
+          "deviceId": "soldering_station",
+          "quizId": "solder_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "lcr_meter_first_steps",
+      "title": "LCR meter first steps",
+      "description": "Measure a capacitor and understand the test settings.",
+      "deviceId": "lcr_meter",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the lcr meter",
+          "deviceId": "lcr_meter"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Test Socket in 3D",
+          "deviceId": "lcr_meter",
+          "partId": "test_socket"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Measure a capacitor",
+          "deviceId": "lcr_meter",
+          "procedureId": "measure_capacitor"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the lcr meter basics quiz",
+          "deviceId": "lcr_meter",
+          "quizId": "lcr_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "insulation_tester_first_steps",
+      "title": "Insulation tester first steps",
+      "description": "Learn the warnings and test insulation resistance safely.",
+      "deviceId": "insulation_tester",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the insulation tester",
+          "deviceId": "insulation_tester"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Live Circuit Warning in 3D",
+          "deviceId": "insulation_tester",
+          "partId": "live_circuit_indicator"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Measure insulation resistance of a cable or motor",
+          "deviceId": "insulation_tester",
+          "procedureId": "measure_insulation_resistance"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the insulation tester basics quiz",
+          "deviceId": "insulation_tester",
+          "quizId": "insulation_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "breadboard_trainer_first_steps",
+      "title": "Digital trainer first steps",
+      "description": "Build and test your first logic circuit.",
+      "deviceId": "breadboard_trainer",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the breadboard / digital trainer",
+          "deviceId": "breadboard_trainer"
+        },
+        {
+          "id": "t2",
+          "type": "identify_part",
+          "title": "Find the Logic Switches in 3D",
+          "deviceId": "breadboard_trainer",
+          "partId": "logic_switches"
+        },
+        {
+          "id": "t3",
+          "type": "complete_procedure",
+          "title": "Build and test a logic gate circuit",
+          "deviceId": "breadboard_trainer",
+          "procedureId": "build_and_test_gate"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the digital trainer basics quiz",
+          "deviceId": "breadboard_trainer",
+          "quizId": "trainer_basics",
+          "minScorePct": 70
+        }
+      ]
+    },
+    {
+      "id": "bench_basics",
+      "title": "Bench basics",
+      "description": "Power a circuit, then check it with a multimeter and an oscilloscope.",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the DC power supply",
+          "deviceId": "dc_power_supply"
+        },
+        {
+          "id": "t2",
+          "type": "complete_procedure",
+          "title": "Set the voltage and current limit",
+          "deviceId": "dc_power_supply",
+          "procedureId": "set_voltage_current_limit"
+        },
+        {
+          "id": "t3",
+          "type": "scan",
+          "title": "Scan the digital multimeter",
+          "deviceId": "digital_multimeter"
+        },
+        {
+          "id": "t4",
+          "type": "complete_procedure",
+          "title": "Measure DC voltage",
+          "deviceId": "digital_multimeter",
+          "procedureId": "measure_dc_voltage"
+        },
+        {
+          "id": "t5",
+          "type": "scan",
+          "title": "Scan the digital oscilloscope",
+          "deviceId": "digital_oscilloscope"
+        },
+        {
+          "id": "t6",
+          "type": "complete_procedure",
+          "title": "Compensate a 10X probe",
+          "deviceId": "digital_oscilloscope",
+          "procedureId": "compensate_probe"
+        }
+      ]
+    },
+    {
+      "id": "measure_and_test",
+      "title": "Measure and test",
+      "description": "Compare three ways to measure: current, component values and insulation.",
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "scan",
+          "title": "Scan the digital clamp meter",
+          "deviceId": "digital_clamp_meter"
+        },
+        {
+          "id": "t2",
+          "type": "complete_procedure",
+          "title": "Measure AC current with the jaws",
+          "deviceId": "digital_clamp_meter",
+          "procedureId": "measure_ac_current"
+        },
+        {
+          "id": "t3",
+          "type": "scan",
+          "title": "Scan the LCR meter",
+          "deviceId": "lcr_meter"
+        },
+        {
+          "id": "t4",
+          "type": "pass_quiz",
+          "title": "Pass the LCR meter quiz",
+          "deviceId": "lcr_meter",
+          "quizId": "lcr_basics",
+          "minScorePct": 70
+        },
+        {
+          "id": "t5",
+          "type": "scan",
+          "title": "Scan the insulation tester",
+          "deviceId": "insulation_tester"
+        },
+        {
+          "id": "t6",
+          "type": "pass_quiz",
+          "title": "Pass the insulation tester quiz",
+          "deviceId": "insulation_tester",
+          "quizId": "insulation_basics",
+          "minScorePct": 70
+        }
+      ]
+    }
+  ]
+}

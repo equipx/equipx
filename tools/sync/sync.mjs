@@ -24,7 +24,7 @@ const ids = index.devices.map((d) => d.id);
 const contentDests = ['android/app/src/main/assets/content', 'admin/src/data/seed'];
 const modelDests = ['android/app/src/main/assets/models', 'admin/public/models'];
 
-const keepContent = new Set(['index.json', ...ids.map((id) => `${id}.json`)]);
+const keepContent = new Set(['index.json', 'missions.json', ...ids.map((id) => `${id}.json`)]);
 const keepModels = new Set(ids.flatMap((id) => [`${id}.glb`, `${id}.hotspots.json`]));
 
 function sync(destRel, files, keep, stalePattern) {
@@ -40,7 +40,8 @@ function sync(destRel, files, keep, stalePattern) {
   console.log(`synced ${files.length} file(s) -> ${destRel}`);
 }
 
-const contentFiles = [['index.json', p('content/index.json')], ...ids.map((id) => [`${id}.json`, p(`content/${id}.json`)])];
+const hasMissions = fs.existsSync(p('content/missions.json'));
+const contentFiles = [['index.json', p('content/index.json')], ...(hasMissions ? [['missions.json', p('content/missions.json')]] : []), ...ids.map((id) => [`${id}.json`, p(`content/${id}.json`)])];
 const modelFiles = ids.flatMap((id) => [`${id}.glb`, `${id}.hotspots.json`].map((n) => [n, p('tools/gen-models/out', n)]));
 for (const [, src] of modelFiles) if (!fs.existsSync(src)) { console.error(`missing generated file ${src}`); process.exit(1); }
 

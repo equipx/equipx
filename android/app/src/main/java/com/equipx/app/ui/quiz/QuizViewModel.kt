@@ -4,7 +4,9 @@ import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.equipx.app.data.ContentRepository
+import com.equipx.app.data.ActivityTracker
 import com.equipx.app.data.ProgressRepository
+import com.equipx.app.domain.ActivityEvent
 import com.equipx.app.domain.Quiz
 import com.equipx.app.domain.QuizAttempt
 import com.equipx.app.domain.QuizResult
@@ -46,6 +48,7 @@ class QuizViewModel(
     private val quizId: String,
     private val content: ContentRepository,
     private val progress: ProgressRepository,
+    private val tracker: ActivityTracker,
 ) : ViewModel() {
     private val _state = MutableStateFlow<QuizUiState>(QuizUiState.Loading)
     val state: StateFlow<QuizUiState> = _state.asStateFlow()
@@ -97,6 +100,8 @@ class QuizViewModel(
         if (s.revealed) return
         val answers = s.answers.toMutableList().also { it[s.index] = option }
         _state.value = s.copy(answers = answers, revealed = true)
+        val q = s.quiz.questions[s.index]
+        tracker.post(ActivityEvent.QuizAnswered("$deviceId:$quizId:${q.id}", option == q.correctIndex))
         // Last answer is in: the clock must not be able to flag this attempt as timed out.
         if (s.isLast) timerJob?.cancel()
     }
@@ -115,21 +120,19 @@ class QuizViewModel(
         val duration = elapsedSec().let { if (limit != null) it.coerceAtMost(limit) else it }
         val result = QuizScorer.score(s.quiz, s.answers)
         _state.value = QuizUiState.Finished(s.quiz, result, s.answers, duration, timedOut)
-        viewModelScope.launch {
-            progress.saveQuizAttempt(
-                QuizAttempt(
-                    deviceId = deviceId,
-                    quizId = s.quiz.id,
-                    quizTitle = s.quiz.title,
-                    completedAtMillis = System.currentTimeMillis(),
-                    total = result.total,
-                    correct = result.correct,
-                    answers = result.results.map { it.selectedIndex },
-                    durationSec = duration,
-                    timedOut = timedOut,
-                ),
-            )
-        }
+        val attempt = QuizAttempt(
+            deviceId = deviceId,
+            quizId = s.quiz.id,
+            quizTitle = s.quiz.title,
+            completedAtMillis = System.currentTimeMillis(),
+            total = result.total,
+            correct = result.correct,
+            answers = result.results.map { it.selectedIndex },
+            durationSec = duration,
+            timedOut = timedOut,
+        )
+        viewModelScope.launch { progress.saveQuizAttempt(attempt) }
+        tracker.post(ActivityEvent.QuizCompleted(attempt))
     }
 
     override fun onCleared() { timerJob?.cancel() }

@@ -3,6 +3,7 @@ package com.equipx.app.data
 import android.content.res.AssetManager
 import com.equipx.app.domain.Device
 import com.equipx.app.domain.DeviceSummary
+import com.equipx.app.domain.Mission
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -12,6 +13,9 @@ interface ContentRepository {
 
     /** Full content for one device; failure when missing or invalid. */
     suspend fun getDevice(id: String): Result<Device>
+
+    /** Missions from `content/missions.json`; an empty list when the file is missing, failure when invalid. */
+    suspend fun getMissions(): Result<List<Mission>>
 
     /** True when the bundled asset at [path] (relative to `assets/`, e.g. `models/x.glb`) exists. */
     suspend fun assetExists(path: String): Boolean
@@ -29,6 +33,17 @@ class AssetContentRepository(private val assets: AssetManager) : ContentReposito
 
     override suspend fun getDevice(id: String): Result<Device> = withContext(Dispatchers.IO) {
         runCatching { ContentParser.parseDevice(read("content/$id.json")) }
+    }
+
+    override suspend fun getMissions(): Result<List<Mission>> = withContext(Dispatchers.IO) {
+        val text = try {
+            read("content/missions.json")
+        } catch (_: java.io.FileNotFoundException) {
+            return@withContext Result.success(emptyList())
+        } catch (e: java.io.IOException) {
+            return@withContext Result.success(emptyList())
+        }
+        runCatching { ContentParser.parseMissions(text) }
     }
 
     override suspend fun assetExists(path: String): Boolean = withContext(Dispatchers.IO) {

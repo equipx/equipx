@@ -146,7 +146,7 @@ private fun PermissionPrompt(
 
 @Composable
 private fun CameraContent(onOpenExplorer: (String) -> Unit) {
-    val vm = appViewModel { ScanViewModel(it.createDetector(), it.contentRepository) }
+    val vm = appViewModel { ScanViewModel(it.createDetector(), it.contentRepository, it.activityTracker) }
     val detections by vm.detections.collectAsStateWithLifecycle()
     val names by vm.names.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { vm.reset() }
@@ -156,7 +156,7 @@ private fun CameraContent(onOpenExplorer: (String) -> Unit) {
         DetectionOverlay(
             detections = detections,
             nameFor = { names[it.deviceId] ?: it.label },
-            onChipTap = { onOpenExplorer(it.deviceId) },
+            onChipTap = { vm.onChipTapped(it.deviceId); onOpenExplorer(it.deviceId) },
         )
         if (detections.isEmpty()) {
             Text(

@@ -5,6 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.equipx.app.ui.gamification.BadgeToastHost
 import com.equipx.app.ui.nav.EquipXNavHost
 import com.equipx.app.ui.theme.EquipXTheme
 
@@ -15,7 +20,12 @@ class MainActivity : ComponentActivity() {
         val container = (application as EquipXApp).container
         setContent {
             CompositionLocalProvider(LocalAppContainer provides container) {
-                EquipXTheme { EquipXNavHost() }
+                EquipXTheme {
+                    Box(Modifier.fillMaxSize()) {
+                        EquipXNavHost()
+                        BadgeToastHost(container.activityTracker, Modifier.align(Alignment.TopCenter))
+                    }
+                }
             }
         }
     }

@@ -43,6 +43,8 @@ private enum class Tab(val label: String, val icon: ImageVector) {
 fun MainScreen(
     onOpenExplorer: (String) -> Unit,
     onOpenDevice: (String) -> Unit,
+    onOpenProcedure: (String, String) -> Unit,
+    onOpenQuiz: (String, String) -> Unit,
     onOpenCredits: () -> Unit,
     onLoggedOut: () -> Unit,
 ) {
@@ -79,7 +81,12 @@ fun MainScreen(
             when (tab) {
                 Tab.Scan -> ScanScreen(onOpenExplorer = onOpenExplorer)
                 Tab.Learn -> LearnScreen(onOpenDevice = onOpenDevice)
-                Tab.Missions -> MissionsScreen()
+                Tab.Missions -> MissionsScreen(
+                    onGoToScan = { selected = Tab.Scan.ordinal },
+                    onOpenExplorer = onOpenExplorer,
+                    onOpenProcedure = onOpenProcedure,
+                    onOpenQuiz = onOpenQuiz,
+                )
                 Tab.Profile -> ProfileScreen(onOpenCredits = onOpenCredits, onLoggedOut = onLoggedOut)
             }
         }

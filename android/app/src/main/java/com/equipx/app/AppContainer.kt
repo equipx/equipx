@@ -3,6 +3,7 @@ package com.equipx.app
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.equipx.app.data.ActivityTracker
 import com.equipx.app.data.AssetContentRepository
 import com.equipx.app.data.AuthRepository
 import com.equipx.app.data.ContentRepository
@@ -19,6 +20,7 @@ class AppContainer(context: Context) {
     val contentRepository: ContentRepository = AssetContentRepository(appContext.assets)
     val authRepository: AuthRepository = MockAuthRepository(appContext.equipXDataStore)
     val progressRepository: ProgressRepository = DataStoreProgressRepository(appContext.equipXDataStore)
+    val activityTracker = ActivityTracker(progressRepository, contentRepository)
     fun createDetector(): Detector = FakeDetector()
 }
 
