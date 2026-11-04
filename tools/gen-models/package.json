@@ -1,0 +1,12 @@
+{
+  "name": "equipx-gen-models",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates GLB models and hotspots.json from /content/<device>.json layouts",
+  "scripts": { "gen": "node src/generate.mjs" },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1",
+    "gltf-validator": "2.0.0-dev.3.10"
+  }
+}

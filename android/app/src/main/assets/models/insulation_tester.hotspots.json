@@ -1,0 +1,131 @@
+{
+  "deviceId": "insulation_tester",
+  "hotspots": [
+    {
+      "partId": "lcd_display",
+      "number": 1,
+      "position": [
+        0,
+        0.045,
+        0.04
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "range_selector",
+      "number": 2,
+      "position": [
+        0,
+        -0.003,
+        0.049
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "test_button",
+      "number": 3,
+      "position": [
+        0.03,
+        -0.052,
+        0.045
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "live_circuit_indicator",
+      "number": 4,
+      "position": [
+        -0.04,
+        0,
+        0.04
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "line_terminal",
+      "number": 5,
+      "position": [
+        -0.01,
+        -0.052,
+        0.047
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "earth_terminal",
+      "number": 6,
+      "position": [
+        -0.04,
+        -0.052,
+        0.047
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "red_probe",
+      "number": 7,
+      "position": [
+        0.0995,
+        0,
+        0
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "partId": "black_clip",
+      "number": 8,
+      "position": [
+        -0.0995,
+        0,
+        0
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "partId": "rubber_holster",
+      "number": 9,
+      "position": [
+        0,
+        0,
+        -0.04
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>EquipX Explorer</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #F7F7F5; overflow: hidden;
+    font-family: -apple-system, "Inter", Roboto, sans-serif; }
+  model-viewer { width: 100vw; height: 100vh; height: 100dvh; background-color: #F7F7F5; --poster-color: #F7F7F5;
+    --progress-bar-color: transparent; }
+  model-viewer::part(default-progress-bar) { display: none; }
+  .hotspot {
+    display: block; width: 24px; height: 24px; padding: 0; box-sizing: border-box;
+    border-radius: 50%; border: 1px solid #37352F; background: #FFFFFF; color: #37352F;
+    font-size: 11px; font-weight: 600; line-height: 22px; text-align: center;
+    cursor: pointer; transition: opacity .2s, background-color .2s, border-color .2s;
+    --min-hotspot-opacity: 0.35;
+  }
+  .hotspot:not([data-visible]) { opacity: 0.35; }
+  .hotspot.selected { background: #2383E2; border-color: #2383E2; color: #FFFFFF; }
+</style>
+<script type="module" src="model-viewer.min.js" onerror="try{window.EquipX&&EquipX.onModelError('Viewer failed to load')}catch(e){}"></script>
+</head>
+<body>
+<model-viewer id="mv"
+  camera-controls
+  touch-action="none"
+  environment-image="neutral"
+  exposure="1.0"
+  shadow-intensity="0.4"
+  shadow-softness="1"
+  interaction-prompt="none"
+  disable-pan>
+</model-viewer>
+<script src="explorer.js"></script>
+</body>
+</html>

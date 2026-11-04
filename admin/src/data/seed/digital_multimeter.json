@@ -1,0 +1,548 @@
+{
+  "id": "digital_multimeter",
+  "name": "Digital Multimeter",
+  "category": "Measurement",
+  "summary": "Handheld meter for measuring voltage, current and resistance, and testing continuity.",
+  "overview": "A digital multimeter (DMM) combines a voltmeter, ammeter and ohmmeter in one handheld instrument. A rotary selector picks the function and the red and black test leads plug into jacks on the lower face. The result appears on an LCD. Always match the function, range and jack to the measurement, and respect the meter's CAT rating.",
+  "model": {
+    "asset": "models/digital_multimeter.glb",
+    "hotspots": "models/digital_multimeter.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.45m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.09,
+      "height": 0.18,
+      "depth": 0.045,
+      "cornerRadius": 0.008,
+      "color": "#D9D7D2"
+    },
+    "parts": [
+      {
+        "id": "lcd_display",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          0,
+          0.062
+        ],
+        "size": [
+          0.07,
+          0.04,
+          0.003
+        ],
+        "color": "#9FB3A5"
+      },
+      {
+        "id": "hold_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.027,
+          0.028
+        ],
+        "size": [
+          0.02,
+          0.01,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "range_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0,
+          0.028
+        ],
+        "size": [
+          0.02,
+          0.01,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "select_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.027,
+          0.028
+        ],
+        "size": [
+          0.02,
+          0.01,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "rotary_selector",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0,
+          -0.024
+        ],
+        "size": [
+          0.05,
+          0.05,
+          0.012
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "ten_amp_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.027,
+          -0.071
+        ],
+        "size": [
+          0.012,
+          0.012,
+          0.005
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "vohm_ma_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0,
+          -0.071
+        ],
+        "size": [
+          0.012,
+          0.012,
+          0.005
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "com_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.027,
+          -0.071
+        ],
+        "size": [
+          0.012,
+          0.012,
+          0.005
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "rubber_holster",
+        "type": "handle",
+        "face": "back",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          0.072,
+          0.162,
+          0.003
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "test_probes",
+        "type": "probe",
+        "face": "right",
+        "position": [
+          0,
+          -0.04
+        ],
+        "size": [
+          0.006,
+          0.006,
+          0.045
+        ],
+        "color": "#A34A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "lcd_display",
+      "number": 1,
+      "name": "LCD Display",
+      "function": "Shows the measured value, its unit, the polarity sign and status symbols such as HOLD, low battery and OL (overload / out of range).",
+      "usage": "Read the digits together with the unit and the range shown. A leading minus sign means the leads are connected with reverse polarity. OL means the input is above the selected range or the circuit is open.",
+      "safety": [
+        "If the display is blank or flickers, do not trust earlier readings; check the battery before measuring a live circuit."
+      ]
+    },
+    {
+      "id": "rotary_selector",
+      "number": 2,
+      "name": "Rotary Function Selector",
+      "function": "Selects the measurement function: AC or DC voltage, resistance, continuity, diode test, capacitance, and current ranges. It also turns the meter off.",
+      "usage": "Turn the dial so the pointer lines up with the function you need before connecting the probes to the circuit. Set it to OFF when finished.",
+      "safety": [
+        "Never turn the selector while the probes are connected to a live circuit.",
+        "Select the function first, then connect; a wrong setting such as current mode on a voltage source can cause a short circuit."
+      ]
+    },
+    {
+      "id": "com_jack",
+      "number": 3,
+      "name": "COM Jack",
+      "function": "Common (negative) input. The black test lead stays here for every measurement.",
+      "usage": "Plug the black lead into COM. It serves as the reference for voltage, resistance and current readings.",
+      "safety": [
+        "Connect the black lead first and disconnect it last when working on live circuits."
+      ]
+    },
+    {
+      "id": "vohm_ma_jack",
+      "number": 4,
+      "name": "V/Ohm/mA Jack",
+      "function": "Positive input for voltage, resistance, continuity, diode test and small current (milliamp range) measurements.",
+      "usage": "Plug the red lead here for voltage and resistance. Use it for mA current only when the selector is on the mA range.",
+      "safety": [
+        "Do not connect the leads in current mode across a voltage source such as a battery or mains outlet; this causes a short circuit and can blow the fuse or injure you."
+      ]
+    },
+    {
+      "id": "ten_amp_jack",
+      "number": 5,
+      "name": "10A Jack",
+      "function": "Positive input for large current measurements, up to the meter's rated maximum (typically 10 A for a limited time). It is protected by a high-energy fuse.",
+      "usage": "Move the red lead to this jack and set the selector to the A range when the current may exceed the mA range limit. Connect the meter in series with the load.",
+      "safety": [
+        "Only measure current in series with the load, never across a voltage source.",
+        "Observe the maximum measurement time marked on the meter and never replace its fuse with a different rating."
+      ]
+    },
+    {
+      "id": "hold_button",
+      "number": 6,
+      "name": "HOLD Button",
+      "function": "Freezes the current reading on the display so it can be read after the probes are removed.",
+      "usage": "Press HOLD to freeze the value and press it again to release. The HOLD symbol shows on the display while active.",
+      "safety": [
+        "A held value does not update. Release HOLD before taking a new reading to avoid misreading an old value."
+      ]
+    },
+    {
+      "id": "range_button",
+      "number": 7,
+      "name": "RANGE Button",
+      "function": "Switches between auto-range and manual range selection.",
+      "usage": "Press RANGE to step through the fixed ranges, and hold it for about two seconds to return to auto-range. Use manual range for a stable reading when auto-range keeps hunting.",
+      "safety": [
+        "When using a manual range for an unknown voltage, start with the highest range and work down."
+      ]
+    },
+    {
+      "id": "select_button",
+      "number": 8,
+      "name": "SELECT / Backlight Button",
+      "function": "Cycles through functions that share a dial position (for example DC, AC, resistance and continuity), and in many models switches the backlight on with a long press.",
+      "usage": "Press SELECT to change the mode shown for the dial position. Hold it for about two seconds, or follow your meter's manual, to turn the backlight on or off.",
+      "safety": [
+        "Check the mode symbol on the display after pressing SELECT, before you connect the leads."
+      ]
+    },
+    {
+      "id": "rubber_holster",
+      "number": 9,
+      "name": "Rubber Holster",
+      "function": "Protective rubber cover that absorbs shock from drops and insulates the case. It often includes a tilt stand and probe storage.",
+      "usage": "Leave the holster on during use. Use the stand to tilt the meter for reading on the bench.",
+      "safety": [
+        "Do not use the meter if the case or holster is cracked or has exposed internal parts."
+      ]
+    },
+    {
+      "id": "test_probes",
+      "number": 10,
+      "name": "Test Probes",
+      "function": "A pair of insulated leads, red (positive) and black (negative), with metal tips for touching the circuit under test.",
+      "usage": "Insert the plugs into the jacks, then touch the tips to the two measurement points. Keep your fingers behind the finger guards.",
+      "safety": [
+        "Use only leads rated at or above the CAT rating and voltage of the circuit.",
+        "Inspect the leads for cracks or exposed metal before every use and replace damaged ones."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Check the meter's CAT rating (CAT II, III or IV) and voltage rating, and only use it on circuits within those limits.",
+    "Never measure current by connecting the meter across a voltage source; current is measured in series with the load.",
+    "Inspect the meter and test leads for damage before use. Do not use a meter with cracked insulation or a damaged case.",
+    "Set the selector and move the lead to the correct jack before connecting to the circuit, and never change the selector while the probes are live.",
+    "Measure resistance, continuity and diodes only on a de-energized circuit with capacitors discharged.",
+    "Keep your fingers behind the probe finger guards and use one hand where possible on high voltages."
+  ],
+  "procedures": [
+    {
+      "id": "measure_dc_voltage",
+      "title": "Measure DC voltage",
+      "steps": [
+        {
+          "text": "Inspect the meter and test leads for damage, and confirm the circuit voltage is within the meter's rating.",
+          "partId": "test_probes"
+        },
+        {
+          "text": "Plug the black lead into the COM jack.",
+          "partId": "com_jack"
+        },
+        {
+          "text": "Plug the red lead into the V/Ohm/mA jack.",
+          "partId": "vohm_ma_jack"
+        },
+        {
+          "text": "Turn the rotary selector to the DC voltage position.",
+          "partId": "rotary_selector"
+        },
+        {
+          "text": "Press SELECT if needed until the display shows the DC voltage symbol.",
+          "partId": "select_button"
+        },
+        {
+          "text": "Touch the black probe to the negative (ground) point and the red probe to the positive point, in parallel with the component being measured.",
+          "partId": "test_probes"
+        },
+        {
+          "text": "Read the value and unit on the display; a minus sign means the polarity is reversed.",
+          "partId": "lcd_display"
+        },
+        {
+          "text": "Press HOLD if you need to freeze the reading, then press it again to release.",
+          "partId": "hold_button"
+        },
+        {
+          "text": "Remove the red probe first, then the black probe, and turn the selector to OFF.",
+          "partId": "rotary_selector"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "no_display",
+      "symptom": "The meter is switched on with the selector turned, but the display is blank.",
+      "options": [
+        {
+          "id": "dead_battery",
+          "text": "The internal battery is flat"
+        },
+        {
+          "id": "blown_fuse",
+          "text": "The 10A fuse has blown"
+        },
+        {
+          "id": "hold_active",
+          "text": "The HOLD function is active"
+        },
+        {
+          "id": "wrong_jack",
+          "text": "The red lead is in the wrong jack"
+        }
+      ],
+      "correctOptionId": "dead_battery",
+      "explanation": "A blank display with a working selector points to a flat battery. A blown fuse affects current measurements only, HOLD freezes digits but leaves them visible, and a wrong jack does not blank the screen.",
+      "relatedPartIds": [
+        "lcd_display",
+        "rotary_selector"
+      ]
+    },
+    {
+      "id": "current_reads_zero",
+      "symptom": "Measuring current in a circuit that is clearly working, the meter reads 0.00 mA, and the same lead position worked yesterday.",
+      "options": [
+        {
+          "id": "blown_fuse",
+          "text": "The meter's current fuse has blown"
+        },
+        {
+          "id": "range_stuck",
+          "text": "The RANGE button is stuck"
+        },
+        {
+          "id": "backlight_off",
+          "text": "The backlight is off"
+        },
+        {
+          "id": "battery_low",
+          "text": "The battery is slightly low"
+        }
+      ],
+      "correctOptionId": "blown_fuse",
+      "explanation": "A blown current fuse leaves the circuit open in the meter, so no current flows through it and the reading is zero. This commonly happens after connecting in current mode across a voltage source. Replace it only with a fuse of the exact rating and type.",
+      "relatedPartIds": [
+        "vohm_ma_jack",
+        "ten_amp_jack"
+      ]
+    },
+    {
+      "id": "ghost_voltage",
+      "symptom": "A switched-off, unconnected cable shows 0.3 V AC to ground, and the reading fluctuates.",
+      "options": [
+        {
+          "id": "capacitive_coupling",
+          "text": "Induced voltage from nearby live wires (ghost voltage)"
+        },
+        {
+          "id": "broken_meter",
+          "text": "The meter is faulty and must be discarded"
+        },
+        {
+          "id": "wrong_polarity",
+          "text": "The probes are connected with reverse polarity"
+        },
+        {
+          "id": "hold_on",
+          "text": "HOLD is freezing an old reading"
+        }
+      ],
+      "correctOptionId": "capacitive_coupling",
+      "explanation": "The high input impedance of a DMM picks up small voltages induced by neighbouring live conductors. A low impedance mode, or a load, makes it disappear, and the reading is not a real supply voltage.",
+      "relatedPartIds": [
+        "rotary_selector",
+        "test_probes",
+        "lcd_display"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "dmm_basics",
+      "title": "Multimeter basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Which jack does the black test lead normally use?",
+          "options": [
+            "10A",
+            "V/Ohm/mA",
+            "COM",
+            "Any free jack"
+          ],
+          "correctIndex": 2,
+          "explanation": "The black lead stays in the COM (common) jack for all measurements."
+        },
+        {
+          "id": "q2",
+          "prompt": "How is a current measured with a multimeter?",
+          "options": [
+            "In parallel with the load",
+            "In series with the load",
+            "Across the voltage source",
+            "With the circuit open and the probes not touching anything"
+          ],
+          "correctIndex": 1,
+          "explanation": "The current must flow through the meter, so the meter is connected in series."
+        },
+        {
+          "id": "q3",
+          "prompt": "What does OL on the display mean?",
+          "options": [
+            "The input is over range or the circuit is open",
+            "Output low",
+            "The meter is locked",
+            "Optical level"
+          ],
+          "correctIndex": 0,
+          "explanation": "OL means overload: the value is above the selected range, or there is an open circuit when measuring resistance."
+        },
+        {
+          "id": "q4",
+          "prompt": "You want to measure a resistor. What must be true about the circuit?",
+          "options": [
+            "It must be live",
+            "It must be connected to the 10A jack",
+            "The HOLD button must be pressed",
+            "It must be powered off"
+          ],
+          "correctIndex": 3,
+          "explanation": "Resistance is measured on a de-energized circuit, otherwise the reading is wrong and the meter can be damaged."
+        },
+        {
+          "id": "q5",
+          "prompt": "A minus sign appears before a DC voltage reading. What does it indicate?",
+          "options": [
+            "The battery is flat",
+            "The meter is broken",
+            "The probes are connected with reverse polarity",
+            "The range is too low"
+          ],
+          "correctIndex": 2,
+          "explanation": "The red probe is on the more negative point. The reading is correct in magnitude; just swap probes if needed."
+        },
+        {
+          "id": "q6",
+          "prompt": "What does the HOLD button do?",
+          "options": [
+            "Locks the rotary selector",
+            "Freezes the current reading on the display",
+            "Turns the backlight on",
+            "Saves the value to memory"
+          ],
+          "correctIndex": 1,
+          "explanation": "HOLD freezes the displayed value so you can read it after removing the probes."
+        },
+        {
+          "id": "q7",
+          "prompt": "Which meter rating is the safest choice for measuring at a building's main distribution panel?",
+          "options": [
+            "CAT III or higher, with a suitable voltage rating",
+            "CAT I",
+            "CAT II",
+            "No rating is needed"
+          ],
+          "correctIndex": 0,
+          "explanation": "Distribution panels are CAT III locations, so use a meter rated CAT III or CAT IV at the appropriate voltage."
+        },
+        {
+          "id": "q8",
+          "prompt": "What should you do before turning the rotary selector to a different function?",
+          "options": [
+            "Press HOLD",
+            "Switch to the 10A jack",
+            "Nothing, it is safe at any time",
+            "Disconnect the probes from the live circuit"
+          ],
+          "correctIndex": 3,
+          "explanation": "Never change the function while connected to a live circuit; arcing or a short can occur inside the switch."
+        },
+        {
+          "id": "q9",
+          "prompt": "Why might the meter read zero when measuring current in a working circuit?",
+          "options": [
+            "The battery is too full",
+            "The display is too bright",
+            "The fuse in the current path has blown",
+            "The probes are too long"
+          ],
+          "correctIndex": 2,
+          "explanation": "A blown fuse opens the current path through the meter, so the circuit is not completed and the reading stays at zero."
+        },
+        {
+          "id": "q10",
+          "prompt": "How do you connect the probes to measure the voltage across a component?",
+          "options": [
+            "In series with the component",
+            "In parallel across the component",
+            "Only to the positive terminal",
+            "Through the 10A jack"
+          ],
+          "correctIndex": 1,
+          "explanation": "Voltage is measured between two points, so the meter is connected in parallel with the component."
+        }
+      ]
+    }
+  ]
+}

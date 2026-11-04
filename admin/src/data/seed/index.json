@@ -1,0 +1,64 @@
+{
+  "devices": [
+    {
+      "id": "digital_multimeter",
+      "name": "Digital Multimeter",
+      "category": "Measurement",
+      "summary": "Handheld meter for measuring voltage, current and resistance, and testing continuity."
+    },
+    {
+      "id": "analog_multimeter",
+      "name": "Analog Multimeter",
+      "category": "Measurement",
+      "summary": "Needle-type meter for measuring voltage, current and resistance, read from a printed scale."
+    },
+    {
+      "id": "digital_clamp_meter",
+      "name": "Digital Clamp Meter",
+      "category": "Measurement",
+      "summary": "Clamp-on meter that measures current through a conductor without breaking the circuit, plus voltage and resistance."
+    },
+    {
+      "id": "digital_oscilloscope",
+      "name": "Digital Oscilloscope",
+      "category": "Measurement",
+      "summary": "Bench instrument that displays how a voltage changes over time, used to view, time and measure signals."
+    },
+    {
+      "id": "function_generator",
+      "name": "Function Generator",
+      "category": "Sources",
+      "summary": "Bench source that produces sine, square, ramp and other test waveforms with adjustable frequency, amplitude and offset."
+    },
+    {
+      "id": "dc_power_supply",
+      "name": "DC Power Supply",
+      "category": "Sources",
+      "summary": "Bench source that provides an adjustable DC voltage with an adjustable current limit to power circuits under test."
+    },
+    {
+      "id": "soldering_station",
+      "name": "Soldering Station",
+      "category": "Assembly",
+      "summary": "Temperature-controlled soldering iron station for joining components to circuit boards."
+    },
+    {
+      "id": "lcr_meter",
+      "name": "LCR Meter",
+      "category": "Measurement",
+      "summary": "Instrument that measures inductance, capacitance and resistance, plus quality factor and dissipation factor."
+    },
+    {
+      "id": "insulation_tester",
+      "name": "Insulation Tester",
+      "category": "Measurement",
+      "summary": "High-voltage tester that measures insulation resistance in megohms and checks low-resistance continuity."
+    },
+    {
+      "id": "breadboard_trainer",
+      "name": "Breadboard / Digital Trainer",
+      "category": "Training",
+      "summary": "Bench trainer with solderless breadboard, 5 V supply, logic switches, LEDs, display and clock for building digital circuits."
+    }
+  ]
+}

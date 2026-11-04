@@ -1,0 +1,23 @@
+# Minimal Supabase CLI config for local development (`supabase start` / `supabase db reset`).
+# Nothing here is linked to a remote project.
+project_id = "equipx"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+major_version = 15
+
+[db.migrations]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+enable_signup = true
+
+[auth.email]
+enable_confirmations = false

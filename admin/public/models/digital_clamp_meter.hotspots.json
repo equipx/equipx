@@ -1,0 +1,145 @@
+{
+  "deviceId": "digital_clamp_meter",
+  "hotspots": [
+    {
+      "partId": "fixed_jaw",
+      "number": 1,
+      "position": [
+        -0.02,
+        0.142,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "partId": "movable_jaw",
+      "number": 2,
+      "position": [
+        0.02,
+        0.142,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "partId": "trigger",
+      "number": 3,
+      "position": [
+        0.0425,
+        0.06,
+        0
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "partId": "lcd_display",
+      "number": 4,
+      "position": [
+        0,
+        0.055,
+        0.02
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "rotary_switch",
+      "number": 5,
+      "position": [
+        0,
+        -0.025,
+        0.027
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "hold_button",
+      "number": 6,
+      "position": [
+        -0.014,
+        0.02,
+        0.021
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "select_button",
+      "number": 7,
+      "position": [
+        0.014,
+        0.02,
+        0.021
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "vohm_jack",
+      "number": 8,
+      "position": [
+        0.014,
+        -0.075,
+        0.022
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "com_jack",
+      "number": 9,
+      "position": [
+        -0.014,
+        -0.075,
+        0.022
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "test_leads",
+      "number": 10,
+      "position": [
+        -0.0795,
+        -0.07,
+        0
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ]
+    }
+  ]
+}

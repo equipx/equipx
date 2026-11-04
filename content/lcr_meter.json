@@ -1,0 +1,584 @@
+{
+  "id": "lcr_meter",
+  "name": "LCR Meter",
+  "category": "Measurement",
+  "summary": "Instrument that measures inductance, capacitance and resistance, plus quality factor and dissipation factor.",
+  "overview": "An LCR meter measures the impedance of a component by applying a small AC test signal at a chosen frequency and measuring the voltage and current. From this it calculates inductance (L), capacitance (C) and resistance (R), along with D (dissipation factor), Q (quality factor), ESR and phase angle. A handheld meter has an LCD, a few keys and a test socket or test leads. Components must be removed from live circuits and capacitors discharged before measuring. Based on DER EE DE-5000.",
+  "model": {
+    "asset": "models/lcr_meter.glb",
+    "hotspots": "models/lcr_meter.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.5m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.09,
+      "height": 0.19,
+      "depth": 0.04,
+      "cornerRadius": 0.008,
+      "color": "#3A4A5C"
+    },
+    "parts": [
+      {
+        "id": "lcd_display",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          0,
+          0.062
+        ],
+        "size": [
+          0.07,
+          0.045,
+          0.003
+        ],
+        "color": "#9FB3A5"
+      },
+      {
+        "id": "power_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.027,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#B04040"
+      },
+      {
+        "id": "hold_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "freq_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.027,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "lcr_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.027,
+          -0.008
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "dcr_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0,
+          -0.008
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "ser_par_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.027,
+          -0.008
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "test_socket",
+        "type": "port",
+        "face": "top",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          0.03,
+          0.012,
+          0.015
+        ],
+        "color": "#1E1E1E"
+      },
+      {
+        "id": "test_leads",
+        "type": "probe",
+        "face": "right",
+        "position": [
+          0,
+          -0.04
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.045
+        ],
+        "color": "#A34A4A"
+      },
+      {
+        "id": "battery_cover",
+        "type": "handle",
+        "face": "back",
+        "position": [
+          0,
+          -0.02
+        ],
+        "size": [
+          0.05,
+          0.06,
+          0.003
+        ],
+        "color": "#2B3A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "lcd_display",
+      "number": 1,
+      "name": "LCD Display",
+      "function": "Shows the primary reading (L, C, R or Z) and a secondary reading (D, Q, ESR or phase angle), together with the unit, test frequency, series or parallel mode and status symbols.",
+      "usage": "Read the value together with the unit prefix (for example nF or mH) and the symbols for the equivalent circuit and frequency. A very large or unstable value can mean the component is not connected.",
+      "safety": [
+        "A low-battery symbol means readings may be wrong; replace the battery before relying on measurements."
+      ]
+    },
+    {
+      "id": "power_button",
+      "number": 2,
+      "name": "Power Button",
+      "function": "Switches the meter on and off.",
+      "usage": "Press to switch on and, usually, to switch off. Most meters also turn off automatically after a period without key presses.",
+      "safety": [
+        "Switch the meter off before opening the battery cover."
+      ]
+    },
+    {
+      "id": "lcr_button",
+      "number": 3,
+      "name": "LCR / Auto Button",
+      "function": "Selects the measured quantity: automatic recognition of L, C or R, or a fixed inductance, capacitance or resistance mode.",
+      "usage": "Press to cycle through the modes. Auto mode picks the likely quantity but can be wrong for unusual parts, so choose the mode manually if the result looks odd.",
+      "safety": [
+        "Check the mode symbol on the display before you record a reading."
+      ]
+    },
+    {
+      "id": "dcr_button",
+      "number": 4,
+      "name": "DCR Button",
+      "function": "Measures the DC resistance of the component, as opposed to its AC impedance. It is useful for inductor windings.",
+      "usage": "Press DCR, connect an inductor or resistor and read the resistance. Compare to the datasheet DC resistance value.",
+      "safety": [
+        "Use DCR only on components that are not connected to a power source."
+      ]
+    },
+    {
+      "id": "freq_button",
+      "number": 5,
+      "name": "FREQ Button",
+      "function": "Changes the test frequency, for example between 100 Hz, 120 Hz, 1 kHz, 10 kHz and 100 kHz, depending on the model.",
+      "usage": "Press FREQ to step through the available frequencies. Use a frequency close to the one the component operates at, as capacitance and inductance values vary with frequency.",
+      "safety": [
+        "Do not compare readings taken at different frequencies without noting the frequency used."
+      ]
+    },
+    {
+      "id": "ser_par_button",
+      "number": 6,
+      "name": "SER / PAR Button",
+      "function": "Selects the series or parallel equivalent circuit model used to calculate the displayed value.",
+      "usage": "Use the series model for low-impedance parts such as large capacitors and small inductors, and the parallel model for high-impedance parts such as small capacitors and large inductors, or use the automatic setting.",
+      "safety": [
+        "Record which model was used when writing down a measurement."
+      ]
+    },
+    {
+      "id": "hold_button",
+      "number": 7,
+      "name": "HOLD Button",
+      "function": "Freezes the displayed reading so it can be read after the component is removed.",
+      "usage": "Press HOLD to freeze the display and press again to release. The HOLD symbol shows while it is active.",
+      "safety": [
+        "Release HOLD before the next measurement; a frozen reading does not update."
+      ]
+    },
+    {
+      "id": "test_socket",
+      "number": 8,
+      "name": "Test Socket",
+      "function": "Input connection for the test fixture or leads. Components are placed in the fixture or clipped to the leads so the meter can drive and measure them.",
+      "usage": "Plug in the fixture or leads firmly before switching on. Insert the component leads into the fixture, or clip the leads across the component.",
+      "safety": [
+        "Never apply an external voltage to the test socket.",
+        "Discharge capacitors fully before connecting them to the meter."
+      ]
+    },
+    {
+      "id": "test_leads",
+      "number": 9,
+      "name": "Test Leads / Clips",
+      "function": "Lead set with clips or tweezers for measuring components that do not fit the socket or fixture, including surface-mount parts.",
+      "usage": "Short the clips together and use the meter's zero or open/short calibration function if it has one, then clip across the component. Keep the leads short and still during a measurement.",
+      "safety": [
+        "Do not clip the leads on a live circuit.",
+        "Replace leads that have cracked insulation or loose clips."
+      ]
+    },
+    {
+      "id": "battery_cover",
+      "number": 10,
+      "name": "Battery Cover",
+      "function": "Covers the compartment that holds the battery which powers the meter. Some models can also run from a DC adapter.",
+      "usage": "Open the cover with the meter off and the leads removed, replace the battery with the correct type and polarity, and close the cover.",
+      "safety": [
+        "Remove the leads and switch off before opening the battery compartment.",
+        "Do not leave flat batteries in the meter for long; they can leak."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Measure components only when they are removed from the circuit and the circuit is powered off.",
+    "Discharge every capacitor, especially large electrolytic and high-voltage types, before connecting it to the meter. A charged capacitor can damage the meter and give you a shock.",
+    "Never apply external voltage to the meter's test terminals.",
+    "Do not touch the component leads with your fingers while measuring small values, since body capacitance disturbs the reading.",
+    "Check the battery state and inspect the leads for damage before use."
+  ],
+  "procedures": [
+    {
+      "id": "measure_capacitor",
+      "title": "Measure a capacitor",
+      "steps": [
+        {
+          "text": "Make sure the capacitor is out of the circuit and fully discharged.",
+          "partId": "test_socket"
+        },
+        {
+          "text": "Plug the test fixture or leads into the meter.",
+          "partId": "test_socket"
+        },
+        {
+          "text": "Switch the meter on with the power button.",
+          "partId": "power_button"
+        },
+        {
+          "text": "Press LCR until the capacitance mode (C) is selected, or use auto mode.",
+          "partId": "lcr_button"
+        },
+        {
+          "text": "Press FREQ to select a test frequency suited to the capacitor, for example 1 kHz for most values.",
+          "partId": "freq_button"
+        },
+        {
+          "text": "Choose the series or parallel model with the SER/PAR button if required.",
+          "partId": "ser_par_button"
+        },
+        {
+          "text": "Insert the capacitor into the fixture or clip the leads across it, observing polarity for electrolytic types.",
+          "partId": "test_leads"
+        },
+        {
+          "text": "Read the capacitance and the D or ESR value on the display and compare it to the marked value and tolerance.",
+          "partId": "lcd_display"
+        },
+        {
+          "text": "Press HOLD if you need to freeze the value, then switch the meter off.",
+          "partId": "hold_button"
+        }
+      ]
+    },
+    {
+      "id": "measure_inductor_dcr",
+      "title": "Measure inductance and winding resistance of an inductor",
+      "steps": [
+        {
+          "text": "Remove the inductor from the circuit and make sure no power is connected.",
+          "partId": "test_socket"
+        },
+        {
+          "text": "Switch the meter on.",
+          "partId": "power_button"
+        },
+        {
+          "text": "Press LCR to select inductance mode (L).",
+          "partId": "lcr_button"
+        },
+        {
+          "text": "Set the test frequency with FREQ, using a frequency near the inductor's use.",
+          "partId": "freq_button"
+        },
+        {
+          "text": "Clip the leads across the inductor, away from large metal objects.",
+          "partId": "test_leads"
+        },
+        {
+          "text": "Read the inductance and Q value on the display.",
+          "partId": "lcd_display"
+        },
+        {
+          "text": "Press DCR to measure the winding's DC resistance.",
+          "partId": "dcr_button"
+        },
+        {
+          "text": "Compare the readings with the datasheet values, and switch the meter off.",
+          "partId": "power_button"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "unstable_small_c",
+      "symptom": "A 10 pF capacitor reads 14 pF and the value drifts when you move your hand near the leads.",
+      "options": [
+        {
+          "id": "stray_capacitance",
+          "text": "Stray and body capacitance from long leads and nearby objects"
+        },
+        {
+          "id": "flat_battery",
+          "text": "The battery has leaked"
+        },
+        {
+          "id": "hold_on",
+          "text": "The HOLD function is active"
+        },
+        {
+          "id": "wrong_buzzer",
+          "text": "The meter buzzer is on"
+        }
+      ],
+      "correctOptionId": "stray_capacitance",
+      "explanation": "At picofarad values, lead and body capacitance are significant. Keep the leads short, use the fixture, keep your hands away and do an open/short calibration if the meter offers it.",
+      "relatedPartIds": [
+        "test_leads",
+        "test_socket"
+      ]
+    },
+    {
+      "id": "inductor_wrong_value",
+      "symptom": "A power inductor measures 30 percent lower than its marking at 100 kHz, but is close to the marked value at 1 kHz.",
+      "options": [
+        {
+          "id": "frequency_dependence",
+          "text": "Inductance depends on test frequency and the part is specified at a different frequency"
+        },
+        {
+          "id": "inductor_burnt",
+          "text": "The inductor must be burnt out"
+        },
+        {
+          "id": "dcr_pressed",
+          "text": "DCR mode is selected"
+        },
+        {
+          "id": "screen_broken",
+          "text": "The display is broken"
+        }
+      ],
+      "correctOptionId": "frequency_dependence",
+      "explanation": "The effective inductance of a real inductor changes with frequency because of core and winding effects. Measure at the frequency given in the datasheet before judging the part.",
+      "relatedPartIds": [
+        "freq_button",
+        "lcd_display"
+      ]
+    },
+    {
+      "id": "charged_capacitor_damage",
+      "symptom": "After a large electrolytic capacitor was connected straight from a power supply board, the meter shows nothing and no longer measures capacitance.",
+      "options": [
+        {
+          "id": "charged_cap",
+          "text": "The capacitor was still charged and has damaged the meter's input"
+        },
+        {
+          "id": "wrong_freq",
+          "text": "The test frequency was too low"
+        },
+        {
+          "id": "series_mode",
+          "text": "The series model was selected"
+        },
+        {
+          "id": "cover_open",
+          "text": "The DCR key was pressed first"
+        }
+      ],
+      "correctOptionId": "charged_cap",
+      "explanation": "The meter input is not designed to withstand external voltage. A charged capacitor can destroy the input circuit. Always discharge capacitors through a suitable resistor before connecting them.",
+      "relatedPartIds": [
+        "test_socket",
+        "test_leads"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "lcr_basics",
+      "title": "LCR meter basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What does an LCR meter measure?",
+          "options": [
+            "Light, current and resistance",
+            "Inductance, capacitance and resistance",
+            "Voltage only",
+            "Frequency only"
+          ],
+          "correctIndex": 1,
+          "explanation": "L is inductance, C is capacitance and R is resistance."
+        },
+        {
+          "id": "q2",
+          "prompt": "What must you do to a capacitor before connecting it to the meter?",
+          "options": [
+            "Discharge it fully",
+            "Charge it fully",
+            "Heat it",
+            "Nothing"
+          ],
+          "correctIndex": 0,
+          "explanation": "A charged capacitor can damage the meter and give a shock hazard. Discharge it first."
+        },
+        {
+          "id": "q3",
+          "prompt": "Can an LCR meter be used on a powered circuit?",
+          "options": [
+            "Yes, always",
+            "Only for resistors",
+            "Only at 1 kHz",
+            "No, components must be unpowered and out of circuit"
+          ],
+          "correctIndex": 3,
+          "explanation": "The meter supplies its own test signal. External voltage or parallel parts give wrong readings or damage it."
+        },
+        {
+          "id": "q4",
+          "prompt": "What does the D (dissipation factor) value indicate?",
+          "options": [
+            "The part's colour",
+            "The part's size",
+            "The ratio of energy lost to energy stored, i.e. how lossy the component is",
+            "The supply voltage"
+          ],
+          "correctIndex": 2,
+          "explanation": "D is the ratio of the resistive to the reactive part of the impedance. Lower D means a better, lower-loss component."
+        },
+        {
+          "id": "q5",
+          "prompt": "Q (quality factor) is the reciprocal of which value?",
+          "options": [
+            "L",
+            "D",
+            "C",
+            "R"
+          ],
+          "correctIndex": 1,
+          "explanation": "Q = 1/D. It is usually quoted for inductors, while D is usually quoted for capacitors."
+        },
+        {
+          "id": "q6",
+          "prompt": "Why does test frequency matter?",
+          "options": [
+            "Component values and losses change with frequency",
+            "It changes the screen brightness",
+            "It sets the battery life",
+            "It does not matter"
+          ],
+          "correctIndex": 0,
+          "explanation": "Capacitors and inductors are specified at particular frequencies and real values vary with frequency."
+        },
+        {
+          "id": "q7",
+          "prompt": "Which equivalent model is normally better for a small, high-impedance capacitor?",
+          "options": [
+            "Series",
+            "Neither",
+            "Either gives the same result at all values",
+            "Parallel"
+          ],
+          "correctIndex": 3,
+          "explanation": "High-impedance parts are better described by the parallel model; low-impedance parts by the series model."
+        },
+        {
+          "id": "q8",
+          "prompt": "Why should your fingers not touch the leads when measuring a few picofarads?",
+          "options": [
+            "It is unsafe",
+            "It wears the leads",
+            "Body capacitance adds to the reading",
+            "It stops the display"
+          ],
+          "correctIndex": 2,
+          "explanation": "Your body and nearby objects add stray capacitance that matters for very small values."
+        },
+        {
+          "id": "q9",
+          "prompt": "What is the DCR function used for?",
+          "options": [
+            "Measuring dielectric constant",
+            "Measuring a component's DC resistance, such as an inductor winding",
+            "Setting the display contrast",
+            "Charging a capacitor"
+          ],
+          "correctIndex": 1,
+          "explanation": "DCR measures the DC resistance of a winding or resistor, which is separate from its AC impedance."
+        },
+        {
+          "id": "q10",
+          "prompt": "What is the purpose of the open/short calibration, where the meter offers it?",
+          "options": [
+            "To remove the effect of lead and fixture stray impedance",
+            "To charge the battery",
+            "To increase the frequency",
+            "To reset the buttons"
+          ],
+          "correctIndex": 0,
+          "explanation": "Calibrating with the leads open and then shorted compensates for the fixture and lead errors, improving accuracy for small values."
+        }
+      ]
+    }
+  ]
+}

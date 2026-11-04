@@ -1,0 +1,131 @@
+{
+  "deviceId": "analog_multimeter",
+  "hotspots": [
+    {
+      "partId": "meter_scale",
+      "number": 1,
+      "position": [
+        0,
+        0.035,
+        0.025
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "mechanical_zero",
+      "number": 2,
+      "position": [
+        0,
+        -0.002,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "ohm_adjust",
+      "number": 3,
+      "position": [
+        -0.036,
+        -0.012,
+        0.03
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "range_selector",
+      "number": 4,
+      "position": [
+        0,
+        -0.034,
+        0.034
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "positive_jack",
+      "number": 5,
+      "position": [
+        -0.038,
+        -0.063,
+        0.027
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "common_jack",
+      "number": 6,
+      "position": [
+        0.038,
+        -0.063,
+        0.027
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "battery_fuse_cover",
+      "number": 7,
+      "position": [
+        0,
+        0.03,
+        -0.024
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "partId": "tilt_stand_cover",
+      "number": 8,
+      "position": [
+        0,
+        -0.02,
+        -0.025
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "partId": "test_probes",
+      "number": 9,
+      "position": [
+        0.097,
+        -0.03,
+        0
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

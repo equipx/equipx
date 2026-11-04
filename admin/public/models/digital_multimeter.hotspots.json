@@ -1,0 +1,145 @@
+{
+  "deviceId": "digital_multimeter",
+  "hotspots": [
+    {
+      "partId": "lcd_display",
+      "number": 1,
+      "position": [
+        0,
+        0.062,
+        0.0275
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "rotary_selector",
+      "number": 2,
+      "position": [
+        0,
+        -0.024,
+        0.0365
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "com_jack",
+      "number": 3,
+      "position": [
+        0.027,
+        -0.071,
+        0.0295
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "vohm_ma_jack",
+      "number": 4,
+      "position": [
+        0,
+        -0.071,
+        0.0295
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "ten_amp_jack",
+      "number": 5,
+      "position": [
+        -0.027,
+        -0.071,
+        0.0295
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "hold_button",
+      "number": 6,
+      "position": [
+        -0.027,
+        0.028,
+        0.0285
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "range_button",
+      "number": 7,
+      "position": [
+        0,
+        0.028,
+        0.0285
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "select_button",
+      "number": 8,
+      "position": [
+        0.027,
+        0.028,
+        0.0285
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "rubber_holster",
+      "number": 9,
+      "position": [
+        0,
+        0,
+        -0.0275
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "partId": "test_probes",
+      "number": 10,
+      "position": [
+        0.092,
+        -0.04,
+        0
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

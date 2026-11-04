@@ -1,0 +1,145 @@
+{
+  "deviceId": "digital_oscilloscope",
+  "hotspots": [
+    {
+      "partId": "screen",
+      "number": 1,
+      "position": [
+        -0.055,
+        0.012,
+        0.07
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "softkeys",
+      "number": 2,
+      "position": [
+        -0.045,
+        -0.058,
+        0.071
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "multifunction_knob",
+      "number": 3,
+      "position": [
+        0.075,
+        0.045,
+        0.079
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "run_stop_buttons",
+      "number": 4,
+      "position": [
+        0.118,
+        0.052,
+        0.071
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "vertical_controls",
+      "number": 5,
+      "position": [
+        0.068,
+        0.01,
+        0.079
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "horizontal_controls",
+      "number": 6,
+      "position": [
+        0.102,
+        0.01,
+        0.079
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "trigger_controls",
+      "number": 7,
+      "position": [
+        0.136,
+        0.01,
+        0.079
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "bnc_inputs",
+      "number": 8,
+      "position": [
+        0.095,
+        -0.058,
+        0.082
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "probe_compensation",
+      "number": 9,
+      "position": [
+        0.147,
+        -0.04,
+        0.071
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "power_button",
+      "number": 10,
+      "position": [
+        -0.14,
+        -0.062,
+        0.071
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    }
+  ]
+}

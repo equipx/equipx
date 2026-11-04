@@ -1,0 +1,145 @@
+{
+  "deviceId": "lcr_meter",
+  "hotspots": [
+    {
+      "partId": "lcd_display",
+      "number": 1,
+      "position": [
+        0,
+        0.062,
+        0.025
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "power_button",
+      "number": 2,
+      "position": [
+        -0.027,
+        0.02,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "lcr_button",
+      "number": 3,
+      "position": [
+        -0.027,
+        -0.008,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "dcr_button",
+      "number": 4,
+      "position": [
+        0,
+        -0.008,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "freq_button",
+      "number": 5,
+      "position": [
+        0.027,
+        0.02,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "ser_par_button",
+      "number": 6,
+      "position": [
+        0.027,
+        -0.008,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "hold_button",
+      "number": 7,
+      "position": [
+        0,
+        0.02,
+        0.026
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "test_socket",
+      "number": 8,
+      "position": [
+        0,
+        0.112,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "partId": "test_leads",
+      "number": 9,
+      "position": [
+        0.092,
+        -0.04,
+        0
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "partId": "battery_cover",
+      "number": 10,
+      "position": [
+        0,
+        -0.02,
+        -0.025
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    }
+  ]
+}

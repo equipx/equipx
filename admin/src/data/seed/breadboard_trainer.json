@@ -1,0 +1,585 @@
+{
+  "id": "breadboard_trainer",
+  "name": "Breadboard / Digital Trainer",
+  "category": "Training",
+  "summary": "Bench trainer with solderless breadboard, 5 V supply, logic switches, LEDs, display and clock for building digital circuits.",
+  "overview": "A digital trainer is a bench board for building and testing logic circuits without soldering. It combines a solderless breadboard with a regulated 5 V supply, logic switches for inputs, LEDs and a seven-segment display for outputs, and a clock and pulse source. Students plug ICs and jumper wires into the breadboard and connect them to the trainer's switches, LEDs and clock. Always switch the supply off before changing wiring and check the power connections of every IC. Based on a typical digital logic trainer such as the Global Specialties PB-505A.",
+  "model": {
+    "asset": "models/breadboard_trainer.glb",
+    "hotspots": "models/breadboard_trainer.hotspots.json",
+    "cameraOrbit": "0deg 50deg 0.65m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.3,
+      "height": 0.04,
+      "depth": 0.2,
+      "cornerRadius": 0.008,
+      "color": "#3B4A3F"
+    },
+    "parts": [
+      {
+        "id": "solderless_breadboard",
+        "type": "slot",
+        "face": "top",
+        "position": [
+          -0.025,
+          0.05
+        ],
+        "size": [
+          0.2,
+          0.07,
+          0.008
+        ],
+        "color": "#F2F0EA"
+      },
+      {
+        "id": "power_terminals",
+        "type": "port",
+        "face": "top",
+        "position": [
+          0.115,
+          0.06
+        ],
+        "size": [
+          0.05,
+          0.04,
+          0.012
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "power_switch",
+        "type": "switch",
+        "face": "top",
+        "position": [
+          0.115,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.02,
+          0.01
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "power_led",
+        "type": "led",
+        "face": "top",
+        "position": [
+          0.115,
+          -0.003
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.003
+        ],
+        "color": "#D03030"
+      },
+      {
+        "id": "seven_segment_display",
+        "type": "display",
+        "face": "top",
+        "position": [
+          -0.1,
+          -0.01
+        ],
+        "size": [
+          0.04,
+          0.025,
+          0.004
+        ],
+        "color": "#C0392B"
+      },
+      {
+        "id": "clock_selector",
+        "type": "knob",
+        "face": "top",
+        "position": [
+          -0.03,
+          -0.01
+        ],
+        "size": [
+          0.02,
+          0.02,
+          0.015
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "pulse_button",
+        "type": "button",
+        "face": "top",
+        "position": [
+          0.005,
+          -0.01
+        ],
+        "size": [
+          0.016,
+          0.016,
+          0.006
+        ],
+        "color": "#C03030"
+      },
+      {
+        "id": "clock_output_jack",
+        "type": "port",
+        "face": "top",
+        "position": [
+          0.05,
+          -0.01
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.008
+        ],
+        "color": "#1E1E1E"
+      },
+      {
+        "id": "led_indicators",
+        "type": "led",
+        "face": "top",
+        "position": [
+          -0.075,
+          -0.035
+        ],
+        "size": [
+          0.12,
+          0.012,
+          0.004
+        ],
+        "color": "#D8A030"
+      },
+      {
+        "id": "logic_switches",
+        "type": "switch",
+        "face": "top",
+        "position": [
+          -0.075,
+          -0.07
+        ],
+        "size": [
+          0.12,
+          0.025,
+          0.012
+        ],
+        "color": "#E9E9E7"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "solderless_breadboard",
+      "number": 1,
+      "name": "Solderless Breadboard",
+      "function": "A grid of spring-clip sockets in which ICs, resistors and jumper wires are plugged to build circuits without soldering. Short rows of five holes are connected, and long power rails run along the edges.",
+      "usage": "Place ICs across the centre gap so each pin has its own row. Connect wires between rows to form the circuit. Connect the power rails to the trainer's supply and then to each IC's power pins.",
+      "safety": [
+        "Do not push thick or damaged leads into the sockets, as they can damage the contacts.",
+        "Wire the circuit with the power switched off."
+      ]
+    },
+    {
+      "id": "power_terminals",
+      "number": 2,
+      "name": "Power Supply Terminals",
+      "function": "Binding posts or jacks that provide the regulated +5 V (and ground) supply for TTL logic, and on some trainers extra voltages.",
+      "usage": "Use short wires from the +5 V and ground posts to the breadboard rails. Check the polarity before switching on.",
+      "safety": [
+        "Never connect +5 V directly to ground; this is a short circuit.",
+        "Do not connect an external supply to these posts."
+      ]
+    },
+    {
+      "id": "power_switch",
+      "number": 3,
+      "name": "Power Switch",
+      "function": "Turns the trainer's supply on and off.",
+      "usage": "Switch on only after the wiring has been checked. Switch off before changing connections or inserting and removing ICs.",
+      "safety": [
+        "Switch the trainer off before changing wires or ICs.",
+        "Do not exceed the supply's rated current."
+      ]
+    },
+    {
+      "id": "power_led",
+      "number": 4,
+      "name": "Power Indicator LED",
+      "function": "Shows that the trainer is switched on and the supply is present.",
+      "usage": "Check that it lights when the power is on. If it does not, check the mains connection and the fuse.",
+      "safety": [
+        "If an IC becomes hot, switch off immediately and check the wiring."
+      ]
+    },
+    {
+      "id": "logic_switches",
+      "number": 5,
+      "name": "Logic Switches",
+      "function": "A row of toggle (data) switches that give a logic 1 (+5 V) or logic 0 (ground) to the circuit inputs.",
+      "usage": "Wire a switch output to an IC input. Set the switch up for logic 1 and down for logic 0 and watch the LED outputs.",
+      "safety": [
+        "Do not connect a switch output to an IC output; this can damage both."
+      ]
+    },
+    {
+      "id": "led_indicators",
+      "number": 6,
+      "name": "LED Indicators",
+      "function": "A row of LEDs with series resistors that show the logic level of the connected signals. Lit means logic 1.",
+      "usage": "Connect an IC output to an LED input and read the state. An LED may stay dim or off if the output is floating.",
+      "safety": [
+        "Do not connect an LED directly across the supply without its series resistor."
+      ]
+    },
+    {
+      "id": "seven_segment_display",
+      "number": 7,
+      "name": "Seven-Segment Display",
+      "function": "A display of seven LED segments that shows decimal digits, usually driven through a BCD to seven-segment decoder IC.",
+      "usage": "Feed the four BCD bits from a counter or switches to the decoder inputs and the decoder outputs to the display, as in the trainer's labelling.",
+      "safety": [
+        "Use current-limiting resistors on directly driven segments."
+      ]
+    },
+    {
+      "id": "clock_selector",
+      "number": 8,
+      "name": "Clock Selector",
+      "function": "Selects the frequency of the clock generator, for example 1 Hz, 1 kHz or 10 kHz, or adjusts the speed.",
+      "usage": "Choose a slow clock (1 Hz) to watch a counter count on the LEDs, and a faster clock for oscilloscope measurements.",
+      "safety": [
+        "Rapid flashing LEDs at a high clock rate can bother photosensitive people; use a slow clock for demonstrations."
+      ]
+    },
+    {
+      "id": "pulse_button",
+      "number": 9,
+      "name": "Debounced Pulse Button",
+      "function": "A pushbutton whose output is cleaned by a debounce circuit, giving one clean pulse per press. It is used for single-stepping a counter or flip-flop.",
+      "usage": "Connect the pulser output to a clock input, then press to advance the circuit by one step.",
+      "safety": [
+        "Use the debounced pulser, not a raw switch, as the clock for counters, since contact bounce causes extra counts."
+      ]
+    },
+    {
+      "id": "clock_output_jack",
+      "number": 10,
+      "name": "Clock Output Jack",
+      "function": "Output terminal that provides the TTL clock signal selected by the clock selector.",
+      "usage": "Connect a wire from this jack to the clock input of the IC under test, or to an oscilloscope probe to view the clock.",
+      "safety": [
+        "Do not connect this output to the supply or to another IC output."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Switch the trainer off before inserting or removing ICs or changing any wiring.",
+    "Check the power connections of every IC (Vcc to +5 V, GND to ground) before switching on. Wrong supply wiring can destroy ICs and make them hot.",
+    "Never connect two IC outputs together, and never connect an output directly to the supply or ground.",
+    "Use only TTL-level signals and the trainer's 5 V rail for TTL ICs. Do not apply more than the rated voltage.",
+    "Handle ICs by the body, avoid touching the pins with your hands, and keep them away from static electricity, as CMOS parts are static sensitive.",
+    "Keep liquids away from the trainer and disconnect it from the mains before opening it."
+  ],
+  "procedures": [
+    {
+      "id": "build_and_test_gate",
+      "title": "Build and test a logic gate circuit",
+      "steps": [
+        {
+          "text": "With the power switch off, place the IC across the centre gap of the breadboard.",
+          "partId": "solderless_breadboard"
+        },
+        {
+          "text": "Wire the +5 V and ground posts to the breadboard power rails.",
+          "partId": "power_terminals"
+        },
+        {
+          "text": "Wire the rails to the IC's Vcc and ground pins.",
+          "partId": "solderless_breadboard"
+        },
+        {
+          "text": "Connect two logic switches to the gate inputs.",
+          "partId": "logic_switches"
+        },
+        {
+          "text": "Connect the gate output to an LED indicator.",
+          "partId": "led_indicators"
+        },
+        {
+          "text": "Set all switches to the down (logic 0) position and check the wiring against the circuit diagram.",
+          "partId": "logic_switches"
+        },
+        {
+          "text": "Switch on the power and confirm the power LED is lit.",
+          "partId": "power_switch"
+        },
+        {
+          "text": "Cycle the switches through all input combinations and compare the LED with the truth table.",
+          "partId": "led_indicators"
+        },
+        {
+          "text": "Switch the trainer off.",
+          "partId": "power_switch"
+        }
+      ]
+    },
+    {
+      "id": "build_counter_display",
+      "title": "Build a counter with display",
+      "steps": [
+        {
+          "text": "Power off. Place the counter and BCD-to-seven-segment decoder ICs on the breadboard and wire their power pins.",
+          "partId": "solderless_breadboard"
+        },
+        {
+          "text": "Connect the +5 V and ground posts to the breadboard rails.",
+          "partId": "power_terminals"
+        },
+        {
+          "text": "Select a slow clock frequency (for example 1 Hz).",
+          "partId": "clock_selector"
+        },
+        {
+          "text": "Connect the clock output jack to the counter's clock input.",
+          "partId": "clock_output_jack"
+        },
+        {
+          "text": "Wire the counter's outputs to the decoder inputs and to LED indicators.",
+          "partId": "led_indicators"
+        },
+        {
+          "text": "Wire the decoder outputs to the seven-segment display as labelled on the board.",
+          "partId": "seven_segment_display"
+        },
+        {
+          "text": "Switch on the power and watch the count on the display.",
+          "partId": "power_switch"
+        },
+        {
+          "text": "Switch to the debounced pulse button as the clock to single-step the counter.",
+          "partId": "pulse_button"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "ic_not_working",
+      "symptom": "A gate circuit is wired correctly, but the output LED never changes when the inputs change.",
+      "options": [
+        {
+          "id": "missing_vcc_gnd",
+          "text": "The IC's power or ground pin is not connected, or the rails are not connected to the supply"
+        },
+        {
+          "id": "led_too_bright",
+          "text": "The LED is too bright"
+        },
+        {
+          "id": "clock_fast",
+          "text": "The clock is too fast"
+        },
+        {
+          "id": "display_off",
+          "text": "The seven-segment display is off"
+        }
+      ],
+      "correctOptionId": "missing_vcc_gnd",
+      "explanation": "A logic IC needs correct Vcc and ground. A missing connection (often the rails or the pins) is the most common wiring error. Switch off, check the power pins with a multimeter and fix the wiring.",
+      "relatedPartIds": [
+        "solderless_breadboard",
+        "power_terminals"
+      ]
+    },
+    {
+      "id": "counter_skips",
+      "symptom": "A counter driven by a plain switch counts by several steps on each press.",
+      "options": [
+        {
+          "id": "contact_bounce",
+          "text": "Switch contact bounce produces extra clock pulses"
+        },
+        {
+          "id": "power_low",
+          "text": "The power LED is off"
+        },
+        {
+          "id": "decoder_wrong",
+          "text": "The seven-segment display is broken"
+        },
+        {
+          "id": "clock_off",
+          "text": "The clock selector is at 1 Hz"
+        }
+      ],
+      "correctOptionId": "contact_bounce",
+      "explanation": "A mechanical switch bounces for a few milliseconds, creating several edges. Use the debounced pulse button (or add a debounce circuit) for manual clock input.",
+      "relatedPartIds": [
+        "pulse_button",
+        "logic_switches"
+      ]
+    },
+    {
+      "id": "wrong_digits",
+      "symptom": "The counter outputs and LEDs show correct binary values, but the seven-segment display shows incorrect shapes.",
+      "options": [
+        {
+          "id": "decoder_wiring",
+          "text": "The BCD bits or segment lines to the display are miswired or swapped"
+        },
+        {
+          "id": "cable_loose",
+          "text": "The mains cable is loose"
+        },
+        {
+          "id": "switch_up",
+          "text": "The power switch is up"
+        },
+        {
+          "id": "ic_cold",
+          "text": "The IC is cold"
+        }
+      ],
+      "correctOptionId": "decoder_wiring",
+      "explanation": "If the binary values are right, the problem is between the counter output and the display: swapped bit order, wrong segment lines or the wrong display type (common cathode versus common anode). Check against the decoder datasheet.",
+      "relatedPartIds": [
+        "seven_segment_display",
+        "led_indicators"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "trainer_basics",
+      "title": "Digital trainer basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What supply voltage do TTL logic ICs normally use on a trainer?",
+          "options": [
+            "1.5 V",
+            "12 V",
+            "5 V",
+            "230 V"
+          ],
+          "correctIndex": 2,
+          "explanation": "TTL ICs use a regulated 5 V supply."
+        },
+        {
+          "id": "q2",
+          "prompt": "When should you change the wiring or insert ICs?",
+          "options": [
+            "With the power switched on",
+            "With the power switched off",
+            "Only when the clock is slow",
+            "Only for CMOS"
+          ],
+          "correctIndex": 1,
+          "explanation": "Changing wiring under power can short the supply or damage ICs."
+        },
+        {
+          "id": "q3",
+          "prompt": "How are the holes in a short row of a breadboard connected?",
+          "options": [
+            "All connected together in the row of five",
+            "No two connected",
+            "All holes on the board",
+            "Only diagonally"
+          ],
+          "correctIndex": 0,
+          "explanation": "Each short row of five holes is connected, so components in the same row are electrically joined."
+        },
+        {
+          "id": "q4",
+          "prompt": "Why are ICs placed across the centre gap?",
+          "options": [
+            "For looks",
+            "To keep them cool",
+            "To protect from static",
+            "So that the pins on opposite sides are not connected by the same rows"
+          ],
+          "correctIndex": 3,
+          "explanation": "The centre gap separates the two sides, so each pin has its own row."
+        },
+        {
+          "id": "q5",
+          "prompt": "What logic level does a switch in the up position usually give?",
+          "options": [
+            "Logic 0",
+            "Floating",
+            "Logic 1 (+5 V)",
+            "Negative voltage"
+          ],
+          "correctIndex": 2,
+          "explanation": "Logic switches connect the output to +5 V (1) or ground (0), depending on the position."
+        },
+        {
+          "id": "q6",
+          "prompt": "Why is a debounced pulser used to clock a counter?",
+          "options": [
+            "To make the LEDs brighter",
+            "To produce one clean pulse per press",
+            "To lower the voltage",
+            "To save power"
+          ],
+          "correctIndex": 1,
+          "explanation": "A raw switch bounces and produces several pulses per press."
+        },
+        {
+          "id": "q7",
+          "prompt": "Which connection must you never make?",
+          "options": [
+            "Two IC outputs connected together",
+            "A switch to a gate input",
+            "A gate output to an LED",
+            "Clock output to a counter input"
+          ],
+          "correctIndex": 0,
+          "explanation": "Two outputs driving opposite levels cause a short-circuit current and can damage both ICs."
+        },
+        {
+          "id": "q8",
+          "prompt": "What does a seven-segment decoder do?",
+          "options": [
+            "Generates a clock",
+            "Regulates the supply",
+            "Amplifies a signal",
+            "Converts a BCD code to the segment signals for a digit"
+          ],
+          "correctIndex": 3,
+          "explanation": "A BCD-to-seven-segment decoder drives the correct segments for each digit."
+        },
+        {
+          "id": "q9",
+          "prompt": "An IC feels hot right after power-on. What should you do first?",
+          "options": [
+            "Keep going and wait",
+            "Raise the clock frequency",
+            "Switch off and check the wiring, especially the power pins",
+            "Swap the LEDs"
+          ],
+          "correctIndex": 2,
+          "explanation": "A hot IC often means reversed or shorted power connections. Switch off and inspect."
+        },
+        {
+          "id": "q10",
+          "prompt": "What is a good clock frequency to watch a counter on LEDs by eye?",
+          "options": [
+            "About 10 MHz",
+            "About 1 Hz",
+            "About 100 kHz",
+            "About 1 GHz"
+          ],
+          "correctIndex": 1,
+          "explanation": "A slow clock lets you see each count change on the LEDs and display."
+        }
+      ]
+    }
+  ]
+}

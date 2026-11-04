@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "explorer-assets",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8765",
+        "--directory",
+        "/Users/sahilpatil/Documents/equipX/android/app/src/main/assets"
+      ],
+      "port": 8765,
+      "cwd": "/Users/sahilpatil/Documents/equipX"
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "admin",
+        "run",
+        "dev",
+        "--",
+        "-p",
+        "3417"
+      ],
+      "port": 3417,
+      "cwd": "/Users/sahilpatil/Documents/equipX"
+    }
+  ]
+}

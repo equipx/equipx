@@ -1,0 +1,563 @@
+{
+  "id": "insulation_tester",
+  "name": "Insulation Tester",
+  "category": "Measurement",
+  "summary": "High-voltage tester that measures insulation resistance in megohms and checks low-resistance continuity.",
+  "overview": "An insulation tester (megohmmeter) applies a high DC test voltage, typically 250 V, 500 V or 1000 V, between a conductor and earth and measures the tiny leakage current to find the insulation resistance, shown in megohms. It is used to check cables, motors and electrical equipment for deterioration before they are energized. Most testers also have a low-voltage continuity function. The test voltage is hazardous, so the circuit must be dead and isolated before testing. Based on Kyoritsu 3005A.",
+  "model": {
+    "asset": "models/insulation_tester.glb",
+    "hotspots": "models/insulation_tester.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.5m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.105,
+      "height": 0.16,
+      "depth": 0.07,
+      "cornerRadius": 0.008,
+      "color": "#E0A526"
+    },
+    "parts": [
+      {
+        "id": "lcd_display",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          0,
+          0.045
+        ],
+        "size": [
+          0.08,
+          0.045,
+          0.003
+        ],
+        "color": "#9FB3A5"
+      },
+      {
+        "id": "range_selector",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0,
+          -0.003
+        ],
+        "size": [
+          0.045,
+          0.045,
+          0.012
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "live_circuit_indicator",
+        "type": "led",
+        "face": "front",
+        "position": [
+          -0.04,
+          0
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.003
+        ],
+        "color": "#D03030"
+      },
+      {
+        "id": "test_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.03,
+          -0.052
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.008
+        ],
+        "color": "#C03030"
+      },
+      {
+        "id": "earth_terminal",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.04,
+          -0.052
+        ],
+        "size": [
+          0.014,
+          0.014,
+          0.01
+        ],
+        "color": "#1E1E1E"
+      },
+      {
+        "id": "line_terminal",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.01,
+          -0.052
+        ],
+        "size": [
+          0.014,
+          0.014,
+          0.01
+        ],
+        "color": "#8A1E1E"
+      },
+      {
+        "id": "red_probe",
+        "type": "probe",
+        "face": "right",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.045
+        ],
+        "color": "#A34A4A"
+      },
+      {
+        "id": "black_clip",
+        "type": "probe",
+        "face": "left",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.045
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "rubber_holster",
+        "type": "handle",
+        "face": "back",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          0.085,
+          0.14,
+          0.003
+        ],
+        "color": "#2B2B2B"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "lcd_display",
+      "number": 1,
+      "name": "LCD Display",
+      "function": "Shows the insulation resistance in megohms or the continuity resistance in ohms, plus a bar graph, the test voltage and warning symbols.",
+      "usage": "Read the value and unit while the test button is held. Wait for the reading to settle before you record it. An over-range indication means the insulation is better than the selected range can show.",
+      "safety": [
+        "The display can show a high-voltage symbol while the test is running; keep your hands off the leads and the circuit."
+      ]
+    },
+    {
+      "id": "range_selector",
+      "number": 2,
+      "name": "Function / Voltage Selector",
+      "function": "Rotary switch that selects the test voltage (for example 250 V, 500 V or 1000 V) or the continuity function, and turns the tester off.",
+      "usage": "Choose a test voltage suited to the equipment rating, as set by your procedure, before connecting the leads. Use the lowest suitable voltage first when you are unsure.",
+      "safety": [
+        "Never change the selector while the test button is pressed or while the leads are connected to a circuit.",
+        "Choose a test voltage not higher than the rating of the equipment's insulation."
+      ]
+    },
+    {
+      "id": "test_button",
+      "number": 3,
+      "name": "Test Button",
+      "function": "Starts the insulation test and applies the test voltage while pressed. Some models have a lock position to hold the test.",
+      "usage": "Press and hold the button after the leads are connected and the circuit has been confirmed dead. Release it when the reading has stabilised.",
+      "safety": [
+        "Do not press the test button while touching the leads or the circuit under test.",
+        "After release, wait for the discharge to finish before touching the circuit."
+      ]
+    },
+    {
+      "id": "live_circuit_indicator",
+      "number": 4,
+      "name": "Live Circuit Warning",
+      "function": "Warns, with a symbol or light and a buzzer, if the circuit being tested carries a voltage, and later shows the stored charge after the test.",
+      "usage": "Check that the warning is off before starting a test. After a test, wait until the warning goes out to confirm the circuit has discharged.",
+      "safety": [
+        "If the warning appears before the test, do not press the test button; the circuit is live.",
+        "This warning does not replace verifying that the circuit is dead with a proper voltage tester."
+      ]
+    },
+    {
+      "id": "line_terminal",
+      "number": 5,
+      "name": "LINE Terminal",
+      "function": "Positive output terminal for the red test lead, which carries the test voltage to the conductor under test.",
+      "usage": "Insert the red lead fully into the LINE terminal and connect the other end to the conductor being tested.",
+      "safety": [
+        "Only use leads rated for the tester's voltage and category.",
+        "Treat the red lead as live whenever the test button is pressed."
+      ]
+    },
+    {
+      "id": "earth_terminal",
+      "number": 6,
+      "name": "EARTH Terminal",
+      "function": "Return terminal for the black lead, usually connected to earth, the metal frame or the other conductor under test.",
+      "usage": "Insert the black lead fully into the EARTH terminal and clip it to the earth or frame connection.",
+      "safety": [
+        "Connect the earth clip first and the line lead second, and disconnect in reverse order after the circuit has discharged."
+      ]
+    },
+    {
+      "id": "red_probe",
+      "number": 7,
+      "name": "Red Test Probe",
+      "function": "Insulated lead with a probe tip (often with a remote test switch) that carries the high test voltage to the conductor.",
+      "usage": "Touch or clip the probe to the conductor under test and hold it steady while testing. Keep your fingers behind the finger guard.",
+      "safety": [
+        "Never touch the probe tip during a test.",
+        "Check the lead insulation for cracks before every use."
+      ]
+    },
+    {
+      "id": "black_clip",
+      "number": 8,
+      "name": "Black Earth Clip",
+      "function": "Insulated lead with a clip that connects the EARTH terminal to the earth or the second conductor under test.",
+      "usage": "Clip securely to a clean bare metal point such as the equipment frame or an earth terminal.",
+      "safety": [
+        "Make sure the clip cannot slip off during the test."
+      ]
+    },
+    {
+      "id": "rubber_holster",
+      "number": 9,
+      "name": "Protective Holster",
+      "function": "Rubber case that protects the tester from knocks and helps with grip. It may carry a strap so the tester can be operated with both hands.",
+      "usage": "Keep the holster on during use and use the strap or stand so that the tester is stable while testing.",
+      "safety": [
+        "Do not use the tester if the case or holster is cracked or the terminals are damaged."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Confirm the circuit or equipment is dead and isolated with a proper voltage tester before connecting an insulation tester. Prove the voltage tester on a known live source before and after.",
+    "Never touch the leads, probes or circuit while the test button is pressed; the test voltage can be 500 V or 1000 V DC and can cause a painful or dangerous shock.",
+    "After the test, wait for the stored charge to discharge (the tester usually discharges the circuit automatically) before disconnecting the leads, and do not touch the conductor until the live circuit warning is off.",
+    "Disconnect or remove sensitive electronics, surge protectors, capacitors and dimmers before testing, as the test voltage can damage them.",
+    "Select the test voltage according to the equipment rating and your teacher's or the standard's instruction; do not exceed it.",
+    "Use only the supplied leads and inspect them for damage. Do not use the tester in wet conditions or near flammable gases.",
+    "Warn others and keep them away from the circuit under test, and never work alone on high-voltage tests."
+  ],
+  "procedures": [
+    {
+      "id": "measure_insulation_resistance",
+      "title": "Measure insulation resistance of a cable or motor",
+      "steps": [
+        {
+          "text": "Isolate the circuit, lock off the supply, and prove it dead with a voltage tester. Disconnect sensitive electronics.",
+          "partId": "live_circuit_indicator"
+        },
+        {
+          "text": "Inspect the tester and leads for damage and make sure the tester is OFF.",
+          "partId": "red_probe"
+        },
+        {
+          "text": "Insert the black lead into the EARTH terminal and the red lead into the LINE terminal.",
+          "partId": "earth_terminal"
+        },
+        {
+          "text": "Connect the black clip to earth or the equipment frame.",
+          "partId": "black_clip"
+        },
+        {
+          "text": "Turn the selector to the required test voltage, for example 500 V for 230 V equipment as per your instruction.",
+          "partId": "range_selector"
+        },
+        {
+          "text": "Connect the red probe to the conductor under test, and make sure the live circuit warning is off.",
+          "partId": "red_probe"
+        },
+        {
+          "text": "Press and hold the test button and keep clear of the circuit while the reading stabilises.",
+          "partId": "test_button"
+        },
+        {
+          "text": "Read the resistance in megohms on the display and note the value and test voltage.",
+          "partId": "lcd_display"
+        },
+        {
+          "text": "Release the test button and wait until the live circuit warning shows the circuit has discharged.",
+          "partId": "live_circuit_indicator"
+        },
+        {
+          "text": "Disconnect the red probe, then the black clip, and turn the selector to OFF.",
+          "partId": "range_selector"
+        }
+      ]
+    },
+    {
+      "id": "continuity_check",
+      "title": "Check continuity of a protective conductor",
+      "steps": [
+        {
+          "text": "Make sure the circuit is dead and isolated, and that the live circuit warning is off.",
+          "partId": "live_circuit_indicator"
+        },
+        {
+          "text": "Insert the leads into the EARTH and LINE terminals.",
+          "partId": "line_terminal"
+        },
+        {
+          "text": "Turn the selector to the continuity position.",
+          "partId": "range_selector"
+        },
+        {
+          "text": "Touch the red probe and black clip together and note the lead resistance shown, or use the zero function if provided.",
+          "partId": "red_probe"
+        },
+        {
+          "text": "Connect the leads across the conductor under test.",
+          "partId": "black_clip"
+        },
+        {
+          "text": "Press the test button to start the measurement.",
+          "partId": "test_button"
+        },
+        {
+          "text": "Read the resistance on the display and subtract the lead resistance if not zeroed.",
+          "partId": "lcd_display"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "live_warning_on",
+      "symptom": "Before a test, the live circuit warning lights and the buzzer sounds when the leads are connected to the supposedly isolated motor.",
+      "options": [
+        {
+          "id": "circuit_live",
+          "text": "The circuit is still energized or holds a charge; stop and re-check isolation"
+        },
+        {
+          "id": "battery_fine",
+          "text": "The tester battery is too strong"
+        },
+        {
+          "id": "wrong_color",
+          "text": "The probes are the wrong colour"
+        },
+        {
+          "id": "display_dirty",
+          "text": "The display needs cleaning"
+        }
+      ],
+      "correctOptionId": "circuit_live",
+      "explanation": "The warning indicates a voltage on the circuit. Do not test; re-check the isolation and lock-off, and discharge any stored charge, before continuing.",
+      "relatedPartIds": [
+        "live_circuit_indicator",
+        "red_probe"
+      ]
+    },
+    {
+      "id": "low_reading_damp",
+      "symptom": "A motor winding reads 0.3 megohms at 500 V, while the same type of dry motor gives over 100 megohms.",
+      "options": [
+        {
+          "id": "moisture_damage",
+          "text": "Moisture or contamination has reduced the insulation resistance"
+        },
+        {
+          "id": "tester_perfect",
+          "text": "The tester is reading too high"
+        },
+        {
+          "id": "range_wrong",
+          "text": "The tester is on the continuity range"
+        },
+        {
+          "id": "holster_fault",
+          "text": "The holster is loose"
+        }
+      ],
+      "correctOptionId": "moisture_damage",
+      "explanation": "A very low insulation resistance indicates leakage through damp, dirty or damaged insulation. The motor should not be energized until it is dried and re-tested, following the plant procedure.",
+      "relatedPartIds": [
+        "lcd_display",
+        "range_selector"
+      ]
+    },
+    {
+      "id": "reading_creeps_up",
+      "symptom": "On a long cable, the reading starts low and keeps rising slowly while the test button is held.",
+      "options": [
+        {
+          "id": "capacitive_charging",
+          "text": "The cable capacitance is charging and absorption effects settle"
+        },
+        {
+          "id": "battery_charging",
+          "text": "The tester battery is charging"
+        },
+        {
+          "id": "leads_swapped",
+          "text": "The leads are in the wrong terminals"
+        },
+        {
+          "id": "button_stuck",
+          "text": "The test button is faulty"
+        }
+      ],
+      "correctOptionId": "capacitive_charging",
+      "explanation": "A long cable has capacitance that must charge, and the insulation shows absorption effects, so the reading rises over time. Hold the test for a consistent time (such as one minute) and record that time with the value. After the test, allow time for discharge before touching.",
+      "relatedPartIds": [
+        "test_button",
+        "lcd_display"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "insulation_basics",
+      "title": "Insulation tester basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What does an insulation tester measure?",
+          "options": [
+            "Current in a live circuit",
+            "Insulation resistance in megohms",
+            "Mains frequency",
+            "Battery capacity"
+          ],
+          "correctIndex": 1,
+          "explanation": "It applies a high DC voltage and calculates the resistance of the insulation from the small leakage current."
+        },
+        {
+          "id": "q2",
+          "prompt": "What must you confirm before connecting the tester?",
+          "options": [
+            "The circuit is dead and isolated",
+            "The circuit is live",
+            "The tester battery is flat",
+            "The sponge is wet"
+          ],
+          "correctIndex": 0,
+          "explanation": "Testing a live circuit is dangerous and can damage the tester. Isolate and prove the circuit dead first."
+        },
+        {
+          "id": "q3",
+          "prompt": "When is it safe to touch the leads?",
+          "options": [
+            "While the test button is pressed",
+            "When the display shows over-range",
+            "Whenever you wear thin gloves",
+            "Only after the test has ended and the circuit has discharged"
+          ],
+          "correctIndex": 3,
+          "explanation": "The test voltage can be up to 1000 V DC and the circuit may hold charge afterwards."
+        },
+        {
+          "id": "q4",
+          "prompt": "Which test voltage is commonly used for 230 V mains cabling, if your procedure says so?",
+          "options": [
+            "5 V",
+            "10 kV",
+            "500 V DC",
+            "1 V"
+          ],
+          "correctIndex": 2,
+          "explanation": "500 V DC is the usual choice for circuits up to 500 V; always follow the standard or instruction in use."
+        },
+        {
+          "id": "q5",
+          "prompt": "What does a very low reading (for example below 1 megohm) usually mean?",
+          "options": [
+            "The insulation is excellent",
+            "The insulation is damaged, damp or contaminated",
+            "The tester is on AC",
+            "The leads are too long"
+          ],
+          "correctIndex": 1,
+          "explanation": "Low insulation resistance means leakage. The equipment should not be put into service until it is investigated."
+        },
+        {
+          "id": "q6",
+          "prompt": "Why should electronics be disconnected before an insulation test?",
+          "options": [
+            "The high test voltage can destroy them",
+            "They would add resistance",
+            "They interfere with the display",
+            "They are not needed"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electronic devices, surge arresters and capacitors are not rated for the test voltage."
+        },
+        {
+          "id": "q7",
+          "prompt": "What does the live circuit warning on the tester tell you?",
+          "options": [
+            "The tester is working",
+            "The battery is full",
+            "The leads are plugged in",
+            "A voltage is present on the circuit being tested"
+          ],
+          "correctIndex": 3,
+          "explanation": "If it shows, do not test. It also shows stored charge after a test."
+        },
+        {
+          "id": "q8",
+          "prompt": "After releasing the test button, what should you do?",
+          "options": [
+            "Immediately touch the conductor",
+            "Press the button again",
+            "Wait until the circuit has discharged before disconnecting",
+            "Turn the selector to the highest voltage"
+          ],
+          "correctIndex": 2,
+          "explanation": "Capacitive circuits hold a charge. The tester discharges it, and the warning goes off when it is safe."
+        },
+        {
+          "id": "q9",
+          "prompt": "Why does the reading sometimes rise slowly during a test?",
+          "options": [
+            "The leads are overheating",
+            "Capacitance charging and dielectric absorption",
+            "A mains supply is connected",
+            "The battery is recharging"
+          ],
+          "correctIndex": 1,
+          "explanation": "Insulation resistance readings rise as the cable charges and the insulation polarizes, so a fixed test time is used."
+        },
+        {
+          "id": "q10",
+          "prompt": "Which statement about changing the selector is correct?",
+          "options": [
+            "Never change it while the test is running or while connected to a circuit",
+            "Change it while the test button is pressed",
+            "Always set the highest voltage first",
+            "It only matters for continuity"
+          ],
+          "correctIndex": 0,
+          "explanation": "Change the selector only when the test is off and the leads are safely disconnected."
+        }
+      ]
+    }
+  ]
+}

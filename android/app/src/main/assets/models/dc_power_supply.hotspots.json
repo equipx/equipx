@@ -1,0 +1,145 @@
+{
+  "deviceId": "dc_power_supply",
+  "hotspots": [
+    {
+      "partId": "voltage_display",
+      "number": 1,
+      "position": [
+        -0.045,
+        0.04,
+        0.155
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "current_display",
+      "number": 2,
+      "position": [
+        0.045,
+        0.04,
+        0.155
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "voltage_knobs",
+      "number": 3,
+      "position": [
+        -0.05,
+        -0.005,
+        0.166
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "current_knobs",
+      "number": 4,
+      "position": [
+        0.05,
+        -0.005,
+        0.166
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "cv_cc_leds",
+      "number": 5,
+      "position": [
+        0,
+        0.01,
+        0.155
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "output_button",
+      "number": 6,
+      "position": [
+        0,
+        -0.02,
+        0.156
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "power_switch",
+      "number": 7,
+      "position": [
+        -0.075,
+        -0.05,
+        0.158
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "negative_terminal",
+      "number": 8,
+      "position": [
+        -0.03,
+        -0.048,
+        0.167
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "ground_terminal",
+      "number": 9,
+      "position": [
+        0,
+        -0.048,
+        0.167
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "positive_terminal",
+      "number": 10,
+      "position": [
+        0.03,
+        -0.048,
+        0.167
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    }
+  ]
+}

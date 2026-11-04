@@ -1,0 +1,589 @@
+{
+  "id": "digital_clamp_meter",
+  "name": "Digital Clamp Meter",
+  "category": "Measurement",
+  "summary": "Clamp-on meter that measures current through a conductor without breaking the circuit, plus voltage and resistance.",
+  "overview": "A digital clamp meter measures current by sensing the magnetic field around a single conductor held inside its jaws, so the circuit does not have to be opened. A trigger opens the jaws, a rotary switch selects the function, and the result appears on an LCD. Most clamp meters also have test lead jacks for voltage, resistance and continuity. Clamp around one conductor only, and always respect the meter's CAT rating and maximum current. Based on UNI-T UT203.",
+  "model": {
+    "asset": "models/digital_clamp_meter.glb",
+    "hotspots": "models/digital_clamp_meter.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.6m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.065,
+      "height": 0.19,
+      "depth": 0.03,
+      "cornerRadius": 0.004,
+      "color": "#E0A526"
+    },
+    "parts": [
+      {
+        "id": "fixed_jaw",
+        "type": "handle",
+        "face": "top",
+        "position": [
+          -0.02,
+          0
+        ],
+        "size": [
+          0.014,
+          0.024,
+          0.045
+        ],
+        "color": "#3A3A38"
+      },
+      {
+        "id": "movable_jaw",
+        "type": "handle",
+        "face": "top",
+        "position": [
+          0.02,
+          0
+        ],
+        "size": [
+          0.014,
+          0.024,
+          0.045
+        ],
+        "color": "#3A3A38"
+      },
+      {
+        "id": "trigger",
+        "type": "button",
+        "face": "right",
+        "position": [
+          0,
+          0.06
+        ],
+        "size": [
+          0.014,
+          0.03,
+          0.008
+        ],
+        "color": "#3A3A38"
+      },
+      {
+        "id": "lcd_display",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          0,
+          0.055
+        ],
+        "size": [
+          0.045,
+          0.035,
+          0.003
+        ],
+        "color": "#9FB3A5"
+      },
+      {
+        "id": "hold_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.014,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.01,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "select_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.014,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.01,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "rotary_switch",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0,
+          -0.025
+        ],
+        "size": [
+          0.04,
+          0.04,
+          0.01
+        ],
+        "color": "#3A3A38"
+      },
+      {
+        "id": "vohm_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.014,
+          -0.075
+        ],
+        "size": [
+          0.011,
+          0.011,
+          0.005
+        ],
+        "color": "#A34A4A"
+      },
+      {
+        "id": "com_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.014,
+          -0.075
+        ],
+        "size": [
+          0.011,
+          0.011,
+          0.005
+        ],
+        "color": "#1F1F1E"
+      },
+      {
+        "id": "test_leads",
+        "type": "probe",
+        "face": "left",
+        "position": [
+          0,
+          -0.07
+        ],
+        "size": [
+          0.006,
+          0.006,
+          0.045
+        ],
+        "color": "#A34A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "fixed_jaw",
+      "number": 1,
+      "name": "Fixed Jaw",
+      "function": "The fixed half of the iron-core transformer jaw. Together with the movable jaw it forms a closed ring that senses the magnetic field around the conductor being measured.",
+      "usage": "Keep the jaw faces clean and the tips aligned with the movable jaw. Place one conductor in the middle of the ring when measuring.",
+      "safety": [
+        "Do not use the meter if the jaw or case is cracked.",
+        "Keep your fingers behind the hand guard (the ridge below the jaws) when clamping live conductors."
+      ]
+    },
+    {
+      "id": "movable_jaw",
+      "number": 2,
+      "name": "Movable Jaw",
+      "function": "The jaw half that opens when the trigger is pressed so a conductor can enter the ring, and closes again under spring force.",
+      "usage": "Press the trigger to open the jaw, place a single conductor in the centre of the ring, then release the trigger so the jaws close completely. Dirt or a gap in the jaw faces causes errors.",
+      "safety": [
+        "Make sure the jaws are fully closed before reading; a gap gives a wrong, usually low, reading.",
+        "Never clamp a conductor larger than the maximum jaw opening shown in the manual."
+      ]
+    },
+    {
+      "id": "trigger",
+      "number": 3,
+      "name": "Jaw Trigger",
+      "function": "Lever on the side of the body that opens the movable jaw.",
+      "usage": "Squeeze the trigger to open the jaws and release it to close them around the conductor. Do not force the jaws open beyond their stop.",
+      "safety": [
+        "Do not use the trigger if the spring does not return the jaws fully; the meter should be repaired or replaced."
+      ]
+    },
+    {
+      "id": "lcd_display",
+      "number": 4,
+      "name": "LCD Display",
+      "function": "Shows the measured value with its unit, the AC/DC symbol, polarity and status symbols such as HOLD, low battery and OL (over range).",
+      "usage": "Read the digits together with the unit shown. OL means the input exceeds the selected range or the circuit is open.",
+      "safety": [
+        "Do not trust a dim or flickering display; replace the battery before measuring."
+      ]
+    },
+    {
+      "id": "rotary_switch",
+      "number": 5,
+      "name": "Rotary Function Switch",
+      "function": "Selects the function and range: AC or DC current, AC or DC voltage, resistance and continuity, and OFF. Some models also have frequency, capacitance and non-contact voltage positions.",
+      "usage": "Turn the switch to the required function before clamping or connecting leads. Use the highest range, or auto-range, when the value is unknown. Turn to OFF when finished.",
+      "safety": [
+        "Do not turn the switch while the jaws are clamped around a conductor that carries current or the leads are connected to a live circuit.",
+        "Set the switch to the correct function before connecting the leads."
+      ]
+    },
+    {
+      "id": "hold_button",
+      "number": 6,
+      "name": "HOLD Button",
+      "function": "Freezes the current reading on the display so it can be read after the meter is moved to a safe spot.",
+      "usage": "Press HOLD to freeze the value and press it again to release. The HOLD symbol shows on the display while active.",
+      "safety": [
+        "A held value does not update; release HOLD before taking a new measurement."
+      ]
+    },
+    {
+      "id": "select_button",
+      "number": 7,
+      "name": "SELECT / Function Button",
+      "function": "Cycles through functions that share a switch position (for example resistance, continuity and diode, or AC and DC), and on some models zeroes the DC current reading or switches on the backlight.",
+      "usage": "Press the button until the display shows the symbol of the mode you want. For DC current, zero the reading with the jaws closed and no conductor inside, as described in your meter's manual.",
+      "safety": [
+        "Check the mode symbol on the display before measuring."
+      ]
+    },
+    {
+      "id": "vohm_jack",
+      "number": 8,
+      "name": "V/Ohm Jack",
+      "function": "Positive input for voltage, resistance, continuity and diode tests with the test leads. It is not used for clamp current measurement.",
+      "usage": "Plug the red test lead into this jack when measuring voltage or resistance with the leads.",
+      "safety": [
+        "Remove the test leads from the jacks before measuring current with the jaws.",
+        "Do not connect the leads to a voltage higher than the meter's rated maximum."
+      ]
+    },
+    {
+      "id": "com_jack",
+      "number": 9,
+      "name": "COM Jack",
+      "function": "Common (negative) input for the black test lead for voltage, resistance and continuity measurements.",
+      "usage": "Plug the black lead here. It is the reference for all lead measurements.",
+      "safety": [
+        "Connect the black lead first and disconnect it last when working on live circuits."
+      ]
+    },
+    {
+      "id": "test_leads",
+      "number": 10,
+      "name": "Test Leads",
+      "function": "Insulated leads, red (positive) and black (common), with probe tips for measuring voltage, resistance and continuity.",
+      "usage": "Insert the plugs into the V/Ohm and COM jacks and touch the tips to the measurement points. Keep your fingers behind the finger guards.",
+      "safety": [
+        "Use only leads rated at or above the CAT rating and voltage of the circuit and inspect them for damage before each use.",
+        "Unplug the leads when you use the jaws to measure current."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Check the meter's CAT rating and voltage rating, and only use it on circuits within those limits.",
+    "Clamp around one conductor only. Enclosing both live and neutral of a cable makes the magnetic fields cancel and the reading is close to zero.",
+    "Never exceed the maximum current marked on the meter, and never use the jaws on uninsulated conductors above the rated voltage.",
+    "Inspect the meter, the jaws and the test leads for damage before use, and do not use a damaged meter.",
+    "Remove the test leads from the jacks when measuring current with the jaws, and set the switch to the function before clamping or connecting.",
+    "Keep your fingers behind the hand guard, and wear suitable personal protective equipment when working on live installations."
+  ],
+  "procedures": [
+    {
+      "id": "measure_ac_current",
+      "title": "Measure AC current with the jaws",
+      "steps": [
+        {
+          "text": "Inspect the meter, jaws and case for damage and make sure the current is within the meter's rating.",
+          "partId": "fixed_jaw"
+        },
+        {
+          "text": "Remove the test leads from the V/Ohm and COM jacks.",
+          "partId": "vohm_jack"
+        },
+        {
+          "text": "Turn the rotary switch to the AC current (A) range.",
+          "partId": "rotary_switch"
+        },
+        {
+          "text": "Press SELECT if necessary until the display shows the AC current symbol.",
+          "partId": "select_button"
+        },
+        {
+          "text": "Press the trigger to open the jaws.",
+          "partId": "trigger"
+        },
+        {
+          "text": "Place one single conductor in the centre of the ring, then release the trigger so the jaws close completely.",
+          "partId": "movable_jaw"
+        },
+        {
+          "text": "Read the current on the display. If the value is unstable, check that the jaws are closed and the conductor is centred.",
+          "partId": "lcd_display"
+        },
+        {
+          "text": "Press HOLD if you need to freeze the reading, then release it afterwards.",
+          "partId": "hold_button"
+        },
+        {
+          "text": "Open the jaws, remove the meter from the conductor and turn the switch to OFF.",
+          "partId": "rotary_switch"
+        }
+      ]
+    },
+    {
+      "id": "measure_ac_voltage",
+      "title": "Measure AC voltage with the leads",
+      "steps": [
+        {
+          "text": "Inspect the test leads and meter for damage and confirm the circuit voltage is within the meter's rating.",
+          "partId": "test_leads"
+        },
+        {
+          "text": "Plug the black lead into the COM jack.",
+          "partId": "com_jack"
+        },
+        {
+          "text": "Plug the red lead into the V/Ohm jack.",
+          "partId": "vohm_jack"
+        },
+        {
+          "text": "Turn the rotary switch to the AC voltage position.",
+          "partId": "rotary_switch"
+        },
+        {
+          "text": "Press SELECT if needed until the display shows the AC voltage symbol.",
+          "partId": "select_button"
+        },
+        {
+          "text": "Touch the two probe tips to the two measurement points, in parallel with the load or supply.",
+          "partId": "test_leads"
+        },
+        {
+          "text": "Read the voltage and unit on the display.",
+          "partId": "lcd_display"
+        },
+        {
+          "text": "Remove the red lead first, then the black lead, and turn the switch to OFF.",
+          "partId": "rotary_switch"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "current_reads_near_zero",
+      "symptom": "A running appliance clearly draws current, but the clamp meter shows almost 0 A when the jaws enclose its two-core cable.",
+      "options": [
+        {
+          "id": "both_conductors",
+          "text": "Both live and neutral are inside the jaws, so their magnetic fields cancel"
+        },
+        {
+          "id": "battery_flat",
+          "text": "The battery is flat"
+        },
+        {
+          "id": "hold_on",
+          "text": "HOLD is active"
+        },
+        {
+          "id": "lead_in_com",
+          "text": "The red lead is in the COM jack"
+        }
+      ],
+      "correctOptionId": "both_conductors",
+      "explanation": "A clamp meter measures the net magnetic field. In a two-core cable the currents are equal and opposite, so the net current is nearly zero. Separate and clamp a single conductor. A flat battery would blank or dim the display, and HOLD would freeze a number rather than show zero.",
+      "relatedPartIds": [
+        "movable_jaw",
+        "fixed_jaw"
+      ]
+    },
+    {
+      "id": "unstable_low_reading",
+      "symptom": "The current reading is lower than expected and jumps around, even though the conductor is centred.",
+      "options": [
+        {
+          "id": "jaws_not_closed",
+          "text": "Dirt or a gap is preventing the jaws from closing completely"
+        },
+        {
+          "id": "voltage_too_high",
+          "text": "The leads are connected to a high voltage"
+        },
+        {
+          "id": "backlight",
+          "text": "The backlight is off"
+        },
+        {
+          "id": "red_lead",
+          "text": "The test leads are too long"
+        }
+      ],
+      "correctOptionId": "jaws_not_closed",
+      "explanation": "An air gap in the magnetic core reduces the signal and makes the reading low and unstable. Clean the jaw faces, check the trigger spring and make sure the jaws close fully.",
+      "relatedPartIds": [
+        "trigger",
+        "movable_jaw",
+        "fixed_jaw"
+      ]
+    },
+    {
+      "id": "dc_current_offset",
+      "symptom": "On the DC current range with no conductor in the jaws, the display shows a small non-zero value such as 0.8 A.",
+      "options": [
+        {
+          "id": "needs_zero",
+          "text": "The reading needs to be zeroed with the jaws closed and empty"
+        },
+        {
+          "id": "short_circuit",
+          "text": "There is a short circuit inside the meter"
+        },
+        {
+          "id": "fuse_blown",
+          "text": "The input fuse has blown"
+        },
+        {
+          "id": "ac_selected",
+          "text": "The meter is on the AC voltage range"
+        }
+      ],
+      "correctOptionId": "needs_zero",
+      "explanation": "DC current measurement uses a magnetic sensor that can have a small offset from residual magnetism and the Earth's field. Use the zero function (see the manual) with the jaws closed and empty, away from other current-carrying conductors, before measuring.",
+      "relatedPartIds": [
+        "select_button",
+        "rotary_switch",
+        "lcd_display"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "clamp_meter_basics",
+      "title": "Clamp meter basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What is the main advantage of a clamp meter for current measurement?",
+          "options": [
+            "It needs no battery",
+            "It measures only voltage",
+            "It is cheaper than a multimeter",
+            "It measures current without breaking the circuit"
+          ],
+          "correctIndex": 3,
+          "explanation": "The jaws sense the magnetic field around the conductor, so the circuit does not have to be opened and the meter does not have to be wired in series."
+        },
+        {
+          "id": "q2",
+          "prompt": "You clamp around a two-core cable (live and neutral together) and the reading is near zero. Why?",
+          "options": [
+            "The cable has no current",
+            "The jaws are too large",
+            "The fields of the two conductors cancel",
+            "The cable is overheating"
+          ],
+          "correctIndex": 2,
+          "explanation": "The currents in live and neutral are equal and opposite, so the net magnetic field is almost zero. Clamp a single conductor."
+        },
+        {
+          "id": "q3",
+          "prompt": "What is the correct position of the conductor in the jaws?",
+          "options": [
+            "Touching the outside of the jaws",
+            "In the centre of the ring, with the jaws fully closed",
+            "Anywhere, the meter compensates",
+            "Wrapped several times around one jaw"
+          ],
+          "correctIndex": 1,
+          "explanation": "A centred conductor and fully closed jaws give the most accurate reading and reduce interference from other conductors."
+        },
+        {
+          "id": "q4",
+          "prompt": "What should be done with the test leads when measuring current with the jaws?",
+          "options": [
+            "Remove them from the jacks",
+            "Plug them into the 10A jack",
+            "Short them together",
+            "Keep them in the COM jack only"
+          ],
+          "correctIndex": 0,
+          "explanation": "The leads are not used for jaw measurements. Removing them avoids confusion and a risk of touching live parts."
+        },
+        {
+          "id": "q5",
+          "prompt": "Which action is NOT safe?",
+          "options": [
+            "Inspecting the jaws before use",
+            "Keeping fingers behind the hand guard",
+            "Checking the CAT rating",
+            "Turning the rotary switch while the jaws are clamped on a loaded conductor"
+          ],
+          "correctIndex": 3,
+          "explanation": "Changing the function while measuring a live conductor or circuit can give wrong readings and is unsafe. Remove the meter from the conductor first."
+        },
+        {
+          "id": "q6",
+          "prompt": "What does the OL symbol mean on the display?",
+          "options": [
+            "Output low",
+            "The meter is locked",
+            "The value is over the selected range or the circuit is open",
+            "The battery is full"
+          ],
+          "correctIndex": 2,
+          "explanation": "OL means overload: the input is above the range, or there is an open circuit on a resistance range."
+        },
+        {
+          "id": "q7",
+          "prompt": "How do you measure AC voltage with a clamp meter?",
+          "options": [
+            "Clamp around the live wire",
+            "Use the test leads in the V/Ohm and COM jacks, in parallel with the load",
+            "Use the leads in series with the load",
+            "Hold the meter near the wire"
+          ],
+          "correctIndex": 1,
+          "explanation": "Voltage is measured between two points with the leads, in parallel with the circuit. The jaws only measure current."
+        },
+        {
+          "id": "q8",
+          "prompt": "Why should the jaw faces be kept clean and closed?",
+          "options": [
+            "A gap in the magnetic core reduces the signal and gives low, unstable readings",
+            "For appearance",
+            "To prevent electric shock only",
+            "To save the battery"
+          ],
+          "correctIndex": 0,
+          "explanation": "Dirt or an air gap breaks the magnetic path through the core, so the induced signal is smaller than it should be."
+        },
+        {
+          "id": "q9",
+          "prompt": "Before measuring DC current with a clamp meter, what is usually necessary?",
+          "options": [
+            "Short the leads together",
+            "Press HOLD",
+            "Open the battery cover",
+            "Zero the reading with the jaws closed and empty"
+          ],
+          "correctIndex": 3,
+          "explanation": "A DC clamp sensor can have an offset, so it is zeroed with no conductor in the jaws, following the meter's manual."
+        },
+        {
+          "id": "q10",
+          "prompt": "Which of these is the correct way to measure resistance with a clamp meter?",
+          "options": [
+            "Clamp the resistor",
+            "Use the jaws on a live circuit",
+            "Use the leads on a de-energized circuit with the switch on the resistance range",
+            "Resistance cannot be measured"
+          ],
+          "correctIndex": 2,
+          "explanation": "Resistance is measured with the leads, on a circuit that is switched off and discharged, like with a multimeter."
+        }
+      ]
+    }
+  ]
+}

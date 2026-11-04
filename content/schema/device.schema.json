@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equipx.app/schema/device.schema.json",
+  "title": "EquipX device content",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "category", "summary", "overview", "model", "layout", "parts", "safetyRules", "procedures", "faults", "quizzes"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$" },
+    "text": { "type": "string", "minLength": 1 },
+    "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "positiveNumber": { "type": "number", "exclusiveMinimum": 0 },
+    "layoutPart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "face", "position", "size"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "enum": ["screen", "knob", "button", "switch", "port", "led", "display", "probe", "slot", "handle"] },
+        "face": { "enum": ["front", "top", "left", "right", "back"] },
+        "position": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "size": { "type": "array", "items": { "$ref": "#/$defs/positiveNumber" }, "minItems": 3, "maxItems": 3 },
+        "color": { "$ref": "#/$defs/color" }
+      }
+    },
+    "part": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "number", "name", "function", "usage", "safety"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "number": { "type": "integer", "minimum": 1 },
+        "name": { "$ref": "#/$defs/text" },
+        "function": { "$ref": "#/$defs/text" },
+        "usage": { "$ref": "#/$defs/text" },
+        "safety": { "type": "array", "items": { "$ref": "#/$defs/text" } }
+      }
+    },
+    "procedure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "steps"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text", "partId"],
+            "properties": {
+              "text": { "$ref": "#/$defs/text" },
+              "partId": { "$ref": "#/$defs/id" }
+            }
+          }
+        }
+      }
+    },
+    "fault": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "symptom", "options", "correctOptionId", "explanation", "relatedPartIds"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "symptom": { "$ref": "#/$defs/text" },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "text"],
+            "properties": { "id": { "$ref": "#/$defs/id" }, "text": { "$ref": "#/$defs/text" } }
+          }
+        },
+        "correctOptionId": { "$ref": "#/$defs/id" },
+        "explanation": { "$ref": "#/$defs/text" },
+        "relatedPartIds": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      }
+    },
+    "quiz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "timeLimitSec", "questions"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "timeLimitSec": { "type": ["integer", "null"], "minimum": 1 },
+        "questions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "prompt", "options", "correctIndex", "explanation"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "prompt": { "$ref": "#/$defs/text" },
+              "options": { "type": "array", "items": { "$ref": "#/$defs/text" }, "minItems": 2 },
+              "correctIndex": { "type": "integer", "minimum": 0 },
+              "explanation": { "$ref": "#/$defs/text" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "id": { "$ref": "#/$defs/id" },
+    "name": { "$ref": "#/$defs/text" },
+    "category": { "$ref": "#/$defs/text" },
+    "summary": { "$ref": "#/$defs/text" },
+    "overview": { "$ref": "#/$defs/text" },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset", "hotspots", "cameraOrbit", "credit"],
+      "properties": {
+        "asset": { "type": "string", "pattern": "^models/[a-z0-9_]+\\.glb$" },
+        "hotspots": { "type": "string", "pattern": "^models/[a-z0-9_]+\\.hotspots\\.json$" },
+        "cameraOrbit": { "type": "string" },
+        "credit": { "type": ["string", "null"] }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["units", "body", "parts"],
+      "properties": {
+        "units": { "const": "m" },
+        "body": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height", "depth", "cornerRadius", "color"],
+          "properties": {
+            "width": { "$ref": "#/$defs/positiveNumber" },
+            "height": { "$ref": "#/$defs/positiveNumber" },
+            "depth": { "$ref": "#/$defs/positiveNumber" },
+            "cornerRadius": { "type": "number", "minimum": 0 },
+            "color": { "$ref": "#/$defs/color" }
+          }
+        },
+        "parts": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/layoutPart" } }
+      }
+    },
+    "parts": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/part" } },
+    "safetyRules": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/text" } },
+    "procedures": { "type": "array", "items": { "$ref": "#/$defs/procedure" } },
+    "faults": { "type": "array", "items": { "$ref": "#/$defs/fault" } },
+    "quizzes": { "type": "array", "items": { "$ref": "#/$defs/quiz" } }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "deviceId": "soldering_station",
+  "hotspots": [
+    {
+      "partId": "temperature_display",
+      "number": 1,
+      "position": [
+        -0.02,
+        0.015,
+        0.09
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "up_button",
+      "number": 2,
+      "position": [
+        0.035,
+        0.02,
+        0.091
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "enter_button",
+      "number": 3,
+      "position": [
+        0.035,
+        0.003,
+        0.091
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "power_switch",
+      "number": 4,
+      "position": [
+        -0.04,
+        -0.025,
+        0.093
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "iron_connector",
+      "number": 5,
+      "position": [
+        0.035,
+        -0.028,
+        0.097
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "partId": "soldering_iron",
+      "number": 6,
+      "position": [
+        -0.117,
+        0,
+        0
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "partId": "iron_stand",
+      "number": 7,
+      "position": [
+        0.03,
+        0.0845,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "partId": "tip_cleaner",
+      "number": 8,
+      "position": [
+        -0.03,
+        0.0595,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    }
+  ]
+}

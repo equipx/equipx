@@ -1,0 +1,585 @@
+{
+  "id": "digital_oscilloscope",
+  "name": "Digital Oscilloscope",
+  "category": "Measurement",
+  "summary": "Bench instrument that displays how a voltage changes over time, used to view, time and measure signals.",
+  "overview": "A digital oscilloscope samples an input voltage and draws it on a screen as a graph of voltage (vertical) against time (horizontal). Probes connect the circuit to the BNC channel inputs, the vertical and horizontal controls set the scale, and the trigger holds a repeating waveform steady. Always check the probe attenuation setting, and remember that the probe ground clip is connected to earth ground through the scope. Based on Rigol DS1054Z.",
+  "model": {
+    "asset": "models/digital_oscilloscope.glb",
+    "hotspots": "models/digital_oscilloscope.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.6m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.32,
+      "height": 0.15,
+      "depth": 0.13,
+      "cornerRadius": 0.008,
+      "color": "#CFCFCB"
+    },
+    "parts": [
+      {
+        "id": "screen",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          -0.055,
+          0.012
+        ],
+        "size": [
+          0.19,
+          0.105,
+          0.003
+        ],
+        "color": "#1E2A2E"
+      },
+      {
+        "id": "softkeys",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.045,
+          -0.058
+        ],
+        "size": [
+          0.15,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "multifunction_knob",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0.075,
+          0.045
+        ],
+        "size": [
+          0.025,
+          0.025,
+          0.012
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "run_stop_buttons",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.118,
+          0.052
+        ],
+        "size": [
+          0.04,
+          0.012,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "vertical_controls",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0.068,
+          0.01
+        ],
+        "size": [
+          0.028,
+          0.028,
+          0.012
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "horizontal_controls",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0.102,
+          0.01
+        ],
+        "size": [
+          0.028,
+          0.028,
+          0.012
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "trigger_controls",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0.136,
+          0.01
+        ],
+        "size": [
+          0.028,
+          0.028,
+          0.012
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "bnc_inputs",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.095,
+          -0.058
+        ],
+        "size": [
+          0.09,
+          0.016,
+          0.015
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "probe_compensation",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.147,
+          -0.04
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "power_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.14,
+          -0.062
+        ],
+        "size": [
+          0.01,
+          0.01,
+          0.004
+        ],
+        "color": "#A34A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "screen",
+      "number": 1,
+      "name": "Display Screen",
+      "function": "Shows the captured waveforms as voltage against time on a grid, together with channel settings, the timebase, trigger status and automatic measurements.",
+      "usage": "Read the volts per division and seconds per division at the screen edges, then count grid divisions to estimate amplitude and period. Use the on-screen measurements or cursors for exact values.",
+      "safety": [
+        "Do not trust a trace until you have checked the vertical scale, timebase and probe attenuation shown on screen."
+      ]
+    },
+    {
+      "id": "softkeys",
+      "number": 2,
+      "name": "Menu Softkeys",
+      "function": "A row of keys below the screen whose function changes with the menu shown above them on the display.",
+      "usage": "Press the key under the menu item you want, and turn the multifunction knob to change values or options in that menu.",
+      "safety": [
+        "Read the menu label before pressing a softkey; some entries such as Default or Clear reset the settings or stored data."
+      ]
+    },
+    {
+      "id": "multifunction_knob",
+      "number": 3,
+      "name": "Multifunction Knob",
+      "function": "Rotary knob that adjusts the selected menu item, scrolls through lists and, when pressed, confirms a choice.",
+      "usage": "Turn it to change a highlighted value, such as a cursor position or the probe ratio, and press it to select. Many models also use it to adjust waveform brightness.",
+      "safety": [
+        "Check the value on the screen after changing it, so that an accidental turn does not leave a wrong setting."
+      ]
+    },
+    {
+      "id": "run_stop_buttons",
+      "number": 4,
+      "name": "RUN/STOP, SINGLE and AUTO Buttons",
+      "function": "RUN/STOP starts or freezes continuous acquisition, SINGLE captures one trigger event and then stops, and AUTO sets up the vertical, horizontal and trigger controls automatically for a suitable display.",
+      "usage": "Press STOP to freeze a trace for measurement and RUN to resume. Use SINGLE for one-off events, and AUTO as a quick starting point for an unknown repetitive signal.",
+      "safety": [
+        "A stopped display does not update. Press RUN before drawing conclusions about a live signal.",
+        "Autoset can change the settings you had; note them first if you need to repeat a measurement."
+      ]
+    },
+    {
+      "id": "vertical_controls",
+      "number": 5,
+      "name": "Vertical Controls",
+      "function": "The channel buttons (CH1 to CH4) switch each channel on or off, and each channel has a POSITION knob to move the trace up or down and a SCALE knob to set volts per division.",
+      "usage": "Press the channel button, then turn SCALE until the waveform fills most of the screen without clipping. Use POSITION to place the zero level where it is easy to read.",
+      "safety": [
+        "Choose a vertical scale high enough for the expected voltage, and never exceed the maximum input voltage marked on the scope or probe."
+      ]
+    },
+    {
+      "id": "horizontal_controls",
+      "number": 6,
+      "name": "Horizontal Controls",
+      "function": "The horizontal SCALE knob sets seconds per division (the timebase) and the POSITION knob moves the waveform in time relative to the trigger point.",
+      "usage": "Turn SCALE so that two to five periods of the signal are visible, and use POSITION to look before or after the trigger event.",
+      "safety": [
+        "If the timebase is too slow, a fast signal appears as a false, wrong-frequency waveform (aliasing), so check the frequency against an expected value."
+      ]
+    },
+    {
+      "id": "trigger_controls",
+      "number": 7,
+      "name": "Trigger Controls",
+      "function": "The trigger decides when a capture starts so that a repeating waveform appears steady. The LEVEL knob sets the voltage at which the trigger fires, and keys select the mode (Auto, Normal, Single), the source and a forced trigger.",
+      "usage": "Set the trigger source to the channel you are viewing, choose the rising or falling edge, and turn LEVEL until it lies within the signal swing. The waveform should then stop drifting.",
+      "safety": [
+        "In Normal mode, the display stays frozen when no trigger occurs and looks like a dead signal. Switch to Auto if you are not sure."
+      ]
+    },
+    {
+      "id": "bnc_inputs",
+      "number": 8,
+      "name": "Channel BNC Inputs",
+      "function": "Coaxial BNC connectors, one per channel, where probes or cables are attached. The outer shell of each BNC is connected to earth ground.",
+      "usage": "Push the probe BNC onto the input and twist it to lock. Set the probe attenuation in the channel menu to match the switch on the probe (1X or 10X).",
+      "safety": [
+        "The BNC shell and probe ground clip are at earth potential, so never clip the ground lead to a live or non-earth-referenced point, because it creates a short circuit.",
+        "Stay within the maximum input voltage printed beside the inputs (typically a few hundred volts on teaching scopes, not mains)."
+      ]
+    },
+    {
+      "id": "probe_compensation",
+      "number": 9,
+      "name": "Probe Compensation Terminal",
+      "function": "Outputs a small test square wave (typically about 1 kHz, 3 V peak to peak) with a ground terminal beside it, used to adjust 10X probes and to check the scope.",
+      "usage": "Clip the probe tip to the signal terminal and the ground clip to the ground terminal. Adjust the small trimmer on the probe until the square wave edges are flat and sharp.",
+      "safety": [
+        "Use this terminal only for compensating probes; it is not a power source."
+      ]
+    },
+    {
+      "id": "power_button",
+      "number": 10,
+      "name": "Power Button",
+      "function": "Turns the oscilloscope on or puts it into standby.",
+      "usage": "Press once to power on and wait for start-up to finish before connecting probes. Press again to power off after use.",
+      "safety": [
+        "Use the supplied grounded (three-pin) power cord and do not defeat the earth connection, since the scope chassis relies on it for safety."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Use the grounded power cord and never remove or bypass the earth pin; the probe ground clips are connected to earth through the scope.",
+    "Connect the probe ground clip only to a circuit point that is at ground potential, and do not measure two different non-ground points with two grounded channel probes at the same time.",
+    "Do not connect the scope or standard probes directly to mains voltage or to voltages above the rating marked on the instrument and probe; use a rated differential probe and ask the instructor.",
+    "Match the probe attenuation setting (1X or 10X) to the probe switch before reading values.",
+    "Check probes and cables for damage before use, and do not use a scope with a damaged case or probe insulation.",
+    "Do not open the case; high voltages remain inside after power-off."
+  ],
+  "procedures": [
+    {
+      "id": "compensate_probe",
+      "title": "Connect and compensate a 10X probe",
+      "steps": [
+        {
+          "text": "Inspect the probe and BNC cable for damage, then power on the scope and wait for it to finish starting.",
+          "partId": "power_button"
+        },
+        {
+          "text": "Plug the probe BNC connector into the CH1 input and twist to lock. Set the probe switch to 10X.",
+          "partId": "bnc_inputs"
+        },
+        {
+          "text": "Press the CH1 button, and in the channel menu set the probe ratio to 10X so that it matches the probe.",
+          "partId": "vertical_controls"
+        },
+        {
+          "text": "Clip the probe tip to the compensation signal terminal and the ground clip to the ground terminal beside it.",
+          "partId": "probe_compensation"
+        },
+        {
+          "text": "Press AUTO to display the test square wave.",
+          "partId": "run_stop_buttons"
+        },
+        {
+          "text": "Adjust the horizontal SCALE so that a few periods are visible.",
+          "partId": "horizontal_controls"
+        },
+        {
+          "text": "Look at the corners of the square wave on the screen. Use the small screwdriver on the probe trimmer until the top is flat, with no overshoot or rounding.",
+          "partId": "screen"
+        },
+        {
+          "text": "Remove the probe from the terminal once the edges are square.",
+          "partId": "probe_compensation"
+        }
+      ]
+    },
+    {
+      "id": "measure_signal",
+      "title": "Display and measure a repetitive signal",
+      "steps": [
+        {
+          "text": "Connect the probe to CH1 with the probe ratio set correctly, and clip the ground lead to the circuit ground.",
+          "partId": "bnc_inputs"
+        },
+        {
+          "text": "Touch the probe tip to the signal test point.",
+          "partId": "bnc_inputs"
+        },
+        {
+          "text": "Press AUTO to get a starting display.",
+          "partId": "run_stop_buttons"
+        },
+        {
+          "text": "Turn the vertical SCALE so that the waveform fills about 60 to 80 percent of the screen height without clipping.",
+          "partId": "vertical_controls"
+        },
+        {
+          "text": "Turn the horizontal SCALE so that two to five periods are visible.",
+          "partId": "horizontal_controls"
+        },
+        {
+          "text": "Set the trigger source to CH1 and the edge to rising, then turn LEVEL to the middle of the waveform until the trace is steady.",
+          "partId": "trigger_controls"
+        },
+        {
+          "text": "Use the measurement menu (Measure) with the softkeys to display the peak-to-peak voltage and the frequency.",
+          "partId": "softkeys"
+        },
+        {
+          "text": "Press STOP to freeze the trace if you need to read cursors or sketch it, then press RUN to resume.",
+          "partId": "run_stop_buttons"
+        },
+        {
+          "text": "Compare the numbers with the grid reading (divisions multiplied by the scales) to confirm that they are reasonable.",
+          "partId": "screen"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "drifting_waveform",
+      "symptom": "A 1 kHz sine wave scrolls sideways across the screen and cannot be held steady.",
+      "options": [
+        {
+          "id": "trigger_level_off",
+          "text": "The trigger level or source is not set to the displayed signal"
+        },
+        {
+          "id": "probe_broken",
+          "text": "The probe cable is open circuit"
+        },
+        {
+          "id": "brightness_low",
+          "text": "The waveform brightness is too low"
+        },
+        {
+          "id": "power_low",
+          "text": "The mains supply is below the rated voltage"
+        }
+      ],
+      "correctOptionId": "trigger_level_off",
+      "explanation": "A steady display depends on triggering on the same point of every cycle. If the trigger source is another channel, or the LEVEL lies outside the signal swing, the scope triggers randomly, so the picture drifts.",
+      "relatedPartIds": [
+        "trigger_controls",
+        "screen"
+      ]
+    },
+    {
+      "id": "amplitude_ten_times_wrong",
+      "symptom": "A 1 V peak-to-peak signal from a generator is read as 10 V peak-to-peak on the screen, with a 10X probe in use.",
+      "options": [
+        {
+          "id": "ratio_mismatch",
+          "text": "The channel probe ratio is set to 10X for a probe switched to 1X"
+        },
+        {
+          "id": "timebase_wrong",
+          "text": "The horizontal scale is too fast"
+        },
+        {
+          "id": "trigger_wrong",
+          "text": "The trigger mode is Single"
+        },
+        {
+          "id": "comp_wrong",
+          "text": "The probe is poorly compensated"
+        }
+      ],
+      "correctOptionId": "ratio_mismatch",
+      "explanation": "The scope multiplies the measured voltage by the probe ratio set in the channel menu. If the probe switch is on 1X but the menu says 10X, the readings are ten times too large. They would be ten times too small the other way round.",
+      "relatedPartIds": [
+        "vertical_controls",
+        "bnc_inputs"
+      ]
+    },
+    {
+      "id": "rounded_square_wave",
+      "symptom": "A 1 kHz square wave from the compensation terminal shows spikes (overshoot) on the corners of each edge, with a 10X probe.",
+      "options": [
+        {
+          "id": "overcompensated",
+          "text": "The probe is over-compensated and needs trimmer adjustment"
+        },
+        {
+          "id": "timebase_off",
+          "text": "The trigger source is off"
+        },
+        {
+          "id": "wrong_input",
+          "text": "The scope is in Single mode"
+        },
+        {
+          "id": "low_battery",
+          "text": "The scope screen battery is flat"
+        }
+      ],
+      "correctOptionId": "overcompensated",
+      "explanation": "Spikes on the edges mean the probe capacitance is over-compensated, while rounded edges mean it is under-compensated. Adjust the probe trimmer until the top of the square wave is flat.",
+      "relatedPartIds": [
+        "probe_compensation",
+        "bnc_inputs",
+        "screen"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "scope_basics",
+      "title": "Oscilloscope basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What does an oscilloscope display?",
+          "options": [
+            "Voltage against time",
+            "Current against resistance",
+            "Power against frequency only",
+            "Resistance against temperature"
+          ],
+          "correctIndex": 0,
+          "explanation": "The vertical axis shows voltage and the horizontal axis shows time."
+        },
+        {
+          "id": "q2",
+          "prompt": "The vertical SCALE knob is set to 2 V per division and a waveform peak-to-peak spans 3 divisions. What is its peak-to-peak voltage?",
+          "options": [
+            "1.5 V",
+            "3 V",
+            "12 V",
+            "6 V"
+          ],
+          "correctIndex": 3,
+          "explanation": "3 divisions multiplied by 2 V/div gives 6 V peak to peak."
+        },
+        {
+          "id": "q3",
+          "prompt": "The horizontal SCALE knob sets 1 ms per division and one period of a wave spans 4 divisions. What is its frequency?",
+          "options": [
+            "4 kHz",
+            "25 Hz",
+            "250 Hz",
+            "400 Hz"
+          ],
+          "correctIndex": 2,
+          "explanation": "The period is 4 ms, so the frequency is 1 / 0.004 s = 250 Hz."
+        },
+        {
+          "id": "q4",
+          "prompt": "What is the job of the trigger?",
+          "options": [
+            "To protect the scope from overload",
+            "To start each capture at the same point of the signal so it looks steady",
+            "To increase the bandwidth",
+            "To switch channels on"
+          ],
+          "correctIndex": 1,
+          "explanation": "Triggering synchronises the display to the waveform so that repeating signals stay still."
+        },
+        {
+          "id": "q5",
+          "prompt": "The probe is switched to 10X. What must you do in the scope?",
+          "options": [
+            "Set the channel probe ratio to 10X",
+            "Nothing, the scope detects it by itself on every model",
+            "Set the timebase to 10 ms",
+            "Press SINGLE"
+          ],
+          "correctIndex": 0,
+          "explanation": "The scope must be told the attenuation; otherwise voltage readings are scaled wrongly."
+        },
+        {
+          "id": "q6",
+          "prompt": "Why must you be careful where the probe ground clip is connected?",
+          "options": [
+            "It only affects the colour of the trace",
+            "It changes the timebase",
+            "It is not connected to anything",
+            "It is connected to earth through the scope, so clipping it to a live point creates a short circuit"
+          ],
+          "correctIndex": 3,
+          "explanation": "The ground of the probe is at earth potential, so connecting it to a non-ground point can short that point to earth."
+        },
+        {
+          "id": "q7",
+          "prompt": "What is the probe compensation terminal used for?",
+          "options": [
+            "Charging the scope battery",
+            "Powering a circuit under test",
+            "Adjusting 10X probes using a test square wave",
+            "Calibrating the timebase of the circuit"
+          ],
+          "correctIndex": 2,
+          "explanation": "The built-in square wave lets you trim the probe so that the edges are flat."
+        },
+        {
+          "id": "q8",
+          "prompt": "What does the SINGLE button do?",
+          "options": [
+            "Shows only CH1",
+            "Captures one trigger event and then stops",
+            "Turns off the display",
+            "Selects 1X attenuation"
+          ],
+          "correctIndex": 1,
+          "explanation": "SINGLE arms the trigger for a single capture and then stops acquisition."
+        },
+        {
+          "id": "q9",
+          "prompt": "The trace does not move in Normal trigger mode and the signal is below the trigger level. What is the likely reason?",
+          "options": [
+            "No trigger occurs, so the display is not updated; try Auto mode or adjust LEVEL",
+            "The scope is broken",
+            "The probe is too long",
+            "The timebase is too slow only"
+          ],
+          "correctIndex": 0,
+          "explanation": "Normal mode waits for a trigger and shows nothing new when there is none."
+        },
+        {
+          "id": "q10",
+          "prompt": "Which is the safest practice for measuring a circuit with a standard passive probe?",
+          "options": [
+            "Use the ground clip on the hot mains line",
+            "Remove the earth pin of the power cord to reduce noise",
+            "Use the probe tip on the 230 V mains directly",
+            "Connect the ground clip to the circuit ground and stay within the voltage rating of the probe and scope"
+          ],
+          "correctIndex": 3,
+          "explanation": "The ground clip goes to the circuit ground, and the ratings of the scope and probe must never be exceeded. Never defeat the earth pin."
+        }
+      ]
+    }
+  ]
+}

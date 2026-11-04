@@ -1,0 +1,541 @@
+{
+  "id": "soldering_station",
+  "name": "Soldering Station",
+  "category": "Assembly",
+  "summary": "Temperature-controlled soldering iron station for joining components to circuit boards.",
+  "overview": "A soldering station is a base unit with a digital temperature controller and a low-voltage soldering iron on a cable. The controller keeps the tip at the set temperature while the iron rests in a stand with a tip cleaner. The iron melts solder to form electrical and mechanical joints between component leads and printed circuit board pads. The tip reaches several hundred degrees Celsius, so burns and fumes are the main hazards. Based on Hakko FX-888D.",
+  "model": {
+    "asset": "models/soldering_station.glb",
+    "hotspots": "models/soldering_station.hotspots.json",
+    "cameraOrbit": "-20deg 65deg 0.55m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.13,
+      "height": 0.095,
+      "depth": 0.17,
+      "cornerRadius": 0.008,
+      "color": "#2F3237"
+    },
+    "parts": [
+      {
+        "id": "temperature_display",
+        "type": "display",
+        "face": "front",
+        "position": [
+          -0.02,
+          0.015
+        ],
+        "size": [
+          0.05,
+          0.025,
+          0.003
+        ],
+        "color": "#C0392B"
+      },
+      {
+        "id": "up_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.035,
+          0.02
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "enter_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.035,
+          0.003
+        ],
+        "size": [
+          0.02,
+          0.012,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "power_switch",
+        "type": "switch",
+        "face": "front",
+        "position": [
+          -0.04,
+          -0.025
+        ],
+        "size": [
+          0.016,
+          0.012,
+          0.006
+        ],
+        "color": "#E9E9E7"
+      },
+      {
+        "id": "iron_connector",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.035,
+          -0.028
+        ],
+        "size": [
+          0.014,
+          0.014,
+          0.01
+        ],
+        "color": "#1E1E1E"
+      },
+      {
+        "id": "iron_stand",
+        "type": "handle",
+        "face": "top",
+        "position": [
+          0.03,
+          0
+        ],
+        "size": [
+          0.05,
+          0.08,
+          0.035
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "tip_cleaner",
+        "type": "slot",
+        "face": "top",
+        "position": [
+          -0.03,
+          0
+        ],
+        "size": [
+          0.05,
+          0.06,
+          0.01
+        ],
+        "color": "#D8B04A"
+      },
+      {
+        "id": "soldering_iron",
+        "type": "probe",
+        "face": "left",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          0.012,
+          0.012,
+          0.05
+        ],
+        "color": "#A34A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "temperature_display",
+      "number": 1,
+      "name": "Temperature Display",
+      "function": "Shows the actual tip temperature while heating and in use, and shows the set temperature while it is being changed. A heater symbol or indicator shows when the heater is on.",
+      "usage": "Wait until the displayed temperature has settled at the set value before soldering. Check that the unit (degrees Celsius or Fahrenheit) is the one you expect.",
+      "safety": [
+        "The tip stays hot after the display value drops, so treat it as hot until it is fully cool."
+      ]
+    },
+    {
+      "id": "up_button",
+      "number": 2,
+      "name": "UP Button",
+      "function": "Raises the set temperature value or steps through the stored preset temperatures, depending on the mode.",
+      "usage": "Press UP to increase the value shown while in the setting mode. Confirm the change with the ENTER button.",
+      "safety": [
+        "Do not use a higher temperature than the job needs; excess heat damages pads and components and shortens tip life."
+      ]
+    },
+    {
+      "id": "enter_button",
+      "number": 3,
+      "name": "ENTER Button",
+      "function": "Confirms the selected temperature or setting and switches between the normal operating display and the setting modes.",
+      "usage": "Press ENTER to accept a change. If no button is pressed for a while, the station returns to its normal operating display.",
+      "safety": [
+        "Check the confirmed value on the display before you start soldering."
+      ]
+    },
+    {
+      "id": "power_switch",
+      "number": 4,
+      "name": "Power Switch",
+      "function": "Turns the station and its heater on and off.",
+      "usage": "Switch on with the iron seated in its stand and wait for the display to reach the set temperature. Switch off after use and leave the iron in the stand to cool.",
+      "safety": [
+        "Never leave the station switched on and unattended.",
+        "Switch off and unplug before changing the tip or cleaning the unit."
+      ]
+    },
+    {
+      "id": "iron_connector",
+      "number": 5,
+      "name": "Iron Connector",
+      "function": "Socket that connects the soldering iron cable to the station. It carries the low-voltage heater supply and the temperature sensor signal.",
+      "usage": "Switch the station off, push the iron plug fully in and screw or lock it if the plug has a retaining ring. Do not pull on the cable to disconnect; hold the plug.",
+      "safety": [
+        "Connect or disconnect the iron only with the station switched off and unplugged.",
+        "Do not use an iron with a damaged or frayed cable."
+      ]
+    },
+    {
+      "id": "soldering_iron",
+      "number": 6,
+      "name": "Soldering Iron",
+      "function": "The hand tool with a heating element and a replaceable tip. Its heat melts solder and heats the pad and component lead so the solder flows into the joint.",
+      "usage": "Hold it like a pen near the front of the handle. Touch the tip to both the pad and the lead together, then feed solder to the joint rather than to the tip itself. Return it to the stand after each use.",
+      "safety": [
+        "Always return the iron to the stand; never place it on the bench or point it at anyone.",
+        "Do not touch the metal barrel or tip, and keep the cable away from the hot tip."
+      ]
+    },
+    {
+      "id": "iron_stand",
+      "number": 7,
+      "name": "Iron Stand",
+      "function": "Heat-resistant holder that keeps the hot iron off the bench and safely away from the cable, your hands and other objects.",
+      "usage": "Place the iron fully in the holder every time you stop soldering, even for a few seconds. Keep the stand on a stable surface with the station.",
+      "safety": [
+        "Make sure the iron is seated securely so it cannot roll or fall out.",
+        "Keep flammable materials such as paper and plastic away from the stand."
+      ]
+    },
+    {
+      "id": "tip_cleaner",
+      "number": 8,
+      "name": "Tip Cleaner",
+      "function": "A damp sponge or brass wool tray used to wipe oxidation and old solder off the tip so it can transfer heat well.",
+      "usage": "Wipe the tip lightly on the damp sponge or brass wool before and after soldering, then add a fresh coat of solder to the tip. Keep a sponge damp, not wet.",
+      "safety": [
+        "Sponge water can spit when it touches a hot tip; wipe gently and keep your face back.",
+        "Never shake the iron to remove solder; molten drops can land on skin or the bench."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Treat the tip as hot at all times. Always return the iron to its stand and never lay it on the bench.",
+    "Solder in a well-ventilated area, ideally with a fume extractor, and keep your face out of the fume plume. Solder flux fumes irritate the lungs and eyes.",
+    "Leaded solder contains lead: do not eat, drink or touch your face while soldering, and wash your hands thoroughly afterwards. Prefer lead-free solder where the course allows.",
+    "Wear safety glasses; molten solder and clipped component leads can spring into the eyes.",
+    "Switch off and unplug the station when finished, and let the iron cool before storing it or changing the tip.",
+    "Never solder on a circuit that is powered or connected to a power source."
+  ],
+  "procedures": [
+    {
+      "id": "prepare_and_tin_tip",
+      "title": "Set up the station and tin the tip",
+      "steps": [
+        {
+          "text": "Check the iron, cable and stand for damage and clear flammable materials from the bench.",
+          "partId": "soldering_iron"
+        },
+        {
+          "text": "Dampen the sponge (or check the brass wool) in the tip cleaner.",
+          "partId": "tip_cleaner"
+        },
+        {
+          "text": "Seat the iron in its stand.",
+          "partId": "iron_stand"
+        },
+        {
+          "text": "Make sure the iron plug is fully inserted in the connector with the station off.",
+          "partId": "iron_connector"
+        },
+        {
+          "text": "Switch the station on with the power switch.",
+          "partId": "power_switch"
+        },
+        {
+          "text": "Use the UP button to set the temperature your teacher specifies for the solder in use.",
+          "partId": "up_button"
+        },
+        {
+          "text": "Press ENTER to confirm the set temperature.",
+          "partId": "enter_button"
+        },
+        {
+          "text": "Wait until the display shows the temperature has reached the set value.",
+          "partId": "temperature_display"
+        },
+        {
+          "text": "Wipe the tip on the tip cleaner and apply a small amount of fresh solder so the tip is shiny and coated.",
+          "partId": "tip_cleaner"
+        }
+      ]
+    },
+    {
+      "id": "solder_through_hole_joint",
+      "title": "Solder a through-hole joint",
+      "steps": [
+        {
+          "text": "Put on safety glasses and start the fume extractor or ventilation.",
+          "partId": "soldering_iron"
+        },
+        {
+          "text": "Confirm the display shows the correct temperature before picking up the iron.",
+          "partId": "temperature_display"
+        },
+        {
+          "text": "Pick up the iron from its stand and wipe the tip on the tip cleaner.",
+          "partId": "iron_stand"
+        },
+        {
+          "text": "Touch the tip to the pad and the component lead together for about one to two seconds.",
+          "partId": "soldering_iron"
+        },
+        {
+          "text": "Feed solder to the junction of the pad, lead and tip, not onto the tip itself.",
+          "partId": "soldering_iron"
+        },
+        {
+          "text": "Remove the solder, then the iron, and keep the joint still until the solder has solidified.",
+          "partId": "soldering_iron"
+        },
+        {
+          "text": "Clean the tip on the tip cleaner and place the iron back in its stand.",
+          "partId": "tip_cleaner"
+        },
+        {
+          "text": "Inspect the joint: it should be smooth and shiny, shaped like a small cone, with no gaps.",
+          "partId": "soldering_iron"
+        },
+        {
+          "text": "When finished, switch the station off and leave the iron in its stand to cool.",
+          "partId": "power_switch"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "solder_balls_up",
+      "symptom": "Solder will not flow onto the pad and forms a ball on the tip. The tip looks dark and dull.",
+      "options": [
+        {
+          "id": "oxidized_tip",
+          "text": "The tip is oxidized and needs cleaning and re-tinning"
+        },
+        {
+          "id": "temperature_too_high",
+          "text": "The set temperature is too high"
+        },
+        {
+          "id": "wrong_stand",
+          "text": "The iron is in the wrong stand"
+        },
+        {
+          "id": "display_unit",
+          "text": "The display unit is wrong"
+        }
+      ],
+      "correctOptionId": "oxidized_tip",
+      "explanation": "An oxidized or dirty tip does not transfer heat or wet the solder, so the solder balls up. Clean the tip on the sponge or brass wool and re-tin it. Too high a temperature tends to burn the flux and oxidize the tip, but the immediate fix is cleaning and tinning.",
+      "relatedPartIds": [
+        "tip_cleaner",
+        "soldering_iron"
+      ]
+    },
+    {
+      "id": "station_no_heat",
+      "symptom": "The station is switched on and the display lights up, but the tip never gets hot. The display shows an error or a sensor message.",
+      "options": [
+        {
+          "id": "iron_not_connected",
+          "text": "The iron plug is not fully seated or the heater or sensor is faulty"
+        },
+        {
+          "id": "cleaner_dry",
+          "text": "The tip cleaner sponge is dry"
+        },
+        {
+          "id": "enter_not_pressed",
+          "text": "ENTER was pressed twice"
+        },
+        {
+          "id": "solder_old",
+          "text": "The solder roll is old"
+        }
+      ],
+      "correctOptionId": "iron_not_connected",
+      "explanation": "Without a good connection to the heater and temperature sensor, the controller cannot heat or regulate and usually shows an error. Switch off, unplug, reseat the iron plug and try again. If the error remains, the heater or sensor needs a technician or replacement.",
+      "relatedPartIds": [
+        "iron_connector",
+        "temperature_display"
+      ]
+    },
+    {
+      "id": "pads_lifting",
+      "symptom": "Pads lift from the board and flux turns brown and burnt when you solder a joint. The set temperature is 450 degrees Celsius.",
+      "options": [
+        {
+          "id": "temp_too_high",
+          "text": "The temperature is set too high or the iron is held on the joint too long"
+        },
+        {
+          "id": "temp_too_low",
+          "text": "The temperature is set too low"
+        },
+        {
+          "id": "no_flux",
+          "text": "The solder has too much flux"
+        },
+        {
+          "id": "power_off",
+          "text": "The station is switched off"
+        }
+      ],
+      "correctOptionId": "temp_too_high",
+      "explanation": "Excess temperature or too long a contact time damages the board adhesive and burns flux. Use the lowest temperature that melts the solder quickly (typically around 320 to 380 degrees Celsius for general electronics, as your teacher specifies) and limit the contact time.",
+      "relatedPartIds": [
+        "up_button",
+        "temperature_display"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "solder_basics",
+      "title": "Soldering station basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Where should the hot iron go when you are not using it?",
+          "options": [
+            "On the bench next to the board",
+            "In the iron stand",
+            "On top of the station",
+            "Held in your other hand"
+          ],
+          "correctIndex": 1,
+          "explanation": "The stand keeps the hot tip and cable away from the bench, your hands and other objects."
+        },
+        {
+          "id": "q2",
+          "prompt": "What is the purpose of the sponge or brass wool tip cleaner?",
+          "options": [
+            "To wipe oxidation and old solder off the tip",
+            "To cool the iron",
+            "To store spare solder",
+            "To measure temperature"
+          ],
+          "correctIndex": 0,
+          "explanation": "A clean, tinned tip transfers heat well and makes better joints."
+        },
+        {
+          "id": "q3",
+          "prompt": "Where should you feed the solder when making a joint?",
+          "options": [
+            "Onto the tip only",
+            "Onto the cable",
+            "Away from the joint",
+            "Onto the pad and lead junction, next to the tip"
+          ],
+          "correctIndex": 3,
+          "explanation": "The pad and lead must be hot enough to melt the solder, so the solder is fed to the junction and flows into the joint."
+        },
+        {
+          "id": "q4",
+          "prompt": "What should you do before changing the tip or connecting the iron to the station?",
+          "options": [
+            "Nothing special",
+            "Raise the temperature",
+            "Switch off, unplug and let the iron cool",
+            "Wet the tip"
+          ],
+          "correctIndex": 2,
+          "explanation": "A hot tip causes burns and the connector carries heater power, so switch off, unplug and cool the tool first."
+        },
+        {
+          "id": "q5",
+          "prompt": "Why is good ventilation or a fume extractor needed?",
+          "options": [
+            "To cool the board",
+            "Solder flux fumes irritate the eyes and lungs",
+            "To keep the sponge damp",
+            "To improve the display"
+          ],
+          "correctIndex": 1,
+          "explanation": "Flux smoke contains irritants. Keep your face out of the plume and ventilate the work area."
+        },
+        {
+          "id": "q6",
+          "prompt": "What is the special hazard of leaded solder?",
+          "options": [
+            "It contains lead, so you must wash your hands and not eat or drink while using it",
+            "It conducts less",
+            "It melts at a higher temperature than lead-free",
+            "It cannot be used on boards"
+          ],
+          "correctIndex": 0,
+          "explanation": "Lead is toxic. Wash hands afterwards and avoid hand-to-mouth contact while soldering."
+        },
+        {
+          "id": "q7",
+          "prompt": "A finished good solder joint should look like:",
+          "options": [
+            "A dull, grainy ball",
+            "A thin crack around the lead",
+            "A large lump covering several pads",
+            "A smooth, shiny, small cone with no gaps"
+          ],
+          "correctIndex": 3,
+          "explanation": "Smooth, shiny and concave joints indicate good wetting. Dull, balled or cracked joints are suspect."
+        },
+        {
+          "id": "q8",
+          "prompt": "What happens if the temperature is set far too high for a long time?",
+          "options": [
+            "Joints get stronger",
+            "Solder cools more quickly",
+            "Pads can lift and the tip wears out faster",
+            "Nothing"
+          ],
+          "correctIndex": 2,
+          "explanation": "Excess heat damages the board and components and oxidizes the tip. Use the lowest effective temperature."
+        },
+        {
+          "id": "q9",
+          "prompt": "Which circuit can you safely solder on?",
+          "options": [
+            "One that is powered",
+            "One with the power source disconnected",
+            "One connected to a mains adapter",
+            "Any circuit if you wear gloves"
+          ],
+          "correctIndex": 1,
+          "explanation": "Always disconnect all power before soldering, to avoid shock, short circuits and damage."
+        },
+        {
+          "id": "q10",
+          "prompt": "You are finished soldering. What is the correct shut-down?",
+          "options": [
+            "Clean and tin the tip, switch off, and leave the iron in its stand to cool",
+            "Unplug the cable and leave the iron on the bench",
+            "Pour water on the tip",
+            "Leave it on standby"
+          ],
+          "correctIndex": 0,
+          "explanation": "A tinned tip resists oxidation; switch off and let the iron cool in its stand before storing."
+        }
+      ]
+    }
+  ]
+}

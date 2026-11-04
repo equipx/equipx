@@ -1,0 +1,584 @@
+{
+  "id": "function_generator",
+  "name": "Function Generator",
+  "category": "Sources",
+  "summary": "Bench source that produces sine, square, ramp and other test waveforms with adjustable frequency, amplitude and offset.",
+  "overview": "A function generator creates repeating electrical waveforms such as sine, square, ramp and pulse for testing circuits. You pick the waveform, then set frequency, amplitude and DC offset on a screen using softkeys, a keypad and a knob. The signal leaves through BNC output connectors with a typical 50 ohm source impedance, so the output load setting must match the real load. Based on Rigol DG1022Z.",
+  "model": {
+    "asset": "models/function_generator.glb",
+    "hotspots": "models/function_generator.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.55m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.3,
+      "height": 0.13,
+      "depth": 0.12,
+      "cornerRadius": 0.008,
+      "color": "#D9D7D2"
+    },
+    "parts": [
+      {
+        "id": "lcd_screen",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          -0.06,
+          0.018
+        ],
+        "size": [
+          0.11,
+          0.075,
+          0.003
+        ],
+        "color": "#2E4A5C"
+      },
+      {
+        "id": "softkeys",
+        "type": "button",
+        "face": "front",
+        "position": [
+          -0.06,
+          -0.032
+        ],
+        "size": [
+          0.11,
+          0.01,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "waveform_keys",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.035,
+          0.045
+        ],
+        "size": [
+          0.07,
+          0.012,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "mode_keys",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.035,
+          0.026
+        ],
+        "size": [
+          0.07,
+          0.012,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "numeric_keypad",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.115,
+          0.03
+        ],
+        "size": [
+          0.05,
+          0.05,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "rotary_knob",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0.07,
+          -0.016
+        ],
+        "size": [
+          0.026,
+          0.026,
+          0.012
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "bnc_outputs",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.07,
+          -0.048
+        ],
+        "size": [
+          0.07,
+          0.014,
+          0.014
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "output_buttons",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0,
+          -0.047
+        ],
+        "size": [
+          0.03,
+          0.01,
+          0.004
+        ],
+        "color": "#4A7BA3"
+      },
+      {
+        "id": "counter_input",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.07,
+          -0.047
+        ],
+        "size": [
+          0.012,
+          0.012,
+          0.012
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "power_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0.125,
+          -0.047
+        ],
+        "size": [
+          0.01,
+          0.01,
+          0.004
+        ],
+        "color": "#A34A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "lcd_screen",
+      "number": 1,
+      "name": "LCD Screen",
+      "function": "Shows the selected waveform, its frequency, amplitude, offset and phase, the output state of each channel and the current menu.",
+      "usage": "Check the parameter values on the screen before enabling an output. The highlighted parameter is the one the knob and keypad will change.",
+      "safety": [
+        "Always read the amplitude and offset shown on screen before enabling the output."
+      ]
+    },
+    {
+      "id": "softkeys",
+      "number": 2,
+      "name": "Menu Softkeys",
+      "function": "Keys below the screen whose function changes with the menu label shown above each one.",
+      "usage": "Press the key under a label to select a parameter (for example Frequency, Amplitude or Offset) or to change the unit.",
+      "safety": [
+        "Check the label above the key before pressing, since softkeys change function between menus."
+      ]
+    },
+    {
+      "id": "waveform_keys",
+      "number": 3,
+      "name": "Waveform Keys",
+      "function": "Dedicated keys that select the output waveform, typically Sine, Square, Ramp, Pulse, Noise and Arbitrary.",
+      "usage": "Press the key for the waveform you need and then set its parameters. Square and pulse waves use a duty cycle parameter.",
+      "safety": [
+        "Changing the waveform can change the output level, so keep the output off while switching to an unfamiliar waveform."
+      ]
+    },
+    {
+      "id": "mode_keys",
+      "number": 4,
+      "name": "Mode and Utility Keys",
+      "function": "Select modulation (Mod), sweep (Sweep), burst (Burst) and the utility menu (Utility) where the output load, sync and other system settings are found.",
+      "usage": "Press Mod, Sweep or Burst to add these features to the basic waveform. Use Utility to find the channel settings, including the output impedance (load) setting.",
+      "safety": [
+        "Leave the modulation and sweep modes off for basic measurements, so that the signal is a plain waveform."
+      ]
+    },
+    {
+      "id": "numeric_keypad",
+      "number": 5,
+      "name": "Numeric Keypad",
+      "function": "Enters exact parameter values using digits, a decimal point and a sign key, with the unit chosen through the softkeys.",
+      "usage": "Select a parameter, type the value on the keypad and press the unit softkey (such as kHz or Vpp) to confirm.",
+      "safety": [
+        "Check the unit before confirming; entering 1 kHz instead of 1 MHz changes the signal a thousand-fold."
+      ]
+    },
+    {
+      "id": "rotary_knob",
+      "number": 6,
+      "name": "Rotary Knob and Arrow Keys",
+      "function": "Adjusts the highlighted digit of a parameter with the knob, with the left and right arrow keys choosing which digit changes.",
+      "usage": "Use the arrow keys to select a digit, then turn the knob to step the value up or down for fine adjustment. Pressing the knob may confirm a selection on some menus.",
+      "safety": [
+        "Turn gradually when a circuit is connected, because a sudden amplitude increase can overstress a component."
+      ]
+    },
+    {
+      "id": "bnc_outputs",
+      "number": 7,
+      "name": "Channel Output Connectors (CH1, CH2)",
+      "function": "BNC connectors that carry the generated signal, one per channel. The source impedance is normally 50 ohms, and the BNC outer shell is connected to ground.",
+      "usage": "Connect a BNC cable or lead from the output to the circuit input or to the oscilloscope. Connect the shell side to the circuit ground.",
+      "safety": [
+        "Do not apply an external voltage to the output connector, because it can damage the output stage.",
+        "The shell is at ground potential, so do not connect it to a voltage point other than ground."
+      ]
+    },
+    {
+      "id": "output_buttons",
+      "number": 8,
+      "name": "Output Enable Buttons",
+      "function": "Switch each channel output on or off. The key lights up while the output is active.",
+      "usage": "Set all parameters with the output off, connect the cable, then press the button to turn the signal on. Press again to turn it off before changing any connection.",
+      "safety": [
+        "Keep the output off whenever you connect or disconnect leads."
+      ]
+    },
+    {
+      "id": "counter_input",
+      "number": 9,
+      "name": "Counter Input",
+      "function": "BNC input for the built-in frequency counter, which measures the frequency or period of an external signal.",
+      "usage": "Connect the signal under test to the counter input and enable the counter in the utility menu. Read the frequency on the screen.",
+      "safety": [
+        "Stay within the maximum input level given for the counter input and never connect mains voltage."
+      ]
+    },
+    {
+      "id": "power_button",
+      "number": 10,
+      "name": "Power Button",
+      "function": "Turns the function generator on and off.",
+      "usage": "Press to switch on and wait until the start-up screen disappears before connecting a circuit.",
+      "safety": [
+        "Use the supplied grounded power cord and keep the vents clear."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Keep the output off while connecting or disconnecting leads or changing the waveform to an unfamiliar one.",
+    "Never apply an external voltage to the output connectors, and do not connect the output to a power supply or mains.",
+    "Check the amplitude, offset and output load setting on the screen before enabling an output, and begin with a low amplitude when driving unknown circuits.",
+    "Use the grounded power cord and do not open the case.",
+    "Connect the BNC shell side only to circuit ground, because it is a ground connection."
+  ],
+  "procedures": [
+    {
+      "id": "output_sine_wave",
+      "title": "Output a 1 kHz sine wave of 2 Vpp",
+      "steps": [
+        {
+          "text": "Power on the generator and wait for the start-up screen to finish.",
+          "partId": "power_button"
+        },
+        {
+          "text": "Check that the CH1 output is off (button not lit).",
+          "partId": "output_buttons"
+        },
+        {
+          "text": "Press the Sine waveform key.",
+          "partId": "waveform_keys"
+        },
+        {
+          "text": "Select Frequency with a softkey, enter 1 on the keypad and confirm with the kHz softkey.",
+          "partId": "numeric_keypad"
+        },
+        {
+          "text": "Select Amplitude with a softkey, enter 2 and confirm with Vpp. Check that the offset is 0 V.",
+          "partId": "softkeys"
+        },
+        {
+          "text": "Check the output load setting in the utility menu. For a high-impedance input such as an oscilloscope, choose High Z, otherwise the shown amplitude is wrong.",
+          "partId": "mode_keys"
+        },
+        {
+          "text": "Connect a BNC cable from CH1 output to the oscilloscope input.",
+          "partId": "bnc_outputs"
+        },
+        {
+          "text": "Press the CH1 output button, and confirm on the oscilloscope that the waveform is 2 Vpp at 1 kHz.",
+          "partId": "output_buttons"
+        },
+        {
+          "text": "Read the final parameters on the screen. Turn the output off when finished.",
+          "partId": "lcd_screen"
+        }
+      ]
+    },
+    {
+      "id": "output_logic_square",
+      "title": "Output a 3.3 V logic-level square wave",
+      "steps": [
+        {
+          "text": "Turn the CH1 output off before making any changes.",
+          "partId": "output_buttons"
+        },
+        {
+          "text": "Press the Square waveform key.",
+          "partId": "waveform_keys"
+        },
+        {
+          "text": "Set the frequency to 1 kHz with the keypad.",
+          "partId": "numeric_keypad"
+        },
+        {
+          "text": "Set the amplitude to 3.3 Vpp and the DC offset to 1.65 V so that the signal swings from 0 V to 3.3 V.",
+          "partId": "softkeys"
+        },
+        {
+          "text": "Set the duty cycle to 50 percent using the softkey and the knob.",
+          "partId": "rotary_knob"
+        },
+        {
+          "text": "Check the values on the screen, including the high and low levels, before connecting to a circuit.",
+          "partId": "lcd_screen"
+        },
+        {
+          "text": "Connect the output to the circuit input, with the shell side to circuit ground.",
+          "partId": "bnc_outputs"
+        },
+        {
+          "text": "Enable the output and verify the waveform on an oscilloscope. Disable the output when finished.",
+          "partId": "output_buttons"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "amplitude_double",
+      "symptom": "The generator is set to 2 Vpp, but an oscilloscope with a 1 Mohm input shows about 4 Vpp.",
+      "options": [
+        {
+          "id": "load_setting",
+          "text": "The output load is set to 50 ohm but the actual load is high impedance"
+        },
+        {
+          "id": "frequency_wrong",
+          "text": "The frequency is set too high"
+        },
+        {
+          "id": "duty_wrong",
+          "text": "The duty cycle is set to 50 percent"
+        },
+        {
+          "id": "knob_stuck",
+          "text": "The rotary knob is stuck"
+        }
+      ],
+      "correctOptionId": "load_setting",
+      "explanation": "With the 50 ohm load setting, the generator assumes that half of the voltage is lost across its own output impedance, so it doubles the open-circuit voltage. With a high-impedance real load, the full doubled voltage appears. Set the load to High Z, or terminate with 50 ohm.",
+      "relatedPartIds": [
+        "mode_keys",
+        "bnc_outputs",
+        "lcd_screen"
+      ]
+    },
+    {
+      "id": "no_signal_output",
+      "symptom": "All parameters look correct on the screen, yet the oscilloscope connected to CH1 shows only a flat line.",
+      "options": [
+        {
+          "id": "output_off",
+          "text": "The CH1 output is not enabled"
+        },
+        {
+          "id": "counter_active",
+          "text": "The counter input is in use"
+        },
+        {
+          "id": "waveform_sine",
+          "text": "The waveform is set to sine"
+        },
+        {
+          "id": "screen_dim",
+          "text": "The screen brightness is low"
+        }
+      ],
+      "correctOptionId": "output_off",
+      "explanation": "The signal is only sent to the BNC when the output button is on. The parameters can all be correct while the output stays off. Also check the cable and that the scope is connected to CH1 and not CH2.",
+      "relatedPartIds": [
+        "output_buttons",
+        "bnc_outputs"
+      ]
+    },
+    {
+      "id": "offset_square",
+      "symptom": "A 3.3 V logic input is not triggered by a square wave of 3.3 Vpp, and the oscilloscope shows the wave swinging between -1.65 V and +1.65 V.",
+      "options": [
+        {
+          "id": "offset_zero",
+          "text": "The DC offset is 0 V, so half of the wave is negative"
+        },
+        {
+          "id": "freq_high",
+          "text": "The frequency is too low"
+        },
+        {
+          "id": "sine_wave",
+          "text": "The waveform is a sine"
+        },
+        {
+          "id": "sweep_on",
+          "text": "The counter is disabled"
+        }
+      ],
+      "correctOptionId": "offset_zero",
+      "explanation": "With zero offset the wave is centred on 0 V. Setting an offset of half the amplitude (1.65 V) shifts it to 0 to 3.3 V, suitable for 3.3 V logic. Also confirm the high and low levels on the screen.",
+      "relatedPartIds": [
+        "softkeys",
+        "lcd_screen",
+        "numeric_keypad"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "fg_basics",
+      "title": "Function generator basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What does a function generator produce?",
+          "options": [
+            "A stable DC supply only",
+            "A high-power AC current",
+            "Repeating waveforms such as sine, square and ramp",
+            "Only noise"
+          ],
+          "correctIndex": 2,
+          "explanation": "It is a signal source for testing, producing standard waveforms of adjustable frequency and amplitude."
+        },
+        {
+          "id": "q2",
+          "prompt": "What is the typical source impedance of the output BNC?",
+          "options": [
+            "1 ohm",
+            "50 ohm",
+            "1 Mohm",
+            "Zero"
+          ],
+          "correctIndex": 1,
+          "explanation": "Most generators have a 50 ohm output impedance, so the load matters for the real output voltage."
+        },
+        {
+          "id": "q3",
+          "prompt": "Why should the output be off while you connect leads?",
+          "options": [
+            "To avoid unexpected signals or levels reaching the circuit",
+            "To save power",
+            "To change the language",
+            "Connecting leads needs it off for the knob to work"
+          ],
+          "correctIndex": 0,
+          "explanation": "An unexpected level can damage a circuit or an instrument input."
+        },
+        {
+          "id": "q4",
+          "prompt": "A sine wave has 4 Vpp. What is its peak voltage?",
+          "options": [
+            "4 V",
+            "8 V",
+            "1.4 V",
+            "2 V"
+          ],
+          "correctIndex": 3,
+          "explanation": "Peak is half of the peak-to-peak value, so 2 V."
+        },
+        {
+          "id": "q5",
+          "prompt": "What does DC offset do?",
+          "options": [
+            "Changes the frequency",
+            "Increases bandwidth",
+            "Shifts the whole waveform up or down",
+            "Changes the duty cycle"
+          ],
+          "correctIndex": 2,
+          "explanation": "Offset adds a constant voltage so the waveform is centred on a level other than zero."
+        },
+        {
+          "id": "q6",
+          "prompt": "What does the duty cycle of a square wave describe?",
+          "options": [
+            "The peak voltage",
+            "The percentage of the period during which the signal is high",
+            "The number of cycles in a burst",
+            "The offset"
+          ],
+          "correctIndex": 1,
+          "explanation": "A duty cycle of 50 percent means equal high and low times."
+        },
+        {
+          "id": "q7",
+          "prompt": "A generator is set to 50 ohm load but drives a high-impedance oscilloscope. What happens to the reading?",
+          "options": [
+            "It is about double the displayed amplitude",
+            "It is half the displayed amplitude",
+            "It is exactly correct",
+            "It is zero"
+          ],
+          "correctIndex": 0,
+          "explanation": "The generator assumes the load divides the voltage in half, so with an open (high-impedance) load the real voltage is about double."
+        },
+        {
+          "id": "q8",
+          "prompt": "What is the correct way to apply an external voltage source to the output BNC?",
+          "options": [
+            "Do it with the output on",
+            "Do it only for sine waves",
+            "It is required for calibration",
+            "Never do it; it can damage the output stage"
+          ],
+          "correctIndex": 3,
+          "explanation": "The output is not designed to receive external voltage."
+        },
+        {
+          "id": "q9",
+          "prompt": "Which unit would you type to set a frequency of 1000 Hz?",
+          "options": [
+            "1 mV",
+            "1 Vpp",
+            "1 kHz",
+            "1 ms duty"
+          ],
+          "correctIndex": 2,
+          "explanation": "1 kHz equals 1000 Hz. Always confirm the unit before pressing the softkey."
+        },
+        {
+          "id": "q10",
+          "prompt": "What is the Counter Input used for?",
+          "options": [
+            "Outputting a signal",
+            "Measuring the frequency of an external signal",
+            "Powering the generator",
+            "Changing the waveform"
+          ],
+          "correctIndex": 1,
+          "explanation": "The built-in counter measures the frequency or period of a signal connected to its input."
+        }
+      ]
+    }
+  ]
+}

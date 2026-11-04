@@ -1,0 +1,561 @@
+{
+  "id": "analog_multimeter",
+  "name": "Analog Multimeter",
+  "category": "Measurement",
+  "summary": "Needle-type meter for measuring voltage, current and resistance, read from a printed scale.",
+  "overview": "An analog multimeter (multitester) shows the measured value with a pointer moving over printed scales. A large range selector chooses the function and range, and the red and black test probes plug into jacks at the bottom of the panel. Resistance ranges need a battery and must be zeroed with the ohm adjuster before use. Always start on the highest range when the value is unknown, and read the scale from straight above to avoid parallax error. Based on Sanwa YX-360TRF.",
+  "model": {
+    "asset": "models/analog_multimeter.glb",
+    "hotspots": "models/analog_multimeter.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.45m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.1,
+      "height": 0.14,
+      "depth": 0.04,
+      "cornerRadius": 0.006,
+      "color": "#2F3A4A"
+    },
+    "parts": [
+      {
+        "id": "meter_scale",
+        "type": "screen",
+        "face": "front",
+        "position": [
+          0,
+          0.035
+        ],
+        "size": [
+          0.082,
+          0.052,
+          0.003
+        ],
+        "color": "#F2EEDC"
+      },
+      {
+        "id": "mechanical_zero",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0,
+          -0.002
+        ],
+        "size": [
+          0.008,
+          0.008,
+          0.004
+        ],
+        "color": "#8C8B87"
+      },
+      {
+        "id": "ohm_adjust",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          -0.036,
+          -0.012
+        ],
+        "size": [
+          0.012,
+          0.012,
+          0.008
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "range_selector",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0,
+          -0.034
+        ],
+        "size": [
+          0.05,
+          0.05,
+          0.012
+        ],
+        "color": "#1F1F1E"
+      },
+      {
+        "id": "positive_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.038,
+          -0.063
+        ],
+        "size": [
+          0.01,
+          0.01,
+          0.005
+        ],
+        "color": "#A34A4A"
+      },
+      {
+        "id": "common_jack",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.038,
+          -0.063
+        ],
+        "size": [
+          0.01,
+          0.01,
+          0.005
+        ],
+        "color": "#1F1F1E"
+      },
+      {
+        "id": "battery_fuse_cover",
+        "type": "slot",
+        "face": "back",
+        "position": [
+          0,
+          0.03
+        ],
+        "size": [
+          0.04,
+          0.025,
+          0.002
+        ],
+        "color": "#4A5568"
+      },
+      {
+        "id": "tilt_stand_cover",
+        "type": "handle",
+        "face": "back",
+        "position": [
+          0,
+          -0.02
+        ],
+        "size": [
+          0.08,
+          0.06,
+          0.003
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "test_probes",
+        "type": "probe",
+        "face": "right",
+        "position": [
+          0,
+          -0.03
+        ],
+        "size": [
+          0.006,
+          0.006,
+          0.045
+        ],
+        "color": "#A34A4A"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "meter_scale",
+      "number": 1,
+      "name": "Meter Scale and Pointer",
+      "function": "Shows the measurement as a pointer moving over several printed scales: DC/AC voltage and current, resistance (ohms), and often decibels. A mirror strip under the scale helps avoid parallax error.",
+      "usage": "Choose the scale that matches the selected function and range, then read the pointer with your eye directly above it so the pointer and its reflection in the mirror line up. Multiply or scale the reading as the range requires; the resistance scale reads from right (zero) to left (infinity).",
+      "safety": [
+        "Do not tap or shake the meter hard; the pointer movement is delicate and can be damaged by shock."
+      ]
+    },
+    {
+      "id": "mechanical_zero",
+      "number": 2,
+      "name": "Mechanical Zero Adjuster",
+      "function": "A small screw below the pointer that sets the resting position of the pointer exactly on zero at the left end of the scale when the meter is not connected.",
+      "usage": "With the probes disconnected and the meter lying in its normal position, turn the screw slowly with a small screwdriver until the pointer sits exactly on the zero mark. Do this before taking voltage or current readings.",
+      "safety": [
+        "Disconnect the probes from any circuit before adjusting the screw, and make only small turns."
+      ]
+    },
+    {
+      "id": "ohm_adjust",
+      "number": 3,
+      "name": "0 ohm Adjuster",
+      "function": "Knob that compensates for battery ageing so the pointer reads exactly 0 ohm on the right end of the resistance scale when the probes are shorted together.",
+      "usage": "Select a resistance range, touch the two probe tips together and turn the 0 ohm knob until the pointer lies on the 0 ohm mark. Repeat after every change of resistance range.",
+      "safety": [
+        "If the pointer cannot reach 0 ohm, the battery is weak and should be replaced before measuring resistance."
+      ]
+    },
+    {
+      "id": "range_selector",
+      "number": 4,
+      "name": "Range Selector Switch",
+      "function": "Rotary switch that selects the function (DC voltage, AC voltage, DC current, resistance) and the measuring range. It usually has an OFF position.",
+      "usage": "Set the pointer of the selector on the function and range you need before touching the probes to the circuit. When the value is unknown, start on the highest range and step down until the pointer gives a clear reading in the middle or upper part of the scale.",
+      "safety": [
+        "Never turn the selector while the probes are connected to a live circuit.",
+        "Never leave the selector on a resistance or current range when measuring voltage; this can damage the meter and cause injury."
+      ]
+    },
+    {
+      "id": "positive_jack",
+      "number": 5,
+      "name": "Positive (+) Jack",
+      "function": "Input jack for the red test probe, used for voltage, current and resistance measurements.",
+      "usage": "Plug the red probe fully into this jack. In current mode the current should enter the meter through the red probe. Note that on resistance ranges the polarity of the internal battery is reversed at the jacks, so the red jack is negative on ohm ranges.",
+      "safety": [
+        "Check that the probe plug is fully inserted before use; a loose plug gives unstable readings and exposes metal."
+      ]
+    },
+    {
+      "id": "common_jack",
+      "number": 6,
+      "name": "Common (COM / -) Jack",
+      "function": "Common input jack for the black test probe, the reference for all measurements.",
+      "usage": "Plug the black probe into this jack for every measurement. For DC measurements, connect it to the more negative point of the circuit.",
+      "safety": [
+        "Connect the black probe to the circuit first and remove it last when working on live circuits."
+      ]
+    },
+    {
+      "id": "battery_fuse_cover",
+      "number": 7,
+      "name": "Battery and Fuse Cover",
+      "function": "Cover on the back that gives access to the internal batteries (needed for resistance ranges) and the protective fuse.",
+      "usage": "To replace a battery or fuse, set the selector to OFF, remove the probes, open the cover with a screwdriver, replace the part and close the cover firmly. Take out the battery if the meter will be stored for a long time.",
+      "safety": [
+        "Never open the cover with the probes connected.",
+        "Replace a blown fuse only with one of the exact same rating and type, and never run the meter with the cover removed."
+      ]
+    },
+    {
+      "id": "tilt_stand_cover",
+      "number": 8,
+      "name": "Protective Cover and Tilt Stand",
+      "function": "Solid cover on the back that protects the case and can fold out as a stand to tilt the meter on the bench.",
+      "usage": "Use the stand to place the meter at a comfortable reading angle. Many analog meters are designed to be read in a horizontal or tilted position, so check the symbol on the scale panel.",
+      "safety": [
+        "Place the meter on a stable surface so it cannot fall while the probes are connected."
+      ]
+    },
+    {
+      "id": "test_probes",
+      "number": 9,
+      "name": "Test Probes",
+      "function": "A pair of insulated leads, red (positive) and black (common), with finger guards and metal tips for touching the measurement points.",
+      "usage": "Insert the plugs into the jacks and touch the tips to the two measurement points. Keep your fingers behind the finger guards and keep the tips from touching each other.",
+      "safety": [
+        "Use only probes rated for the voltage of the circuit and inspect them for cracks before each use.",
+        "Replace the removable tip covers after use."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Check the meter's voltage and CAT rating and only use it on circuits within its limits. Analog meters are generally intended for low-energy circuits, so follow your meter's manual.",
+    "Before use, inspect the case and test probes for cracks or exposed metal. Do not use a damaged meter.",
+    "Start on the highest range when the value is unknown, and never exceed the maximum input rating of the selected range.",
+    "Select the function and range before touching the probes to the circuit. Never turn the selector while connected to a live circuit.",
+    "Measure resistance only on a de-energized circuit with capacitors discharged, and never apply voltage to a resistance range.",
+    "Measure current only in series with the load, never across a voltage source.",
+    "After use, set the selector to OFF (or the highest AC voltage range) and store the meter with the probes removed."
+  ],
+  "procedures": [
+    {
+      "id": "measure_dc_voltage",
+      "title": "Measure DC voltage",
+      "steps": [
+        {
+          "text": "Inspect the probes and case for damage, and confirm the circuit voltage is within the meter's rating.",
+          "partId": "test_probes"
+        },
+        {
+          "text": "With the probes disconnected, check that the pointer rests on zero at the left of the scale; if not, adjust the mechanical zero screw.",
+          "partId": "mechanical_zero"
+        },
+        {
+          "text": "Plug the black probe into the common (COM) jack.",
+          "partId": "common_jack"
+        },
+        {
+          "text": "Plug the red probe into the positive (+) jack.",
+          "partId": "positive_jack"
+        },
+        {
+          "text": "Turn the range selector to the DC voltage range above the expected voltage; use the highest DC range if the voltage is unknown.",
+          "partId": "range_selector"
+        },
+        {
+          "text": "Touch the black probe to the negative point and the red probe to the positive point, in parallel with the component being measured.",
+          "partId": "test_probes"
+        },
+        {
+          "text": "If the pointer deflects too little, remove the probes, select the next lower range and measure again. If the pointer moves backwards, swap the probes.",
+          "partId": "range_selector"
+        },
+        {
+          "text": "Read the DC scale from directly above, using the mirror, and apply the range multiplier.",
+          "partId": "meter_scale"
+        },
+        {
+          "text": "Remove the probes and turn the selector to OFF.",
+          "partId": "range_selector"
+        }
+      ]
+    },
+    {
+      "id": "measure_resistance",
+      "title": "Measure resistance",
+      "steps": [
+        {
+          "text": "Switch off and unplug the circuit and discharge any capacitors; remove the component from the circuit if possible.",
+          "partId": "test_probes"
+        },
+        {
+          "text": "Plug the black probe into the common jack and the red probe into the positive jack.",
+          "partId": "common_jack"
+        },
+        {
+          "text": "Turn the range selector to a resistance range (for example x100).",
+          "partId": "range_selector"
+        },
+        {
+          "text": "Touch the two probe tips together and turn the 0 ohm adjuster until the pointer sits on 0 ohm at the right end of the scale.",
+          "partId": "ohm_adjust"
+        },
+        {
+          "text": "Touch the probes across the resistor or the circuit part to be tested.",
+          "partId": "test_probes"
+        },
+        {
+          "text": "If the pointer is near the left end, select a higher range; if it is near the right end, select a lower range. Zero the meter again after every range change.",
+          "partId": "range_selector"
+        },
+        {
+          "text": "Read the ohm scale (zero on the right) and multiply the reading by the range factor.",
+          "partId": "meter_scale"
+        },
+        {
+          "text": "Remove the probes and turn the selector to OFF so the internal battery does not drain.",
+          "partId": "range_selector"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "pointer_wont_zero_ohms",
+      "symptom": "On a resistance range with the probes shorted together, the pointer cannot be brought to 0 ohm using the 0 ohm adjuster.",
+      "options": [
+        {
+          "id": "weak_battery",
+          "text": "The internal battery is weak"
+        },
+        {
+          "id": "mechanical_zero_off",
+          "text": "The mechanical zero screw is set too high"
+        },
+        {
+          "id": "wrong_scale",
+          "text": "The AC voltage scale is being read"
+        },
+        {
+          "id": "probe_in_wrong_jack",
+          "text": "The black probe is in the positive jack"
+        }
+      ],
+      "correctOptionId": "weak_battery",
+      "explanation": "The resistance ranges are powered by the internal battery. When it is weak, the adjuster no longer has enough range to reach 0 ohm and the battery must be replaced. The mechanical zero only affects the resting position, not the ohm zero.",
+      "relatedPartIds": [
+        "ohm_adjust",
+        "battery_fuse_cover"
+      ]
+    },
+    {
+      "id": "no_deflection_on_ohm",
+      "symptom": "The voltage ranges work normally, but on every resistance range the pointer does not move when the probes are shorted together.",
+      "options": [
+        {
+          "id": "dead_battery_or_fuse",
+          "text": "The battery is dead or the protective fuse has blown"
+        },
+        {
+          "id": "mirror_dirty",
+          "text": "The mirror strip on the scale is dirty"
+        },
+        {
+          "id": "stand_open",
+          "text": "The tilt stand is folded out"
+        },
+        {
+          "id": "mech_zero_wrong",
+          "text": "The pointer is not exactly on zero at rest"
+        }
+      ],
+      "correctOptionId": "dead_battery_or_fuse",
+      "explanation": "Resistance ranges depend on the battery and are protected by a fuse in series with the ohm circuit. If voltage works but all ohm ranges are dead, check the battery and the fuse first, and replace them only with the exact rating specified for the meter.",
+      "relatedPartIds": [
+        "battery_fuse_cover",
+        "range_selector"
+      ]
+    },
+    {
+      "id": "pointer_pegged_right",
+      "symptom": "As soon as the probes touch a mains-powered circuit on a high voltage range, the pointer slams against the right end. Before this, the selector was left on a current range from an earlier job.",
+      "options": [
+        {
+          "id": "wrong_function_set",
+          "text": "The selector was left on a current range, so the meter acted as a short circuit across the voltage"
+        },
+        {
+          "id": "reverse_polarity",
+          "text": "The probes are the wrong way round"
+        },
+        {
+          "id": "stand_loose",
+          "text": "The tilt stand is loose"
+        },
+        {
+          "id": "scale_dirty",
+          "text": "The scale window is dirty"
+        }
+      ],
+      "correctOptionId": "wrong_function_set",
+      "explanation": "A current range has a very low resistance, so connecting it across a voltage source is almost a short circuit. It can pin the pointer, blow the fuse, damage the meter and injure the user. Always set the correct function and range before touching the probes to a circuit.",
+      "relatedPartIds": [
+        "range_selector",
+        "meter_scale"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "analog_mm_basics",
+      "title": "Analog multimeter basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What is the correct way to read the pointer to avoid parallax error?",
+          "options": [
+            "From the left side of the meter",
+            "From directly above so the pointer lines up with its mirror reflection",
+            "From as far away as possible",
+            "With the meter held upside down"
+          ],
+          "correctIndex": 1,
+          "explanation": "When the pointer and its mirror image coincide, your eye is directly above the pointer and the reading is free of parallax error."
+        },
+        {
+          "id": "q2",
+          "prompt": "What is the purpose of the mechanical zero screw?",
+          "options": [
+            "To set the pointer to zero on the left of the scale when nothing is connected",
+            "To calibrate the resistance ranges",
+            "To select the AC range",
+            "To open the battery cover"
+          ],
+          "correctIndex": 0,
+          "explanation": "The mechanical zero sets the resting position of the pointer at zero when the meter is not connected."
+        },
+        {
+          "id": "q3",
+          "prompt": "Where is zero on the resistance (ohm) scale of an analog multimeter?",
+          "options": [
+            "On the left",
+            "In the middle",
+            "It has no zero",
+            "On the right"
+          ],
+          "correctIndex": 3,
+          "explanation": "The ohm scale is reversed: zero ohm is at the right end (probes shorted) and infinity is at the left end (open circuit)."
+        },
+        {
+          "id": "q4",
+          "prompt": "What must you do after changing the resistance range?",
+          "options": [
+            "Replace the fuse",
+            "Press HOLD",
+            "Re-zero the meter with the 0 ohm adjuster with the probes shorted",
+            "Reverse the probes"
+          ],
+          "correctIndex": 2,
+          "explanation": "Each resistance range uses a different internal circuit, so the 0 ohm adjustment must be repeated after every range change."
+        },
+        {
+          "id": "q5",
+          "prompt": "You do not know how large a DC voltage is. Which range do you start with?",
+          "options": [
+            "The lowest DC range",
+            "The highest DC voltage range",
+            "A resistance range",
+            "A current range"
+          ],
+          "correctIndex": 1,
+          "explanation": "Starting on the highest range protects the pointer and the meter. Then step down until the reading is easy to read."
+        },
+        {
+          "id": "q6",
+          "prompt": "Which statement about measuring resistance is correct?",
+          "options": [
+            "The circuit must be switched off and capacitors discharged",
+            "The circuit must be live",
+            "The reading is better if the circuit is powered",
+            "It can be done on any voltage range"
+          ],
+          "correctIndex": 0,
+          "explanation": "The meter supplies its own test current from its battery. External voltage gives wrong readings and can damage the meter."
+        },
+        {
+          "id": "q7",
+          "prompt": "The pointer moves backwards (to the left of zero) when measuring DC voltage. What is the most likely cause?",
+          "options": [
+            "The battery is flat",
+            "The range is too high",
+            "The fuse is blown",
+            "The probes are connected with reverse polarity"
+          ],
+          "correctIndex": 3,
+          "explanation": "The pointer deflects the wrong way when polarity is reversed. Swap the probes (after removing them from the circuit)."
+        },
+        {
+          "id": "q8",
+          "prompt": "How is current measured with the meter?",
+          "options": [
+            "In parallel with the component",
+            "Across the voltage source",
+            "In series with the load",
+            "With the probes not touching anything"
+          ],
+          "correctIndex": 2,
+          "explanation": "The current must flow through the meter, so the meter is connected in series in the circuit."
+        },
+        {
+          "id": "q9",
+          "prompt": "Why should the selector be set to OFF after measuring resistance?",
+          "options": [
+            "To protect the scale from dust",
+            "On resistance ranges, touching the probes together can drain the battery",
+            "To reset the mechanical zero",
+            "To charge the battery"
+          ],
+          "correctIndex": 1,
+          "explanation": "On resistance ranges the battery supplies current whenever the probes touch, so storing the meter on an ohm range can drain or damage the battery."
+        },
+        {
+          "id": "q10",
+          "prompt": "Why can a pointer be read less accurately at the far left end of a voltage scale?",
+          "options": [
+            "A small deflection gives low resolution, so a lower range should be chosen",
+            "The scale divisions are dirtier",
+            "The mirror does not reach there",
+            "The probes lose contact"
+          ],
+          "correctIndex": 0,
+          "explanation": "Readings are most accurate in the upper part of the scale. If the pointer is close to zero, select a lower range so it deflects more."
+        }
+      ]
+    }
+  ]
+}

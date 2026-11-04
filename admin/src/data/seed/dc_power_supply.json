@@ -1,0 +1,581 @@
+{
+  "id": "dc_power_supply",
+  "name": "DC Power Supply",
+  "category": "Sources",
+  "summary": "Bench source that provides an adjustable DC voltage with an adjustable current limit to power circuits under test.",
+  "overview": "A benchtop DC power supply delivers a steady, adjustable DC voltage and limits the current to a value you set. Two displays show the output voltage and current, and coarse and fine knobs set each. In constant-voltage (CV) mode the supply holds the set voltage; if the load tries to draw more than the current limit, it switches to constant-current (CC) mode and the voltage drops. Based on GW Instek GPS-3030D.",
+  "model": {
+    "asset": "models/dc_power_supply.glb",
+    "hotspots": "models/dc_power_supply.hotspots.json",
+    "cameraOrbit": "0deg 75deg 0.55m",
+    "credit": null
+  },
+  "layout": {
+    "units": "m",
+    "body": {
+      "width": 0.21,
+      "height": 0.14,
+      "depth": 0.3,
+      "cornerRadius": 0.008,
+      "color": "#CFCFCB"
+    },
+    "parts": [
+      {
+        "id": "voltage_display",
+        "type": "display",
+        "face": "front",
+        "position": [
+          -0.045,
+          0.04
+        ],
+        "size": [
+          0.07,
+          0.025,
+          0.003
+        ],
+        "color": "#7A2E2E"
+      },
+      {
+        "id": "current_display",
+        "type": "display",
+        "face": "front",
+        "position": [
+          0.045,
+          0.04
+        ],
+        "size": [
+          0.07,
+          0.025,
+          0.003
+        ],
+        "color": "#7A2E2E"
+      },
+      {
+        "id": "voltage_knobs",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          -0.05,
+          -0.005
+        ],
+        "size": [
+          0.05,
+          0.04,
+          0.014
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "current_knobs",
+        "type": "knob",
+        "face": "front",
+        "position": [
+          0.05,
+          -0.005
+        ],
+        "size": [
+          0.05,
+          0.04,
+          0.014
+        ],
+        "color": "#4A4A48"
+      },
+      {
+        "id": "cv_cc_leds",
+        "type": "led",
+        "face": "front",
+        "position": [
+          0,
+          0.01
+        ],
+        "size": [
+          0.024,
+          0.016,
+          0.003
+        ],
+        "color": "#0F7B6C"
+      },
+      {
+        "id": "output_button",
+        "type": "button",
+        "face": "front",
+        "position": [
+          0,
+          -0.02
+        ],
+        "size": [
+          0.024,
+          0.012,
+          0.004
+        ],
+        "color": "#C9A64B"
+      },
+      {
+        "id": "power_switch",
+        "type": "switch",
+        "face": "front",
+        "position": [
+          -0.075,
+          -0.05
+        ],
+        "size": [
+          0.015,
+          0.015,
+          0.006
+        ],
+        "color": "#A34A4A"
+      },
+      {
+        "id": "negative_terminal",
+        "type": "port",
+        "face": "front",
+        "position": [
+          -0.03,
+          -0.048
+        ],
+        "size": [
+          0.016,
+          0.016,
+          0.015
+        ],
+        "color": "#2B2B2B"
+      },
+      {
+        "id": "ground_terminal",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0,
+          -0.048
+        ],
+        "size": [
+          0.016,
+          0.016,
+          0.015
+        ],
+        "color": "#0F7B6C"
+      },
+      {
+        "id": "positive_terminal",
+        "type": "port",
+        "face": "front",
+        "position": [
+          0.03,
+          -0.048
+        ],
+        "size": [
+          0.016,
+          0.016,
+          0.015
+        ],
+        "color": "#E03E3E"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "voltage_display",
+      "number": 1,
+      "name": "Voltage Display",
+      "function": "Shows the output voltage in volts.",
+      "usage": "Read it to confirm the voltage set with the voltage knobs. With the output off, many supplies show the set value; with a load, it shows the actual output.",
+      "safety": [
+        "Check the displayed voltage before connecting a sensitive circuit."
+      ]
+    },
+    {
+      "id": "current_display",
+      "number": 2,
+      "name": "Current Display",
+      "function": "Shows the output current in amperes.",
+      "usage": "Read the load current while the circuit is running. It also shows the current limit setting at the moment the output is short-circuited during setup.",
+      "safety": [
+        "A current much higher than expected indicates a fault in the circuit, so switch the output off and investigate."
+      ]
+    },
+    {
+      "id": "voltage_knobs",
+      "number": 3,
+      "name": "Voltage Knobs (Coarse / Fine)",
+      "function": "Set the output voltage. The COARSE knob changes it in large steps and the FINE knob gives small adjustments.",
+      "usage": "Turn COARSE close to the required value and then use FINE for exact setting while watching the voltage display.",
+      "safety": [
+        "Start from zero, turn up slowly, and never set a voltage above the rating of the circuit under test."
+      ]
+    },
+    {
+      "id": "current_knobs",
+      "number": 4,
+      "name": "Current Limit Knobs (Coarse / Fine)",
+      "function": "Set the maximum current that the supply allows. If the load tries to draw more, the supply goes into constant-current mode and the voltage drops.",
+      "usage": "Set the limit slightly above the current the circuit should normally draw. It protects components and wiring against excess current.",
+      "safety": [
+        "Set the current limit before connecting the circuit and use a conservatively low value for new or untested circuits."
+      ]
+    },
+    {
+      "id": "cv_cc_leds",
+      "number": 5,
+      "name": "CV / CC Indicator LEDs",
+      "function": "Show the operating mode: CV (constant voltage) lights in normal operation, CC (constant current) lights when the current limit is active.",
+      "usage": "Normally the CV light is on. If the CC light comes on, the load is demanding more than the limit and the voltage is being reduced.",
+      "safety": [
+        "A lit CC light during normal operation means an overload or short circuit; check the circuit before raising the current limit."
+      ]
+    },
+    {
+      "id": "output_button",
+      "number": 6,
+      "name": "Output ON/OFF Button",
+      "function": "Connects or disconnects the output terminals from the supply without switching off the power.",
+      "usage": "Set voltage and limit with the output off, connect the circuit, then press the button to energise it. Press again to remove power. Some basic models have no such button, so check your unit.",
+      "safety": [
+        "Switch the output off before changing connections."
+      ]
+    },
+    {
+      "id": "power_switch",
+      "number": 7,
+      "name": "Power Switch",
+      "function": "Turns the supply on and off at the mains.",
+      "usage": "Switch on after the supply is connected to the mains and before setting the voltage. Switch off when finished.",
+      "safety": [
+        "Use the grounded mains cord provided, and do not remove the earth connection."
+      ]
+    },
+    {
+      "id": "negative_terminal",
+      "number": 8,
+      "name": "Negative (-) Terminal",
+      "function": "Black output terminal, the negative side of the DC output. It is normally floating relative to the earth.",
+      "usage": "Connect the black lead here and to the negative (ground) side of the circuit.",
+      "safety": [
+        "Do not connect the output terminal directly to the earth terminal or mains-referenced points without understanding the circuit."
+      ]
+    },
+    {
+      "id": "ground_terminal",
+      "number": 9,
+      "name": "Ground (GND) Terminal",
+      "function": "Green terminal connected to the chassis and the mains earth. It allows the output to be grounded if the circuit requires it, using a link to the negative or positive terminal.",
+      "usage": "Leave it unconnected unless the circuit needs a ground reference. Use a short link to the negative terminal only when instructed.",
+      "safety": [
+        "Do not connect the red positive terminal to GND by mistake, as it shorts the output to earth."
+      ]
+    },
+    {
+      "id": "positive_terminal",
+      "number": 10,
+      "name": "Positive (+) Terminal",
+      "function": "Red output terminal, the positive side of the DC output.",
+      "usage": "Connect the red lead here and to the positive input of the circuit under test.",
+      "safety": [
+        "Check the polarity of the circuit before enabling the output, since reverse polarity damages polarised components such as electrolytic capacitors and ICs."
+      ]
+    }
+  ],
+  "safetyRules": [
+    "Set the voltage and current limit first, with the output off, and only then connect the circuit.",
+    "Check polarity (red to positive, black to negative) before enabling the output, and never exceed the voltage rating of any component.",
+    "Switch the output off before changing connections or touching the circuit.",
+    "Do not short the output terminals deliberately except during the short-circuit current-limit setting procedure, and use short, thick leads for that.",
+    "Use the grounded mains cord, and do not open the case, because mains voltage is present inside.",
+    "If the CC light stays on or the supply gets hot, switch off and look for a short circuit or overload."
+  ],
+  "procedures": [
+    {
+      "id": "set_voltage_current_limit",
+      "title": "Set the voltage and current limit",
+      "steps": [
+        {
+          "text": "Make sure nothing is connected to the output terminals, then switch the power on.",
+          "partId": "power_switch"
+        },
+        {
+          "text": "Turn the output off if the supply has an output button.",
+          "partId": "output_button"
+        },
+        {
+          "text": "Turn both current knobs to a low value, then turn the voltage knobs to the required voltage using coarse and then fine, watching the display.",
+          "partId": "voltage_knobs"
+        },
+        {
+          "text": "Check the set voltage on the voltage display.",
+          "partId": "voltage_display"
+        },
+        {
+          "text": "Briefly connect a short, heavy lead between the + and - terminals and turn the output on, as described in your supply manual, to use the short-circuit method.",
+          "partId": "positive_terminal"
+        },
+        {
+          "text": "Turn the current knobs until the current display shows the limit required. The CC light should turn on.",
+          "partId": "current_knobs"
+        },
+        {
+          "text": "Confirm the CC light on the indicators, then turn the output off and remove the short lead.",
+          "partId": "cv_cc_leds"
+        },
+        {
+          "text": "Check that the voltage and current limit are set as required before connecting the load.",
+          "partId": "current_display"
+        }
+      ]
+    },
+    {
+      "id": "power_a_circuit",
+      "title": "Power a circuit safely",
+      "steps": [
+        {
+          "text": "With the output off and the supply on, set the required voltage and current limit.",
+          "partId": "voltage_knobs"
+        },
+        {
+          "text": "Check the polarity of the circuit supply input.",
+          "partId": "negative_terminal"
+        },
+        {
+          "text": "Connect the black lead to the negative terminal and then to the circuit negative.",
+          "partId": "negative_terminal"
+        },
+        {
+          "text": "Connect the red lead to the positive terminal and then to the circuit positive.",
+          "partId": "positive_terminal"
+        },
+        {
+          "text": "Turn the output on.",
+          "partId": "output_button"
+        },
+        {
+          "text": "Check that the CV light is on (not CC) and the voltage is as expected.",
+          "partId": "cv_cc_leds"
+        },
+        {
+          "text": "Read the current on the display and compare it with the expected current of the circuit.",
+          "partId": "current_display"
+        },
+        {
+          "text": "When finished, turn the output off, disconnect the leads and switch the supply off.",
+          "partId": "power_switch"
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "voltage_collapses",
+      "symptom": "The voltage is set to 12 V, but when the circuit is connected the voltage display falls to 3 V, the current display reads the limit value and the CC light is on.",
+      "options": [
+        {
+          "id": "current_limit_reached",
+          "text": "The load demands more than the current limit (overload or short circuit)"
+        },
+        {
+          "id": "display_fault",
+          "text": "The voltage display is broken"
+        },
+        {
+          "id": "ground_link",
+          "text": "The ground terminal is not linked"
+        },
+        {
+          "id": "knob_loose",
+          "text": "The voltage knob is loose"
+        }
+      ],
+      "correctOptionId": "current_limit_reached",
+      "explanation": "In constant-current mode, the supply lowers the voltage so that the current does not exceed the limit. This protects the circuit but shows that the load is drawing too much, possibly because of a short circuit, a wiring error or a limit set too low.",
+      "relatedPartIds": [
+        "cv_cc_leds",
+        "current_knobs",
+        "current_display"
+      ]
+    },
+    {
+      "id": "circuit_dead_displays_ok",
+      "symptom": "The supply displays show 5.00 V, but a connected circuit has no power and the measured voltage at the circuit is 0 V.",
+      "options": [
+        {
+          "id": "output_off",
+          "text": "The output is switched off or a lead is loose or open"
+        },
+        {
+          "id": "cc_mode",
+          "text": "The voltage is too high"
+        },
+        {
+          "id": "fine_knob",
+          "text": "The fine knob is at its minimum"
+        },
+        {
+          "id": "neg_terminal",
+          "text": "The negative terminal is connected to GND"
+        }
+      ],
+      "correctOptionId": "output_off",
+      "explanation": "On many supplies, the display can show the set voltage while the output is off. A disabled output, a loose lead or an open circuit between the terminals and the circuit all give 0 V at the load. Check the output state and measure at the terminals.",
+      "relatedPartIds": [
+        "output_button",
+        "positive_terminal",
+        "negative_terminal"
+      ]
+    },
+    {
+      "id": "supply_dead",
+      "symptom": "After the power switch is turned on, nothing lights up on the supply at all.",
+      "options": [
+        {
+          "id": "no_mains",
+          "text": "There is no mains power (cord, outlet or mains fuse)"
+        },
+        {
+          "id": "cv_mode",
+          "text": "The supply is in CV mode"
+        },
+        {
+          "id": "low_current",
+          "text": "The current limit is zero"
+        },
+        {
+          "id": "output_off",
+          "text": "The output is off"
+        }
+      ],
+      "correctOptionId": "no_mains",
+      "explanation": "If the displays and indicators are all dark, the supply is not receiving mains power. Check the cord, the socket and then the fuse (with the supply unplugged, by an authorised person). A zero current limit or output off would still leave the displays lit.",
+      "relatedPartIds": [
+        "power_switch",
+        "voltage_display",
+        "current_display"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "psu_basics",
+      "title": "DC power supply basics",
+      "timeLimitSec": null,
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "What does the CC light mean?",
+          "options": [
+            "The cable is charged",
+            "The cooling fan is on",
+            "The supply is in standby",
+            "The supply is limiting the current (constant-current mode)"
+          ],
+          "correctIndex": 3,
+          "explanation": "CC means the load is trying to draw more than the set current limit."
+        },
+        {
+          "id": "q2",
+          "prompt": "What is the purpose of the current limit?",
+          "options": [
+            "To increase the voltage",
+            "To make the display brighter",
+            "To protect the circuit and wiring against excess current",
+            "To select AC output"
+          ],
+          "correctIndex": 2,
+          "explanation": "It limits the current so that a fault does not damage components."
+        },
+        {
+          "id": "q3",
+          "prompt": "Which terminal colour is normally positive?",
+          "options": [
+            "Black",
+            "Red",
+            "Green",
+            "White"
+          ],
+          "correctIndex": 1,
+          "explanation": "Red is positive, black is negative and green is earth ground."
+        },
+        {
+          "id": "q4",
+          "prompt": "What should you do before connecting a circuit?",
+          "options": [
+            "Set voltage and current limit with the output off",
+            "Turn all knobs to maximum",
+            "Short the GND terminal to the positive terminal",
+            "Remove the mains cord"
+          ],
+          "correctIndex": 0,
+          "explanation": "Preset the supply safely, so that the circuit sees the right values from the start."
+        },
+        {
+          "id": "q5",
+          "prompt": "In CV mode, what stays constant?",
+          "options": [
+            "The load resistance",
+            "The load current",
+            "The frequency",
+            "The output voltage"
+          ],
+          "correctIndex": 3,
+          "explanation": "In constant-voltage mode the supply holds the set voltage and the current depends on the load."
+        },
+        {
+          "id": "q6",
+          "prompt": "A circuit takes 0.5 A at 5 V. Which current limit is the most sensible?",
+          "options": [
+            "30 A",
+            "0 A",
+            "A little above 0.5 A, such as 0.6 to 1 A",
+            "Any value, it is irrelevant"
+          ],
+          "correctIndex": 2,
+          "explanation": "A limit just above the normal current protects the circuit."
+        },
+        {
+          "id": "q7",
+          "prompt": "What is the purpose of the GND terminal?",
+          "options": [
+            "To provide a second positive output",
+            "To connect the chassis and earth for reference when needed",
+            "To change the voltage range",
+            "To switch the output on"
+          ],
+          "correctIndex": 1,
+          "explanation": "It is the chassis/earth connection and is used only when the circuit requires an earth reference."
+        },
+        {
+          "id": "q8",
+          "prompt": "Why should the output be off when changing connections?",
+          "options": [
+            "To avoid short circuits and live connections while handling leads",
+            "To keep the display on",
+            "To reset the knob",
+            "There is no reason"
+          ],
+          "correctIndex": 0,
+          "explanation": "Live leads could short against each other or the circuit."
+        },
+        {
+          "id": "q9",
+          "prompt": "The voltage is 12 V and current is 0.5 A. What power is the load drawing?",
+          "options": [
+            "24 W",
+            "12.5 W",
+            "0.04 W",
+            "6 W"
+          ],
+          "correctIndex": 3,
+          "explanation": "P = V x I = 12 x 0.5 = 6 W."
+        },
+        {
+          "id": "q10",
+          "prompt": "What happens if a polarised component such as an electrolytic capacitor is powered with reversed polarity?",
+          "options": [
+            "Nothing, it is protected",
+            "It works better",
+            "It can be damaged or overheat",
+            "The supply switches to AC"
+          ],
+          "correctIndex": 2,
+          "explanation": "Reverse polarity can damage polarised components, so check the polarity before switching on the output."
+        }
+      ]
+    }
+  ]
+}
