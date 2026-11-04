@@ -48,4 +48,16 @@ for (const [, src] of modelFiles) if (!fs.existsSync(src)) { console.error(`miss
 console.log('');
 for (const d of contentDests) sync(d, contentFiles, keepContent, /\.json$/);
 for (const d of modelDests) sync(d, modelFiles, keepModels, /\.(glb|hotspots\.json)$/);
+// Optional ML model (produced in Colab, see ml/README.md). Skipped quietly when absent.
+const mlFiles = ['equipx_detector.tflite', 'labels.txt', 'model_info.json'];
+const mlSrc = p('ml/export');
+if (mlFiles.every((f) => fs.existsSync(path.join(mlSrc, f)))) {
+  const mlDest = p('android/app/src/main/assets/ml');
+  fs.mkdirSync(mlDest, { recursive: true });
+  for (const f of mlFiles) fs.copyFileSync(path.join(mlSrc, f), path.join(mlDest, f));
+  console.log(`synced ${mlFiles.length} ML file(s) -> android/app/src/main/assets/ml`);
+} else {
+  console.log('ml/export has no complete model yet; skipping ML sync (app uses the demo detector).');
+}
+
 console.log('\nSync complete.');

@@ -31,6 +31,7 @@ import com.equipx.app.ml.NormalizedBox
 import com.equipx.app.ui.device.DeviceDetailContent
 import com.equipx.app.ui.device.DeviceDetailState
 import com.equipx.app.ui.explorer.ExplorerOverlay
+import com.equipx.app.ui.explorer.ExplorerPartsBar
 import com.equipx.app.ui.home.ContinueItem
 import com.equipx.app.ui.home.HomeContent
 import com.equipx.app.ui.home.HomeData
@@ -147,8 +148,11 @@ class ScreenshotTests {
 
     @Test fun explorerOverlay() = shot("explorer_controls") {
         val parts = device("digital_multimeter").parts.sortedBy { it.number }
-        Box(Modifier.fillMaxSize().background(com.equipx.app.ui.theme.EquipXColors.Surface)) {
-            ExplorerOverlay(parts, parts[2].id, modelLoaded = true, showCoach = true, onReset = {}, onOpenParts = {}, onPick = {}, onDismissCoach = {})
+        androidx.compose.foundation.layout.Column(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxWidth().weight(1f).background(com.equipx.app.ui.theme.EquipXColors.Surface)) {
+                ExplorerOverlay(parts, modelLoaded = true, showCoach = true, onReset = {}, onOpenParts = {}, onDismissCoach = {})
+            }
+            ExplorerPartsBar(parts, parts[2].id, onPick = {})
         }
     }
 

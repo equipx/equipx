@@ -6,6 +6,8 @@ class FakeDetector(
     private val clock: () -> Long = { System.nanoTime() / 1_000_000 },
 ) : Detector {
 
+    override val isDemo: Boolean = true
+
     @Volatile private var firstFrameAt: Long? = null
 
     override fun detect(frame: Frame): List<Detection> {

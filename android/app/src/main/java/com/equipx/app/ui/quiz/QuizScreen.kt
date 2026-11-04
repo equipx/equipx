@@ -36,6 +36,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import com.equipx.app.ui.components.RememberLastDevice
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,6 +78,7 @@ fun QuizScreen(deviceId: String, quizId: String, onBack: () -> Unit) {
         QuizViewModel(deviceId, quizId, it.contentRepository, it.progressRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
+    RememberLastDevice(deviceId)
     var confirmExit by rememberSaveable { mutableStateOf(false) }
     val inProgress = state is QuizUiState.Active
 
@@ -179,11 +182,14 @@ private fun ActiveQuiz(s: QuizUiState.Active, onSelect: (Int) -> Unit, onNext: (
                     onClick = { onSelect(i) },
                 )
             }
-            AnimatedVisibility(visible = s.revealed, enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { it / 4 }) {
-                Callout(
-                    title = if (selected == q.correctIndex) "Correct" else "Not quite",
-                    text = q.explanation.ifBlank { "The correct answer is ${('A' + q.correctIndex.coerceIn(0, 25))}." },
-                )
+            // Keyed by question so the exit animation never recomposes with the next question's content.
+            key(s.index) {
+                AnimatedVisibility(visible = s.revealed, enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { it / 4 }) {
+                    Callout(
+                        title = if (selected == q.correctIndex) "Correct" else "Not quite",
+                        text = q.explanation.ifBlank { "The correct answer is ${('A' + q.correctIndex.coerceIn(0, 25))}." },
+                    )
+                }
             }
         }
         AnimatedVisibility(visible = s.revealed, enter = fadeIn() + slideInVertically { it }) {

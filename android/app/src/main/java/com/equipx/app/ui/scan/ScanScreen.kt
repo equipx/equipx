@@ -183,6 +183,7 @@ private fun CameraContent(onOpenExplorer: (String) -> Unit) {
         ScanOverlay(
             detections = detections,
             devices = devices,
+            demo = vm.isDemoDetector,
             onOpenDetected = { vm.onChipTapped(it.deviceId); onOpenExplorer(it.deviceId) },
             onChooseManually = { vm.onManualChoice(it); onOpenExplorer(it) },
         )
@@ -220,6 +221,7 @@ private fun CameraPreview(onFrame: (Frame) -> Unit, modifier: Modifier = Modifie
                                     height = image.height,
                                     rotationDegrees = image.imageInfo.rotationDegrees,
                                     timestampNanos = image.imageInfo.timestamp,
+                                    bitmapProvider = { runCatching { image.toBitmap() }.getOrNull() },
                                 )
                             )
                         } finally {
@@ -255,6 +257,7 @@ fun ScanOverlay(
     onOpenDetected: (Detection) -> Unit,
     onChooseManually: (String) -> Unit,
     initialSheetOpen: Boolean = false,
+    demo: Boolean = false,
 ) {
     var sheetOpen by rememberSaveable { mutableStateOf(initialSheetOpen) }
     val detected = detections.firstOrNull()
@@ -262,6 +265,19 @@ fun ScanOverlay(
 
     Box(Modifier.fillMaxSize()) {
         Viewfinder(detected)
+        if (demo) {
+            Text(
+                "Demo detector",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.Black.copy(alpha = 0.55f))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+            )
+        }
         Column(
             Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -357,14 +373,16 @@ private fun DetectedCard(name: String, deviceId: String, category: String, onOpe
 @Composable
 private fun Viewfinder(detected: Detection?) {
     val reduced = rememberReducedMotion()
-    val transition = rememberInfiniteTransition(label = "pulse")
-    val animatedPulse by transition.animateFloat(
-        initialValue = 0.94f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(1100), RepeatMode.Reverse),
-        label = "pulse-scale",
-    )
-    val pulse = if (reduced) 1f else animatedPulse
+    val pulse = if (reduced) 1f else {
+        val transition = rememberInfiniteTransition(label = "pulse")
+        val animatedPulse by transition.animateFloat(
+            initialValue = 0.94f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(tween(1100), RepeatMode.Reverse),
+            label = "pulse-scale",
+        )
+        animatedPulse
+    }
     val box = detected?.box
     val spec = tween<Float>(350)
     val l by animateFloatAsState(box?.left ?: 0.15f, spec, label = "l")

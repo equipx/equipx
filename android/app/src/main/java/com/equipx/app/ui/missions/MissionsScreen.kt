@@ -224,7 +224,7 @@ private fun MissionDetail(
                 Column(Modifier.padding(16.dp).animateContentSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (mission.description.isNotBlank()) Text(mission.description, style = MaterialTheme.typography.bodyLarge)
                     EquipXProgressBar(MissionRules.progressFraction(mission, done), color = if (complete) EquipXColors.Success else EquipXColors.Accent, height = 10.dp)
-                    Text("${done.size} of ${mission.tasks.size} tasks done", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
+                    Text("${mission.tasks.count { it.id in done }} of ${mission.tasks.size} tasks done", style = MaterialTheme.typography.labelMedium, color = EquipXColors.TextSecondary)
                     when {
                         complete -> Callout(title = "Mission complete", text = "+50 points and the Mission Complete badge.")
                         isActive -> AccentChip("Active mission", Accent(EquipXColors.AccentTint, EquipXColors.Accent))

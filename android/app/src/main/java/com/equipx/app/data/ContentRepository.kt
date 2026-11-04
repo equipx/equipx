@@ -24,15 +24,21 @@ interface ContentRepository {
 /** Reads `assets/content` JSON files (synced from /content; read-only for the app). */
 class AssetContentRepository(private val assets: AssetManager) : ContentRepository {
 
+    // Parsed device files are immutable bundled assets: cache them so Home, Learn etc. don't re-parse every file.
+    private val deviceCache = java.util.concurrent.ConcurrentHashMap<String, Device>()
+    @Volatile private var indexCache: List<DeviceSummary>? = null
+
     private fun read(path: String): String =
         assets.open(path).bufferedReader().use { it.readText() }
 
     override suspend fun getIndex(): Result<List<DeviceSummary>> = withContext(Dispatchers.IO) {
-        runCatching { ContentParser.parseIndex(read("content/index.json")).devices }
+        indexCache?.let { return@withContext Result.success(it) }
+        runCatching { ContentParser.parseIndex(read("content/index.json")).devices }.onSuccess { indexCache = it }
     }
 
     override suspend fun getDevice(id: String): Result<Device> = withContext(Dispatchers.IO) {
-        runCatching { ContentParser.parseDevice(read("content/$id.json")) }
+        deviceCache[id]?.let { return@withContext Result.success(it) }
+        runCatching { ContentParser.parseDevice(read("content/$id.json")) }.onSuccess { deviceCache[id] = it }
     }
 
     override suspend fun getMissions(): Result<List<Mission>> = withContext(Dispatchers.IO) {

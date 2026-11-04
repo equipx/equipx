@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CenterFocusStrong
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.TouchApp
 import androidx.compose.material3.Icon
@@ -49,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -88,21 +91,24 @@ fun ExplorerScreen(
     val coachDismissed by prefs.explorerCoachDismissed.collectAsStateWithLifecycle(initialValue = true)
     val scope = rememberCoroutineScope()
 
+    fun dismissCoach() { if (!coachDismissed) scope.launch { prefs.dismissExplorerCoach() } }
+    fun pick(id: String) { dismissCoach(); vm.selectPart(id) }
+
     Column(Modifier.fillMaxSize().background(EquipXColors.Canvas)) {
         EquipXTopBar(title = device?.name ?: "3D Explorer", onBack = onBack)
+        // The WebView keeps a bounded height (weight) and the parts bar sits below it, so the model frames above the bar.
         Box(Modifier.fillMaxWidth().weight(1f)) {
             ExplorerPane(
                 device = device,
                 controller = controller,
                 selectedPartId = state.selectedPartId,
                 selectionToken = state.selectionToken,
-                onHotspotTap = vm::selectPart,
+                onHotspotTap = ::pick,
                 onLoadedChange = { modelLoaded = it },
                 modifier = Modifier.fillMaxSize(),
             )
             ExplorerOverlay(
                 parts = parts,
-                selectedPartId = state.selectedPartId,
                 modelLoaded = modelLoaded,
                 showCoach = !coachDismissed && modelLoaded && parts.isNotEmpty(),
                 onReset = {
@@ -110,10 +116,10 @@ fun ExplorerScreen(
                     controller.resetCamera()
                 },
                 onOpenParts = vm::openPartsList,
-                onPick = vm::selectPart,
-                onDismissCoach = { scope.launch { prefs.dismissExplorerCoach() } },
+                onDismissCoach = ::dismissCoach,
             )
         }
+        ExplorerPartsBar(parts = parts, selectedPartId = state.selectedPartId, onPick = ::pick)
     }
 
     if (state.partsListOpen) {
@@ -142,16 +148,14 @@ fun ExplorerScreen(
     }
 }
 
-/** Floating controls over the 3D view: reset/parts buttons (top right), coach mark and numbered part chips (bottom). */
+/** Floating controls over the 3D view: reset/parts buttons (top right) and a small coach mark (top left). */
 @Composable
 fun BoxScope.ExplorerOverlay(
     parts: List<Part>,
-    selectedPartId: String?,
     modelLoaded: Boolean,
     showCoach: Boolean,
     onReset: () -> Unit,
     onOpenParts: () -> Unit,
-    onPick: (String) -> Unit,
     onDismissCoach: () -> Unit,
 ) {
     Column(
@@ -161,23 +165,42 @@ fun BoxScope.ExplorerOverlay(
         if (modelLoaded) FloatingControl(Icons.Outlined.CenterFocusStrong, "Reset view", onReset)
         if (parts.isNotEmpty()) FloatingControl(Icons.Outlined.FormatListNumbered, "Parts list", onOpenParts)
     }
-    Column(
-        Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(bottom = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+    AnimatedVisibility(
+        visible = showCoach,
+        modifier = Modifier.align(Alignment.TopStart).padding(start = 12.dp, top = 12.dp, end = 72.dp),
+        enter = fadeIn() + slideInVertically { -it / 2 },
+        exit = fadeOut() + slideOutVertically { -it / 2 },
     ) {
-        AnimatedVisibility(
-            visible = showCoach,
-            enter = fadeIn() + slideInVertically { it / 2 },
-            exit = fadeOut() + slideOutVertically { it / 2 },
-        ) {
-            CoachMark(onDismissCoach, Modifier.padding(horizontal = 12.dp))
-        }
-        if (parts.isNotEmpty()) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+        CoachMark(onDismissCoach)
+    }
+}
+
+/** Compact, collapsible strip of numbered part chips under the 3D view (never covers the model). */
+@Composable
+fun ExplorerPartsBar(parts: List<Part>, selectedPartId: String?, onPick: (String) -> Unit) {
+    if (parts.isEmpty()) return
+    var expanded by rememberSaveable { mutableStateOf(true) }
+    Surface(color = Color.White, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.navigationBarsPadding()) {
+            HairlineDivider()
+            Row(
+                Modifier.fillMaxWidth().heightIn(min = 40.dp).clickable { expanded = !expanded }.padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                items(parts, key = { it.id }) { p -> PartChip(p, selected = p.id == selectedPartId, onClick = { onPick(p.id) }) }
+                Text("Parts · ${parts.size}", style = MaterialTheme.typography.labelLarge, color = EquipXColors.TextSecondary, modifier = Modifier.weight(1f))
+                Icon(
+                    if (expanded) Icons.Outlined.ExpandMore else Icons.Outlined.ExpandLess,
+                    contentDescription = if (expanded) "Hide parts" else "Show parts",
+                    tint = EquipXColors.TextSecondary,
+                )
+            }
+            AnimatedVisibility(visible = expanded) {
+                LazyRow(
+                    contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(parts, key = { it.id }) { p -> PartChip(p, selected = p.id == selectedPartId, onClick = { onPick(p.id) }) }
+                }
             }
         }
     }
@@ -204,16 +227,16 @@ private fun PartChip(part: Part, selected: Boolean, onClick: () -> Unit) {
         onClick = onClick,
         shape = RoundedCornerShape(50),
         color = if (selected) EquipXColors.Accent else Color.White,
-        shadowElevation = 4.dp,
-        modifier = Modifier.heightIn(min = 48.dp),
+        border = if (selected) null else androidx.compose.foundation.BorderStroke(1.dp, EquipXColors.Border),
+        modifier = Modifier.heightIn(min = 40.dp),
     ) {
         Row(
-            Modifier.padding(start = 8.dp, end = 16.dp),
+            Modifier.padding(start = 6.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Box(
-                Modifier.size(28.dp).clip(CircleShape).background(if (selected) Color.White else EquipXColors.AccentTint),
+                Modifier.size(26.dp).clip(CircleShape).background(if (selected) Color.White else EquipXColors.AccentTint),
                 contentAlignment = Alignment.Center,
             ) { Text(part.number.toString(), style = MaterialTheme.typography.labelLarge, color = EquipXColors.Accent) }
             Text(
@@ -226,18 +249,18 @@ private fun PartChip(part: Part, selected: Boolean, onClick: () -> Unit) {
     }
 }
 
-/** One-time hint; dismissal is remembered in DataStore. */
+/** One-time hint, kept small; dismissal is remembered in DataStore. */
 @Composable
 private fun CoachMark(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
-    EquipXCard(modifier.fillMaxWidth(), elevation = 8.dp) {
-        Row(Modifier.padding(start = 14.dp, top = 6.dp, bottom = 6.dp, end = 6.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Icon(Icons.Outlined.TouchApp, contentDescription = null, tint = EquipXColors.Accent)
-            Text("Tap the numbers to learn each part", style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+    EquipXCard(modifier, elevation = 4.dp) {
+        Row(Modifier.padding(start = 10.dp, end = 2.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Icon(Icons.Outlined.TouchApp, contentDescription = null, tint = EquipXColors.Accent, modifier = Modifier.size(18.dp))
+            Text("Tap a number to explore", style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f, fill = false))
             Text(
                 "Got it",
                 style = MaterialTheme.typography.labelLarge,
                 color = EquipXColors.Accent,
-                modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable(onClick = onDismiss).heightIn(min = 48.dp).padding(horizontal = 12.dp).wrapContentHeight(Alignment.CenterVertically),
+                modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable(onClick = onDismiss).heightIn(min = 48.dp).padding(horizontal = 10.dp).wrapContentHeight(Alignment.CenterVertically),
             )
         }
     }

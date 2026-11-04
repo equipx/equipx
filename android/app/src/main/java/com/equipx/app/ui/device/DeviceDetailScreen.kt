@@ -27,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.style.TextOverflow
+import com.equipx.app.ui.components.RememberLastDevice
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -135,6 +137,7 @@ fun DeviceDetailScreen(
 ) {
     val vm = appViewModel(key = "device-$deviceId") { DeviceDetailViewModel(deviceId, it.contentRepository, it.progressRepository) }
     val state by vm.state.collectAsStateWithLifecycle()
+    RememberLastDevice(deviceId)
     DeviceDetailContent(state, onBack, vm::load, onExplore, onOpenPart, onOpenProcedure, onOpenQuiz, onOpenFault)
 }
 
@@ -303,7 +306,7 @@ private fun HeroHeader(s: DeviceDetailState.Loaded) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             DeviceIconTile(d.id, d.category, size = 64.dp)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(d.name, style = MaterialTheme.typography.headlineSmall)
+                Text(d.name, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 if (d.category.isNotBlank()) AccentChip(d.category, accent)
             }
             ProgressRing(progress, size = 60.dp, stroke = 6.dp, color = accent.strong, trackColor = Color.White) {
@@ -326,7 +329,7 @@ private fun ActionRow(d: Device, onExplore: () -> Unit, onProcedures: () -> Unit
     Row(Modifier.fillMaxWidth().padding(top = 14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         ActionTile("Explore 3D", Icons.Outlined.ViewInAr, null, Accent(EquipXColors.Accent, Color.White), true, onExplore, Modifier.weight(1f))
         ActionTile("Procedures", Icons.Outlined.Checklist, d.procedures.size, ProcedureAccent, d.procedures.isNotEmpty(), onProcedures, Modifier.weight(1f))
-        ActionTile("Troubleshoot", Icons.Outlined.BugReport, d.faults.size, FaultAccent, d.faults.isNotEmpty(), onTroubleshoot, Modifier.weight(1f))
+        ActionTile("Faults", Icons.Outlined.BugReport, d.faults.size, FaultAccent, d.faults.isNotEmpty(), onTroubleshoot, Modifier.weight(1f))
         ActionTile("Quiz", Icons.Outlined.Quiz, d.quizzes.size, QuizAccent, d.quizzes.isNotEmpty(), onQuiz, Modifier.weight(1f))
     }
 }
@@ -350,7 +353,8 @@ private fun ActionTile(label: String, icon: ImageVector, count: Int?, accent: Ac
             Text(
                 label,
                 style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 color = if (primary) Color.White else if (enabled) EquipXColors.Text else EquipXColors.TextSecondary,
                 textAlign = TextAlign.Center,
             )

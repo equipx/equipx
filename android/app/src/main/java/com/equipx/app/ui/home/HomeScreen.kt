@@ -39,6 +39,7 @@ import androidx.lifecycle.viewModelScope
 import com.equipx.app.data.AuthRepository
 import com.equipx.app.data.ContentRepository
 import com.equipx.app.data.ProgressRepository
+import com.equipx.app.data.UiPrefsRepository
 import com.equipx.app.domain.Badge
 import com.equipx.app.domain.LevelInfo
 import com.equipx.app.domain.Levels
@@ -99,6 +100,7 @@ class HomeViewModel(
     private val content: ContentRepository,
     private val progress: ProgressRepository,
     private val auth: AuthRepository,
+    private val prefs: UiPrefsRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -112,14 +114,26 @@ class HomeViewModel(
                 _state.value = HomeUiState.Error("Could not load the device list.")
                 return@launch
             }
-            val counts = index.map { d -> async { d to content.getDevice(d.id).getOrNull()?.parts?.size } }.awaitAll()
+            val partIds = index.map { d -> async { d to content.getDevice(d.id).getOrNull()?.parts?.map { it.id }?.toSet() } }.awaitAll()
             val missions = content.getMissions().getOrNull().orEmpty()
-            combine(auth.currentUser, progress.progress, progress.missionState, progress.quizAttempts) { user, p, ms, attempts ->
-                val devices = counts.map { (d, n) -> LearnItem(d, n, p.viewedParts.count { it.startsWith(d.id + ":") }) }
+            combine(auth.currentUser, progress.progress, progress.missionState, progress.quizAttempts, prefs.lastDeviceId) { user, p, ms, attempts, lastOpened ->
+                val devices = partIds.map { (d, ids) ->
+                    LearnItem(d, ids?.size, ids?.let { s -> p.viewedParts.count { it.startsWith(d.id + ":") && it.removePrefix(d.id + ":") in s } } ?: 0)
+                }
                 val last = p.ledger.lastOrNull { e -> index.any { e.key.startsWith(it.id + ":") } }
                 val lastDevice = last?.let { e -> index.first { e.key.startsWith(it.id + ":") } }
                 val lastAttempt = attempts.lastOrNull()
+                val opened = lastOpened?.let { id -> index.firstOrNull { it.id == id } }
                 val cont = when {
+                    opened != null -> ContinueItem(
+                        opened.id, opened.name, opened.category,
+                        when {
+                            lastAttempt?.deviceId == opened.id && (last == null || lastAttempt.completedAtMillis >= last.timestampMillis) ->
+                                "Last quiz: ${lastAttempt.quizTitle.ifBlank { "Quiz" }} (${lastAttempt.correct}/${lastAttempt.total})"
+                            lastDevice?.id == opened.id && last != null -> captionFor(last.reason)
+                            else -> "Pick up where you left off."
+                        },
+                    )
                     lastAttempt != null && (last == null || lastAttempt.completedAtMillis >= last.timestampMillis) ->
                         index.firstOrNull { it.id == lastAttempt.deviceId }?.let {
                             ContinueItem(it.id, it.name, it.category, "Last quiz: ${lastAttempt.quizTitle.ifBlank { "Quiz" }} (${lastAttempt.correct}/${lastAttempt.total})")
@@ -131,7 +145,7 @@ class HomeViewModel(
                     ?: missions.firstOrNull { it.id !in p.completedMissions }
                 val mission = shown?.let { m ->
                     val done = ms.doneTasks[m.id].orEmpty()
-                    HomeMission(m, done.size, m.tasks.size, MissionRules.currentTask(m, done)?.title, isActive = m.id == ms.activeMissionId)
+                    HomeMission(m, m.tasks.count { it.id in done }, m.tasks.size, MissionRules.currentTask(m, done)?.title, isActive = m.id == ms.activeMissionId)
                 }
                 HomeData(
                     greeting = greetingNow(),
@@ -172,7 +186,7 @@ fun HomeScreen(
     onOpenDevice: (String) -> Unit,
     onOpenMissions: () -> Unit,
 ) {
-    val vm = appViewModel { HomeViewModel(it.contentRepository, it.progressRepository, it.authRepository) }
+    val vm = appViewModel { HomeViewModel(it.contentRepository, it.progressRepository, it.authRepository, it.uiPrefsRepository) }
     val state by vm.state.collectAsStateWithLifecycle()
     HomeContent(state, vm::load, onScan, onBrowse, onOpenDevice, onOpenMissions)
 }
@@ -254,8 +268,13 @@ private fun StatsHero(d: HomeData) {
             }
             Column(Modifier.weight(1f)) {
                 Text("${d.points}", style = MaterialTheme.typography.headlineMedium, color = Color.White)
-                Text("points · Level ${d.level.level}", style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.85f))
+                Text("points · Level ${d.level.level}", style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.85f), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
+        }
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+        ) {
             Row(
                 Modifier.clip(RoundedCornerShape(50)).background(Color.White.copy(alpha = 0.2f)).padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,

@@ -70,10 +70,10 @@ class LearnViewModel(private val content: ContentRepository, private val progres
             content.getIndex()
                 .onSuccess { index ->
                     // Part counts come from the full device files; a device that fails to load still shows (without a count).
-                    val counts = index.map { d -> async { d to content.getDevice(d.id).getOrNull()?.parts?.size } }.awaitAll()
+                    val parts = index.map { d -> async { d to content.getDevice(d.id).getOrNull()?.parts?.map { it.id }?.toSet() } }.awaitAll()
                     progress.viewedParts.collect { viewed ->
-                        _state.value = LearnUiState.Loaded(counts.map { (d, n) ->
-                            LearnItem(d, n, viewed.count { it.startsWith(d.id + ":") })
+                        _state.value = LearnUiState.Loaded(parts.map { (d, ids) ->
+                            LearnItem(d, ids?.size, ids?.let { s -> viewed.count { it.startsWith(d.id + ":") && it.removePrefix(d.id + ":") in s } } ?: 0)
                         })
                     }
                 }

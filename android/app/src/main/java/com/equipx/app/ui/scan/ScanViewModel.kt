@@ -40,6 +40,8 @@ class ScanViewModel(
         }
     }
 
+    val isDemoDetector: Boolean get() = detector.isDemo
+
     /** Called on the camera analysis thread. */
     fun onFrame(frame: Frame) {
         val result = detector.detect(frame)
@@ -56,6 +58,10 @@ class ScanViewModel(
      * so it awards no scan points/badge and cannot complete a mission's scan task. Scanning must be real.
      */
     fun onManualChoice(@Suppress("UNUSED_PARAMETER") deviceId: String) = Unit
+
+    override fun onCleared() {
+        detector.close()
+    }
 
     fun reset() {
         detector.reset()

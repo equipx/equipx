@@ -33,6 +33,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.equipx.app.ui.components.RememberLastDevice
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -144,6 +145,7 @@ fun ProcedureScreen(
         ProcedureViewModel(deviceId, procedureId, it.contentRepository, it.activityTracker)
     }
     val state by vm.state.collectAsStateWithLifecycle()
+    RememberLastDevice(deviceId)
     Column(Modifier.fillMaxSize().background(EquipXColors.Canvas)) {
         EquipXTopBar(title = (state as? ProcedureState.Running)?.procedure?.title ?: "Procedure", onBack = onBack)
         when (val s = state) {

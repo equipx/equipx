@@ -14,7 +14,7 @@ import com.equipx.app.data.DataStoreUiPrefsRepository
 import com.equipx.app.data.UiPrefsRepository
 import com.equipx.app.data.equipXDataStore
 import com.equipx.app.ml.Detector
-import com.equipx.app.ml.FakeDetector
+import com.equipx.app.ml.DetectorFactory
 
 /** Manual DI container. Swap Mock* / Fake* implementations here. */
 class AppContainer(context: Context) {
@@ -24,7 +24,7 @@ class AppContainer(context: Context) {
     val progressRepository: ProgressRepository = DataStoreProgressRepository(appContext.equipXDataStore)
     val uiPrefsRepository: UiPrefsRepository = DataStoreUiPrefsRepository(appContext.equipXDataStore)
     val activityTracker = ActivityTracker(progressRepository, contentRepository)
-    fun createDetector(): Detector = FakeDetector()
+    fun createDetector(): Detector = DetectorFactory.create(appContext)
 }
 
 class EquipXApp : Application() {
