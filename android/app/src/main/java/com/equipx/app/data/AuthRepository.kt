@@ -9,11 +9,19 @@ import com.equipx.app.domain.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/** Where accounts live: bundled demo accounts, or a configured Supabase project. */
+enum class AuthMode { MOCK, SUPABASE }
+
 interface AuthRepository {
+    val mode: AuthMode get() = AuthMode.MOCK
     /** Emits the logged-in user, or null when logged out. Persisted across launches. */
     val currentUser: Flow<User?>
     suspend fun login(email: String, password: String): Result<User>
     suspend fun logout()
+
+    /** Student self-registration. Only available when [mode] is [AuthMode.SUPABASE]. */
+    suspend fun register(email: String, password: String, displayName: String): Result<User> =
+        Result.failure(UnsupportedOperationException("Sign-up needs a Supabase connection"))
 }
 
 class MockAuthRepository(private val store: DataStore<Preferences>) : AuthRepository {

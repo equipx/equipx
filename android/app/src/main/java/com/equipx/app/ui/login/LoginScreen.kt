@@ -32,7 +32,10 @@ import androidx.compose.foundation.background
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.equipx.app.data.AuthMode
 import com.equipx.app.data.AuthRepository
+import com.equipx.app.data.remote.AuthException
+import androidx.compose.material3.TextButton
 import com.equipx.app.ui.appViewModel
 import com.equipx.app.ui.components.Callout
 import com.equipx.app.ui.components.PrimaryButton
@@ -43,9 +46,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class LoginUiState(val busy: Boolean = false, val error: String? = null, val done: Boolean = false)
+data class LoginUiState(
+    val busy: Boolean = false,
+    val error: String? = null,
+    val done: Boolean = false,
+    /** Non-error hint, e.g. "check your email to confirm". */
+    val info: String? = null,
+)
 
 class LoginViewModel(private val auth: AuthRepository) : ViewModel() {
+    val mode: AuthMode = auth.mode
+
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()
 
@@ -56,6 +67,21 @@ class LoginViewModel(private val auth: AuthRepository) : ViewModel() {
             auth.login(email, password)
                 .onSuccess { _state.update { LoginUiState(done = true) } }
                 .onFailure { e -> _state.update { LoginUiState(error = e.message ?: "Login failed") } }
+        }
+    }
+
+    fun register(email: String, password: String, name: String) {
+        if (_state.value.busy) return
+        _state.update { LoginUiState(busy = true) }
+        viewModelScope.launch {
+            auth.register(email, password, name)
+                .onSuccess { _state.update { LoginUiState(done = true) } }
+                .onFailure { e ->
+                    val confirm = (e as? AuthException)?.kind == AuthException.Kind.CONFIRM_EMAIL
+                    _state.update {
+                        if (confirm) LoginUiState(info = e.message) else LoginUiState(error = e.message ?: "Sign-up failed")
+                    }
+                }
         }
     }
 }
@@ -69,6 +95,10 @@ fun LoginScreen(onLoggedIn: () -> Unit) {
 
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var creating by rememberSaveable { mutableStateOf(false) }
+    val remote = vm.mode == AuthMode.SUPABASE
+    val signUp = remote && creating
     val fieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = EquipXColors.Accent,
         unfocusedBorderColor = EquipXColors.Border,
@@ -87,8 +117,19 @@ fun LoginScreen(onLoggedIn: () -> Unit) {
     ) {
         Spacer(Modifier.height(48.dp))
         Text("Welcome to EquipX", style = MaterialTheme.typography.headlineMedium)
-        Text("Sign in to continue", style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary)
+        Text(if (signUp) "Create a student account" else "Sign in to continue", style = MaterialTheme.typography.bodyMedium, color = EquipXColors.TextSecondary)
         Spacer(Modifier.height(8.dp))
+        if (signUp) {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Display name") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = fieldColors,
+            )
+        }
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -113,16 +154,36 @@ fun LoginScreen(onLoggedIn: () -> Unit) {
         state.error?.let {
             Text(it, style = MaterialTheme.typography.bodySmall, color = EquipXColors.Danger)
         }
+        state.info?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall, color = EquipXColors.TextSecondary)
+        }
         PrimaryButton(
-            text = if (state.busy) "Signing in..." else "Sign in",
-            onClick = { vm.login(email, password) },
-            enabled = !state.busy && email.isNotBlank() && password.isNotBlank(),
+            text = when {
+                state.busy && signUp -> "Creating account..."
+                state.busy -> "Signing in..."
+                signUp -> "Create account"
+                else -> "Sign in"
+            },
+            onClick = { if (signUp) vm.register(email, password, name) else vm.login(email, password) },
+            enabled = !state.busy && email.isNotBlank() && password.isNotBlank() && (!signUp || (name.isNotBlank() && password.length >= 6)),
             modifier = Modifier.fillMaxWidth(),
         )
+        if (remote) {
+            TextButton(onClick = { creating = !creating }, enabled = !state.busy) {
+                Text(if (signUp) "Already have an account? Sign in" else "New student? Create account")
+            }
+        }
         Spacer(Modifier.height(8.dp))
-        Callout(
-            title = "Demo accounts",
-            text = "Student: student@equipx.app / student123\nTeacher: teacher@equipx.app / teacher123",
-        )
+        if (remote) {
+            Callout(
+                title = "Online mode",
+                text = "Connected to the EquipX server. Your progress is saved on this phone and synced when you are online.",
+            )
+        } else {
+            Callout(
+                title = "Demo mode (offline accounts)",
+                text = "Student: student@equipx.app / student123\nTeacher: teacher@equipx.app / teacher123",
+            )
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.equipx.app.data
 import com.equipx.app.domain.ActivityEvent
 import com.equipx.app.domain.Badge
 import com.equipx.app.domain.EngineResult
+import com.equipx.app.domain.FaultAttempt
 import com.equipx.app.domain.MissionRules
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +17,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/** Optional observer of tracker output (the Supabase outbox). Must never throw into the tracker; failures are swallowed. */
+interface ActivitySink {
+    suspend fun onEvent(event: ActivityEvent, result: EngineResult)
+    suspend fun onFaultAttempt(attempt: FaultAttempt)
+
+    /** [newTaskIds] were just completed in [missionId]; [complete] is true when that finished the mission. */
+    suspend fun onMissionProgress(missionId: String, newTaskIds: List<String>, complete: Boolean)
+}
+
 /**
  * Single entry point for every award path: records an event through the points/badge engine,
  * advances the active mission, and queues new badges for the toast host.
@@ -26,7 +36,8 @@ import kotlinx.coroutines.launch
 class ActivityTracker(
     private val progress: ProgressRepository,
     private val content: ContentRepository,
-    scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    private val sink: ActivitySink? = null,
 ) {
     private class Pending(val event: ActivityEvent, val result: CompletableDeferred<EngineResult>)
 
@@ -80,19 +91,24 @@ class ActivityTracker(
         progress.migrate()
         val missions = content.getMissions().getOrNull().orEmpty()
         if (missions.isEmpty()) return
+        var completed: List<Pair<String, List<String>>> = emptyList()
         val results = progress.applyMissionStep { st ->
             val complete = missions.filter { MissionRules.isComplete(it, st.doneTasks[it.id].orEmpty()) }.map { it.id }
+            completed = complete.map { it to st.doneTasks[it].orEmpty() }
             MissionStep(
                 if (st.activeMissionId in complete) st.copy(activeMissionId = null) else st,
                 complete,
             )
         }
         results.forEach(::announce)
+        // Re-offer finished missions to the outbox (deterministic ids make this a no-op when already queued/uploaded).
+        completed.forEach { (id, done) -> notify { it.onMissionProgress(id, done, complete = true) } }
     }
 
     private suspend fun process(event: ActivityEvent): EngineResult {
         val result = progress.record(event)
         announce(result)
+        notify { it.onEvent(event, result) }
         if (event !is ActivityEvent.MissionCompleted) advanceMission(event)
         return result
     }
@@ -101,6 +117,7 @@ class ActivityTracker(
         val missions = content.getMissions().getOrNull().orEmpty()
         if (missions.isEmpty()) return
         // Task progress and the mission award happen in one storage edit: no window where one is lost.
+        var progressed: Triple<String, List<String>, Boolean>? = null
         val results = progress.applyMissionStep { st ->
             val id = st.activeMissionId ?: return@applyMissionStep MissionStep(st)
             val mission = missions.firstOrNull { it.id == id } ?: return@applyMissionStep MissionStep(st)
@@ -108,10 +125,24 @@ class ActivityTracker(
             val next = MissionRules.advance(mission, done, event, active = true)
             if (next == done) return@applyMissionStep MissionStep(st)
             val updated = st.copy(doneTasks = st.doneTasks + (id to next))
-            if (MissionRules.isComplete(mission, next)) MissionStep(updated.copy(activeMissionId = null), listOf(id))
+            val finished = MissionRules.isComplete(mission, next)
+            progressed = Triple(id, next.filter { it !in done }, finished)
+            if (finished) MissionStep(updated.copy(activeMissionId = null), listOf(id))
             else MissionStep(updated)
         }
         results.forEach(::announce)
+        progressed?.let { (id, newTasks, finished) -> notify { it.onMissionProgress(id, newTasks, finished) } }
+    }
+
+    /** Reports a saved fault attempt (it carries the chosen option, which the points event does not). */
+    fun postFaultAttempt(attempt: FaultAttempt) {
+        scope.launch { notify { it.onFaultAttempt(attempt) } }
+    }
+
+    private suspend fun notify(block: suspend (ActivitySink) -> Unit) {
+        val s = sink ?: return
+        // Server sync is best effort and must never disturb local progress.
+        runCatching { block(s) }
     }
 
     /** Makes [missionId] the active mission (only one at a time). */

@@ -159,9 +159,9 @@ class TroubleshootViewModel(
         val award = tracker.postForResult(ActivityEvent.FaultDiagnosed("$deviceId:$faultId", correct))
         viewModelScope.launch {
             runCatching {
-                progress.saveFaultAttempt(
-                    FaultAttempt(deviceId, faultId, chosen, correct, s.inspected, System.currentTimeMillis()),
-                )
+                val attempt = FaultAttempt(deviceId, faultId, chosen, correct, s.inspected, System.currentTimeMillis())
+                progress.saveFaultAttempt(attempt)
+                tracker.postFaultAttempt(attempt)
             }
         }
         viewModelScope.launch {
