@@ -83,3 +83,19 @@ class Letterbox(val srcW: Int, val srcH: Int, val size: Int) {
         return NormalizedBox(x(b.left), y(b.top), x(b.right), y(b.bottom))
     }
 }
+
+/** Pure-Kotlin packing of letterboxed ARGB pixels into the float32 model input (RGB / 255). */
+object InputPacking {
+    /** Writes [pixels] (row-major ARGB, size*size) into [dst]: planar R,G,B if [channelsFirst] (NCHW), else interleaved (NHWC). */
+    fun pack(pixels: IntArray, channelsFirst: Boolean, dst: java.nio.FloatBuffer) {
+        if (channelsFirst) {
+            for (shift in intArrayOf(16, 8, 0)) for (p in pixels) dst.put(((p shr shift) and 0xFF) / 255f)
+        } else {
+            for (p in pixels) {
+                dst.put(((p shr 16) and 0xFF) / 255f)
+                dst.put(((p shr 8) and 0xFF) / 255f)
+                dst.put((p and 0xFF) / 255f)
+            }
+        }
+    }
+}

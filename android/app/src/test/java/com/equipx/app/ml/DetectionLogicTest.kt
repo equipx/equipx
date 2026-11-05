@@ -89,6 +89,33 @@ class DetectionLogicTest {
         assertFalse(af.channelsFirst); assertFalse(af.boxesNormalized); assertEquals(8400, af.numAnchors)
     }
 
+    @Test fun modelInfoParsesRealExportJson() {
+        val m = ModelInfo.parse("""{"model": "equipx_detector.tflite", "task": "detect", "num_classes": 10,
+ "classes": ["digital_multimeter","analog_multimeter","digital_clamp_meter","digital_oscilloscope","function_generator","dc_power_supply","soldering_station","lcr_meter","insulation_tester","breadboard_trainer"],
+ "input": {"shape": [1, 3, 640, 640], "layout": "NCHW", "dtype": "float32", "normalization": "pixel/255.0 -> [0,1]; letterbox to 640; RGB"},
+ "output": {"shape": [1, 14, 8400], "dtype": "float32", "layout": "channels_first", "box_format": "cx,cy,w,h", "box_units": "normalized", "nms": "not applied"}}""")
+        assertEquals(10, m.numClasses); assertEquals(640, m.inputSize); assertEquals(8400, m.numAnchors)
+        assertTrue(m.inputChannelsFirst); assertTrue(m.channelsFirst); assertTrue(m.boxesNormalized)
+    }
+
+    @Test fun modelInfoInfersLayoutsFromShapes() {
+        val nchw = ModelInfo.parse("""{"classes":["a"],"input":{"shape":[1,3,320,320]},"output":{"shape":[1,5,100]}}""")
+        assertTrue(nchw.inputChannelsFirst); assertEquals(320, nchw.inputSize)
+        val nhwc = ModelInfo.parse("""{"classes":["a"],"input":{"shape":[1,320,320,3]},"output":{"shape":[1,100,5],"layout":"anchors_first"}}""")
+        assertFalse(nhwc.inputChannelsFirst); assertFalse(nhwc.channelsFirst); assertEquals(100, nhwc.numAnchors)
+    }
+
+    @Test fun inputPackingNchwVsNhwc() {
+        // 2x2 "bitmap": ARGB ints with distinct channel values.
+        fun px(r: Int, g: Int, b: Int) = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+        val pixels = intArrayOf(px(10, 20, 30), px(40, 50, 60), px(70, 80, 90), px(100, 110, 120))
+        fun pack(cf: Boolean) = java.nio.FloatBuffer.allocate(12).also { InputPacking.pack(pixels, cf, it) }.array()
+        val nchw = pack(true)
+        assertEquals(listOf(10, 40, 70, 100, 20, 50, 80, 110, 30, 60, 90, 120).map { it / 255f }, nchw.toList())
+        val nhwc = pack(false)
+        assertEquals(listOf(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120).map { it / 255f }, nhwc.toList())
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun modelInfoRejectsMismatchedShape() {
         ModelInfo.parse("""{"classes":["a"],"input":{"shape":[1,640,640,3]},"output":{"shape":[1,7,100]}}""")

@@ -16,7 +16,7 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
 /**
- * YOLO TFLite detector for the 10 lab devices. Float32 NHWC RGB/255 input (letterboxed), `[1,14,N]` or `[1,N,14]`
+ * YOLO TFLite detector for the 10 lab devices. Float32 RGB/255 input (letterboxed, NCHW planar or NHWC per [ModelInfo.inputChannelsFirst]), `[1,14,N]` or `[1,N,14]`
  * output, threshold + class-wise NMS here, then temporal smoothing. Called on the CameraX analysis executor.
  */
 class TfliteDetector(
@@ -135,12 +135,7 @@ class TfliteDetector(
         canvas.drawBitmap(src, m, paint)
         canvasBitmap.getPixels(pixels, 0, size, 0, 0, size, size)
         inputBuffer.rewind()
-        val f = inputBuffer.asFloatBuffer()
-        for (p in pixels) {
-            f.put(((p shr 16) and 0xFF) / 255f)
-            f.put(((p shr 8) and 0xFF) / 255f)
-            f.put((p and 0xFF) / 255f)
-        }
+        InputPacking.pack(pixels, info.inputChannelsFirst, inputBuffer.asFloatBuffer())
         return uw to uh
     }
 
