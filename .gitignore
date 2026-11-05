@@ -26,3 +26,7 @@ android/app/src/test/snapshots/
 supabase/.env
 admin/.env.local
 android/supabase.properties
+ml/export/*.zip
+ml/export/equipx/
+ml/export/*.onnx
+ml/export/*.tflite

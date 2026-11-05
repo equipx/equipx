@@ -1,0 +1,10 @@
+digital_multimeter
+analog_multimeter
+digital_clamp_meter
+digital_oscilloscope
+function_generator
+dc_power_supply
+soldering_station
+lcr_meter
+insulation_tester
+breadboard_trainer

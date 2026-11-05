@@ -1,0 +1,40 @@
+{
+  "model": "equipx_detector.tflite",
+  "task": "detect",
+  "num_classes": 10,
+  "classes": [
+    "digital_multimeter",
+    "analog_multimeter",
+    "digital_clamp_meter",
+    "digital_oscilloscope",
+    "function_generator",
+    "dc_power_supply",
+    "soldering_station",
+    "lcr_meter",
+    "insulation_tester",
+    "breadboard_trainer"
+  ],
+  "input": {
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "layout": "NCHW",
+    "dtype": "float32",
+    "normalization": "pixel/255.0 -> [0,1]; letterbox to 640; RGB"
+  },
+  "output": {
+    "shape": [
+      1,
+      14,
+      8400
+    ],
+    "dtype": "float32",
+    "layout": "channels_first",
+    "box_format": "cx,cy,w,h",
+    "box_units": "normalized",
+    "nms": "not applied"
+  }
+}

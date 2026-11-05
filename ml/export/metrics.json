@@ -1,0 +1,82 @@
+{
+  "split": "test",
+  "overall": {
+    "precision": 0.9179363989495304,
+    "recall": 0.8888518616523582,
+    "mAP50": 0.9313172826985892,
+    "mAP50_95": 0.816983100952371
+  },
+  "per_class": [
+    {
+      "cls": "digital_multimeter",
+      "precision": 1.0,
+      "recall": 0.968,
+      "mAP50": 0.995,
+      "mAP50_95": 0.907
+    },
+    {
+      "cls": "analog_multimeter",
+      "precision": 1.0,
+      "recall": 0.441,
+      "mAP50": 0.859,
+      "mAP50_95": 0.576
+    },
+    {
+      "cls": "digital_clamp_meter",
+      "precision": 0.988,
+      "recall": 1.0,
+      "mAP50": 0.995,
+      "mAP50_95": 0.789
+    },
+    {
+      "cls": "digital_oscilloscope",
+      "precision": 1.0,
+      "recall": 0.925,
+      "mAP50": 0.991,
+      "mAP50_95": 0.927
+    },
+    {
+      "cls": "function_generator",
+      "precision": 0.97,
+      "recall": 1.0,
+      "mAP50": 0.995,
+      "mAP50_95": 0.941
+    },
+    {
+      "cls": "dc_power_supply",
+      "precision": 0.908,
+      "recall": 0.983,
+      "mAP50": 0.977,
+      "mAP50_95": 0.942
+    },
+    {
+      "cls": "soldering_station",
+      "precision": 0.653,
+      "recall": 0.571,
+      "mAP50": 0.517,
+      "mAP50_95": 0.268
+    },
+    {
+      "cls": "lcr_meter",
+      "precision": 0.85,
+      "recall": 1.0,
+      "mAP50": 0.995,
+      "mAP50_95": 0.962
+    },
+    {
+      "cls": "insulation_tester",
+      "precision": 0.812,
+      "recall": 1.0,
+      "mAP50": 0.995,
+      "mAP50_95": 0.907
+    },
+    {
+      "cls": "breadboard_trainer",
+      "precision": 0.998,
+      "recall": 1.0,
+      "mAP50": 0.995,
+      "mAP50_95": 0.951
+    }
+  ],
+  "no_test_instances": []
+}

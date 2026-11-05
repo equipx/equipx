@@ -28,3 +28,8 @@ Fork the datasets into your Roboflow workspace, use Dataset > Classes to rename/
 
 ## Local env (optional)
 `uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements.txt`
+
+## Current bundled model (2026-11-05)
+YOLO11n, 60 epochs on a Colab T4, public datasets only (no own photos yet). Export: TFLite float32, input `[1,3,640,640]` NCHW, output `[1,14,8400]` channels-first, normalized boxes. Full numbers in `ml/export/metrics.json`.
+
+Test split: mAP50 0.93, precision 0.92, recall 0.89. Strong (mAP50 ≥ 0.97): digital multimeter, clamp meter, oscilloscope, function generator, DC supply, LCR meter, insulation tester, breadboard/trainer. **Weak: soldering station (mAP50 0.52) and analog multimeter (recall 0.44)**, which had the fewest public images. Add 50–100 own photos of each to `MyDrive/equipx/own_photos/<class_id>/`, delete `MyDrive/equipx/weights/best.pt`, and re-run the notebook. The LCR and insulation-tester scores come from only ~15 public images each, so expect them to drop on your lab's units until own photos are added.
